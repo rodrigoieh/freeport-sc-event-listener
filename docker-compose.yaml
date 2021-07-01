@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  postgresql:
+    container_name: 'postgresql'
+    image: 'postgres:alpine'
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_USER=pg'
+      - 'POSTGRES_PASSWORD=pwd'
+      - 'POSTGRES_DB=davinci_sc'
