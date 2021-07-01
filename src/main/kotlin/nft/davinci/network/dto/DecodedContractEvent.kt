@@ -26,7 +26,7 @@ data class DecodedContractEvent(
         val from = getParamValue(PARAM_FROM)
         val to = getParamValue(PARAM_TO)
         val nftId = getParamValue(PARAM_ID)
-        val quantity = getParamValue(PARAM_AMOUNT).toLong()
+        val quantity = getParamValue(PARAM_AMOUNT).toBigInteger()
 
         return when {
             from == ZERO_ADDRESS -> NftMinted(operator, to, nftId, quantity)

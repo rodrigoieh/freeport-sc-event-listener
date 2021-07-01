@@ -9,6 +9,7 @@ import io.vertx.mutiny.sqlclient.SqlClientHelper
 import io.vertx.mutiny.sqlclient.Tuple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import nft.davinci.network.NetworkConfig
+import java.math.BigInteger
 import javax.enterprise.context.ApplicationScoped
 
 @ExperimentalCoroutinesApi
@@ -57,12 +58,12 @@ class WalletRepository(private val db: PgPool, networkConfig: NetworkConfig) {
             .size() > 0
     }
 
-    suspend fun updateQuantity(wallet: String, nftId: String, delta: Long) {
+    suspend fun updateQuantity(wallet: String, nftId: String, delta: BigInteger) {
         SqlClientHelper.inTransactionUni(db) {
             getOrCreate(wallet, nftId)
                 .flatMap {
                     val newQuantity = it.quantity + delta
-                    if (newQuantity == 0L) {
+                    if (newQuantity == BigInteger.ZERO) {
                         delete(it.id)
                     } else {
                         update(it.id, newQuantity)
@@ -77,7 +78,7 @@ class WalletRepository(private val db: PgPool, networkConfig: NetworkConfig) {
             .flatMap {
                 if (it.size() > 0) {
                     val row = it.first()
-                    Uni.createFrom().item(WalletNft(row.getLong(0), wallet, nftId, row.getLong(1)))
+                    Uni.createFrom().item(WalletNft(row.getLong(0), wallet, nftId, row.getBigDecimal(1).toBigInteger()))
                 } else {
                     create(wallet, nftId)
                 }
@@ -93,7 +94,7 @@ class WalletRepository(private val db: PgPool, networkConfig: NetworkConfig) {
             }
     }
 
-    private fun update(id: Long, newQuantity: Long): Uni<RowSet<Row>> {
+    private fun update(id: Long, newQuantity: BigInteger): Uni<RowSet<Row>> {
         return db.preparedQuery(SQL_UPDATE).execute(Tuple.of(newQuantity, id))
     }
 
