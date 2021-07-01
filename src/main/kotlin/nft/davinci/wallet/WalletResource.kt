@@ -1,16 +1,15 @@
 package nft.davinci.wallet
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.math.BigInteger
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.core.Response
 
-@ExperimentalCoroutinesApi
 @Path("nfts")
 class WalletResource(private val walletRepository: WalletRepository) {
     @GET
     @Path("{wallet}")
-    suspend fun getWalletNfts(wallet: String): Map<String, Long> {
+    suspend fun getWalletNfts(wallet: String): Map<String, BigInteger> {
         return walletRepository.getWalletNfts(wallet)
     }
 

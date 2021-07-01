@@ -7,12 +7,10 @@ import io.vertx.mutiny.sqlclient.Row
 import io.vertx.mutiny.sqlclient.RowSet
 import io.vertx.mutiny.sqlclient.SqlClientHelper
 import io.vertx.mutiny.sqlclient.Tuple
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import nft.davinci.network.NetworkConfig
 import java.math.BigInteger
 import javax.enterprise.context.ApplicationScoped
 
-@ExperimentalCoroutinesApi
 @ApplicationScoped
 class WalletRepository(private val db: PgPool, networkConfig: NetworkConfig) {
     private companion object {
@@ -42,12 +40,12 @@ class WalletRepository(private val db: PgPool, networkConfig: NetworkConfig) {
     private val networkId = networkConfig.chainId()
     private val contractAddress = networkConfig.contractAddress()
 
-    suspend fun getWalletNfts(wallet: String): Map<String, Long> {
+    suspend fun getWalletNfts(wallet: String): Map<String, BigInteger> {
         return db.preparedQuery(SQL_SELECT_BY_WALLET)
             .execute(Tuple.of(wallet, networkId, contractAddress))
             .awaitSuspending()
             .asSequence()
-            .map { it.getString(0) to it.getLong(1) }
+            .map { it.getString(0) to it.getBigDecimal(1).toBigInteger() }
             .toMap()
     }
 

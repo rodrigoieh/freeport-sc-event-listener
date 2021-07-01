@@ -1,6 +1,5 @@
 package nft.davinci.network
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import nft.davinci.ddc.DdcService
 import nft.davinci.network.dto.DecodedContractEvent
@@ -11,7 +10,6 @@ import nft.davinci.wallet.WalletRepository
 import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
 
-@ExperimentalCoroutinesApi
 @ApplicationScoped
 class ContractEventProcessor(
     private val ddcService: DdcService,

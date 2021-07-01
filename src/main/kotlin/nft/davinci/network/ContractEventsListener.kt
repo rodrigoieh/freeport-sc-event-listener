@@ -2,7 +2,6 @@ package nft.davinci.network
 
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
 
-@ExperimentalCoroutinesApi
 @ApplicationScoped
 class ContractEventsListener(
     private val runFlyway: RunFlyway,
