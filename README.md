@@ -22,7 +22,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |NETWORK_POLL_INTERVAL|Poll interval|`PT30S`|
 |QUARKUS_DATASOURCE_USERNAME|Postgres user|`pg`|
 |QUARKUS_DATASOURCE_PASSWORD|Postgres password|`pwd`|
-|QUARKUS_DATASOURCE_REACTIVE_URL|Postgres URL|`postgresql://localhost:5432/davinci_sc`|
+|QUARKUS_DATASOURCE_REACTIVE_URL|Postgres URL|`postgresql://localhost:5432/davinci`|
 
 ## Requirements for development
 

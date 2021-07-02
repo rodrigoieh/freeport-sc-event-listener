@@ -6,14 +6,16 @@ import nft.davinci.network.dto.DecodedContractEvent
 import nft.davinci.network.dto.NftBurned
 import nft.davinci.network.dto.NftMinted
 import nft.davinci.network.dto.NftTransferred
-import nft.davinci.wallet.WalletRepository
+import nft.davinci.nft.NftRepository
+import nft.davinci.nft.WalletNftRepository
 import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class ContractEventProcessor(
     private val ddcService: DdcService,
-    private val walletRepository: WalletRepository
+    private val nftRepository: NftRepository,
+    private val walletNftRepository: WalletNftRepository
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -29,15 +31,16 @@ class ContractEventProcessor(
     }
 
     private suspend fun onNftMinted(event: NftMinted) = coroutineScope {
-        walletRepository.updateQuantity(event.minter, event.nftId, event.quantity)
+        nftRepository.create(event.nftId, event.minter, event.quantity)
+        walletNftRepository.updateQuantity(event.minter, event.nftId, event.quantity)
     }
 
     private suspend fun onNftTransferred(event: NftTransferred) = coroutineScope {
-        walletRepository.updateQuantity(event.from, event.nftId, -event.quantity)
-        walletRepository.updateQuantity(event.to, event.nftId, event.quantity)
+        walletNftRepository.updateQuantity(event.from, event.nftId, -event.quantity)
+        walletNftRepository.updateQuantity(event.to, event.nftId, event.quantity)
     }
 
     private suspend fun onNftBurned(event: NftBurned) = coroutineScope {
-        walletRepository.updateQuantity(event.from, event.nftId, -event.quantity)
+        walletNftRepository.updateQuantity(event.from, event.nftId, -event.quantity)
     }
 }
