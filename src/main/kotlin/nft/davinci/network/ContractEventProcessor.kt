@@ -1,5 +1,6 @@
 package nft.davinci.network
 
+import io.vertx.pgclient.PgException
 import kotlinx.coroutines.coroutineScope
 import nft.davinci.ddc.DdcService
 import nft.davinci.network.dto.DecodedContractEvent
@@ -31,8 +32,19 @@ class ContractEventProcessor(
     }
 
     private suspend fun onNftMinted(event: NftMinted) = coroutineScope {
-        nftRepository.create(event.nftId, event.minter, event.quantity)
-        walletNftRepository.updateQuantity(event.minter, event.nftId, event.quantity)
+        // TODO sometimes we might get duplicate minted event. Need to research why it happens
+        runCatching {
+            nftRepository.create(event.nftId, event.minter, event.quantity)
+        }.fold(
+            { walletNftRepository.updateQuantity(event.minter, event.nftId, event.quantity) },
+            {
+                if (it is PgException && it.code == "23505") {
+                    log.warn("Duplicate {} event. Ignored.", event.eventType())
+                } else {
+                    throw it
+                }
+            }
+        )
     }
 
     private suspend fun onNftTransferred(event: NftTransferred) = coroutineScope {
