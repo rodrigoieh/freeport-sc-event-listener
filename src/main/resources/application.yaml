@@ -36,8 +36,3 @@ quarkus:
     log:
       console:
         json: true
-
-"%test":
-  network:
-    first-block-number: 0
-    poll-interval: 'PT1S'
