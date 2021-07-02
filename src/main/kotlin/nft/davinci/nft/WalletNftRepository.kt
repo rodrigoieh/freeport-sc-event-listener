@@ -45,12 +45,11 @@ class WalletNftRepository(private val db: PgPool) {
     private fun getOrCreate(wallet: String, nftId: String): Uni<BigInteger> {
         return db.preparedQuery(SQL_SELECT)
             .execute(Tuple.of(nftId, wallet))
-            .map {
+            .flatMap {
                 if (it.size() > 0) {
-                    it.first().getBigDecimal(0).toBigInteger()
+                    Uni.createFrom().item(it.first().getBigDecimal(0).toBigInteger())
                 } else {
-                    create(wallet, nftId)
-                    BigInteger.ZERO
+                    create(wallet, nftId).map { BigInteger.ZERO }
                 }
             }
     }

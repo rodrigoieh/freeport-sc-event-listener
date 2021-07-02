@@ -9,9 +9,9 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class LastScannedBlockRepository(private val db: PgPool, private val networkConfig: NetworkConfig) {
     private companion object {
-        private const val SQL_SELECT = "SELECT block_height FROM last_scanned_blocks"
-        private const val SQL_INSERT = "INSERT INTO last_scanned_blocks (block_height) VALUES ($1)"
-        private const val SQL_UPDATE = "UPDATE last_scanned_blocks SET block_height = $1"
+        private const val SQL_SELECT = "SELECT block_height FROM last_scanned_block"
+        private const val SQL_INSERT = "INSERT INTO last_scanned_block (block_height) VALUES ($1)"
+        private const val SQL_UPDATE = "UPDATE last_scanned_block SET block_height = $1"
     }
 
     suspend fun getLastScannedBlock(): Long {
