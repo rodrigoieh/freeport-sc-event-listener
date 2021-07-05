@@ -98,7 +98,9 @@ class ContractEventsListener(
             return@coroutineScope false
         }
         rs.data!!.items.forEach {
-            contractEventProcessor.process(it.decoded)
+            if (it.decoded != null) {
+                contractEventProcessor.process(it.decoded)
+            }
             updateLastScannedBlockNumber(it.blockHeight)
         }
         updateLastScannedBlockNumber(toBlock)

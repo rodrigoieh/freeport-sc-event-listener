@@ -20,5 +20,5 @@ data class ContractEvent(
     @field:JsonProperty("sender_address")
     val senderAddress: String,
 
-    val decoded: DecodedContractEvent
+    val decoded: DecodedContractEvent?
 )
