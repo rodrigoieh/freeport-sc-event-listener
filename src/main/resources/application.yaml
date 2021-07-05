@@ -13,9 +13,8 @@ quarkus:
     db-kind: 'postgresql'
     username: 'pg'
     password: 'pwd'
-    jdbc: false
     reactive:
-      url: 'postgresql://localhost:5432/davinci_sc'
+      url: 'postgresql://localhost:5432/davinci'
   flyway:
     migrate-at-start: false
   log:

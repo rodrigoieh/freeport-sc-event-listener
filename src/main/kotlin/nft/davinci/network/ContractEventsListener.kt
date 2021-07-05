@@ -5,7 +5,6 @@ import io.quarkus.runtime.StartupEvent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import nft.davinci.db.RunFlyway
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.jboss.resteasy.reactive.server.runtime.kotlin.ApplicationCoroutineScope
 import org.slf4j.LoggerFactory
@@ -16,7 +15,6 @@ import javax.enterprise.event.Observes
 
 @ApplicationScoped
 class ContractEventsListener(
-    private val runFlyway: RunFlyway,
     private val networkConfig: NetworkConfig,
     private val lastScannedBlockRepository: LastScannedBlockRepository,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
@@ -38,10 +36,6 @@ class ContractEventsListener(
     }
 
     private suspend fun init() = coroutineScope {
-        while (!runFlyway.isCompleted()) {
-            log.info("Waiting for database migrations")
-            delay(500)
-        }
         log.info("Initializing Contract Event Listener")
         log.info("Updating last scanned block")
 
