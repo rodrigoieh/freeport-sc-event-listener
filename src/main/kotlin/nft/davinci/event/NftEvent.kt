@@ -1,4 +1,4 @@
-package nft.davinci.network.dto
+package nft.davinci.event
 
 import java.math.BigInteger
 
@@ -27,13 +27,4 @@ data class NftTransferred(
     override val quantity: BigInteger
 ) : NftEvent(operator, nftId, quantity) {
     override fun eventType() = "NFT_TRANSFERRED"
-}
-
-data class NftBurned(
-    override val operator: String,
-    val from: String,
-    override val nftId: String,
-    override val quantity: BigInteger
-) : NftEvent(operator, nftId, quantity) {
-    override fun eventType() = "NFT_BURNED"
 }
