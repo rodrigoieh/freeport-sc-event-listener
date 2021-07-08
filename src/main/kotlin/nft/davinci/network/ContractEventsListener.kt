@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
-import javax.enterprise.inject.Instance
 
 @ApplicationScoped
 class ContractEventsListener(
@@ -24,8 +23,8 @@ class ContractEventsListener(
     private val lastScannedBlockRepository: LastScannedBlockRepository,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
     @RestClient private val covalentClient: CovalentClient,
-    converters: Instance<DecodedContractEventConverter<SmartContractEvent>>,
-    processors: Instance<EventProcessor<SmartContractEvent>>
+    private val convertersMap: Map<String, DecodedContractEventConverter<SmartContractEvent>>,
+    private val processorsMap: Map<String, EventProcessor<SmartContractEvent>>,
 ) {
     private companion object {
         private const val OUT_OF_SYNC_THRESHOLD = 100
@@ -36,9 +35,6 @@ class ContractEventsListener(
 
     private val lastScannedBlock = AtomicLong()
     private val isRunning = AtomicBoolean(true)
-
-    private val convertersMap = converters.associateBy { it.supportedClass.simpleName }
-    private val processorsMap = processors.associateBy { it.supportedClass.simpleName }
 
     fun scheduleInit(@Observes e: StartupEvent) {
         applicationCoroutineScope.launch { init() }

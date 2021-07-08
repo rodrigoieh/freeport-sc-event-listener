@@ -5,25 +5,17 @@ import nft.davinci.ddc.DdcService
 import nft.davinci.event.NftEvent
 import nft.davinci.event.NftMinted
 import nft.davinci.event.NftTransferred
-import nft.davinci.event.SmartContractEvent
-import nft.davinci.network.processor.EventProcessor
 import nft.davinci.nft.NftRepository
 import nft.davinci.nft.WalletNftRepository
-import org.slf4j.LoggerFactory
+import javax.enterprise.context.ApplicationScoped
 
-abstract class AbstractNftEventProcessor<T : SmartContractEvent>(
+@ApplicationScoped
+class NftEventProcessor(
     private val ddcService: DdcService,
     private val nftRepository: NftRepository,
     private val walletNftRepository: WalletNftRepository
-) : EventProcessor<T> {
-    private val log = LoggerFactory.getLogger(javaClass)
-
-    protected companion object {
-        const val ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
-    }
-
-    protected suspend fun onNftEvent(event: NftEvent) = coroutineScope {
-        log.info("Received {} event", event.eventType())
+) {
+    suspend fun onNftEvent(event: NftEvent) = coroutineScope {
         ddcService.sendNftEvent(event)
         when (event) {
             is NftMinted -> onNftMinted(event)
