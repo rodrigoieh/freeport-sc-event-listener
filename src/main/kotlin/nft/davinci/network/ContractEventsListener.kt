@@ -5,6 +5,10 @@ import io.quarkus.runtime.StartupEvent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import nft.davinci.event.SmartContractEvent
+import nft.davinci.network.converter.DecodedContractEventConverter
+import nft.davinci.network.dto.DecodedContractEvent
+import nft.davinci.network.processor.EventProcessor
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.jboss.resteasy.reactive.server.runtime.kotlin.ApplicationCoroutineScope
 import org.slf4j.LoggerFactory
@@ -12,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
+import javax.enterprise.inject.Instance
 
 @ApplicationScoped
 class ContractEventsListener(
@@ -19,7 +24,8 @@ class ContractEventsListener(
     private val lastScannedBlockRepository: LastScannedBlockRepository,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
     @RestClient private val covalentClient: CovalentClient,
-    private val contractEventProcessor: ContractEventProcessor
+    converters: Instance<DecodedContractEventConverter<SmartContractEvent>>,
+    processors: Instance<EventProcessor<SmartContractEvent>>
 ) {
     private companion object {
         private const val OUT_OF_SYNC_THRESHOLD = 100
@@ -30,6 +36,9 @@ class ContractEventsListener(
 
     private val lastScannedBlock = AtomicLong()
     private val isRunning = AtomicBoolean(true)
+
+    private val convertersMap = converters.associateBy { it.supportedClass.simpleName }
+    private val processorsMap = processors.associateBy { it.supportedClass.simpleName }
 
     fun scheduleInit(@Observes e: StartupEvent) {
         applicationCoroutineScope.launch { init() }
@@ -99,12 +108,29 @@ class ContractEventsListener(
         }
         rs.data!!.items.forEach {
             if (it.decoded != null) {
-                contractEventProcessor.process(it.decoded)
+                convertAndProcess(it.decoded)
             }
             updateLastScannedBlockNumber(it.blockHeight)
         }
         updateLastScannedBlockNumber(toBlock)
         true
+    }
+
+    private suspend fun convertAndProcess(event: DecodedContractEvent) = coroutineScope {
+        log.info("Received event {}", event.name)
+        val converter = convertersMap[event.name]
+        if (converter == null) {
+            log.info("Unable to find converter for event {}. Skip.", event.name)
+            return@coroutineScope
+        }
+        log.info("Converting event {}", event.name)
+        val converted = converter.convert(event)
+        val processor = processorsMap[converted.javaClass.simpleName]
+        if (processor == null) {
+            log.warn("Unable to find processor for event {}. Skip.", converted.javaClass.simpleName)
+            return@coroutineScope
+        }
+        processor.process(converted)
     }
 
     private suspend fun updateLastScannedBlockNumber(blockNumber: Long) = coroutineScope {

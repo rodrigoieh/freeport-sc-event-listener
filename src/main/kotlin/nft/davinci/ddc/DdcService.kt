@@ -8,7 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import network.cere.ddc.client.producer.DdcProducer
 import network.cere.ddc.client.producer.Piece
-import nft.davinci.network.dto.NftEvent
+import nft.davinci.event.NftEvent
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
