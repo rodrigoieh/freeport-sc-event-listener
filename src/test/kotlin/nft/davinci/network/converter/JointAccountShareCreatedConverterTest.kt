@@ -7,7 +7,6 @@ import nft.davinci.network.dto.DecodedContractEvent
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
-import java.math.BigInteger
 
 internal class JointAccountShareCreatedConverterTest {
     private val testSubject = JointAccountShareCreatedConverter()
@@ -34,6 +33,6 @@ internal class JointAccountShareCreatedConverterTest {
         //then
         assertThat(account, equalTo("0x123"))
         assertThat(owner, equalTo("0xabc"))
-        assertThat(fraction, equalTo(BigInteger.TEN))
+        assertThat(fraction, equalTo(10))
     }
 }
