@@ -23,5 +23,5 @@ data class TransferBatch(
 data class JointAccountShareCreated(
     val account: String,
     val owner: String,
-    val fraction: BigInteger
+    val fraction: Int
 ) : SmartContractEvent()

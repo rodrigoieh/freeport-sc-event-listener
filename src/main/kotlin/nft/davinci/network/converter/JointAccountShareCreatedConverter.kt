@@ -18,7 +18,7 @@ class JointAccountShareCreatedConverter : DecodedContractEventConverter<JointAcc
         return JointAccountShareCreated(
             source.getParamStringValue(PARAM_ACCOUNT),
             source.getParamStringValue(PARAM_OWNER),
-            source.getParamStringValue(PARAM_FRACTION).toBigInteger()
+            source.getParamStringValue(PARAM_FRACTION).toInt()
         )
     }
 }
