@@ -22,7 +22,13 @@ internal class JointAccountShareCreatedEventProcessorTest {
     @Test
     fun `Process joint accouts share created event`() {
         //given
-        val event = JointAccountShareCreated("0x123", "0xabc", 123)
+        val event = JointAccountShareCreated(
+            "2021-07-08T00:47:30Z",
+            "0xcafebabe",
+            "0x123",
+            "0xabc",
+            123
+        )
 
         //when
         runBlocking { testSubject.process(event) }

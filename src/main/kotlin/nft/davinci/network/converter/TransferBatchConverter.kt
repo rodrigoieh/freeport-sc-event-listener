@@ -1,7 +1,7 @@
 package nft.davinci.network.converter
 
 import nft.davinci.event.TransferBatch
-import nft.davinci.network.dto.DecodedContractEvent
+import nft.davinci.network.dto.ContractEvent
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -16,13 +16,17 @@ class TransferBatchConverter : DecodedContractEventConverter<TransferBatch> {
 
     override val supportedClass = TransferBatch::class.java
 
-    override fun convert(source: DecodedContractEvent): TransferBatch {
+    override fun convert(source: ContractEvent): TransferBatch {
+        val (blockSignedAt, _, txHash, decoded) = source
+        requireNotNull(decoded)
         return TransferBatch(
-            source.getParamStringValue(PARAM_OPERATOR),
-            source.getParamStringValue(PARAM_FROM),
-            source.getParamStringValue(PARAM_TO),
-            source.getParamArrayValues(PARAM_IDS),
-            source.getParamArrayValues(PARAM_AMOUNTS).map(String::toBigInteger)
+            blockSignedAt,
+            txHash,
+            decoded.getParamStringValue(PARAM_OPERATOR),
+            decoded.getParamStringValue(PARAM_FROM),
+            decoded.getParamStringValue(PARAM_TO),
+            decoded.getParamArrayValues(PARAM_IDS),
+            decoded.getParamArrayValues(PARAM_AMOUNTS).map(String::toBigInteger)
         )
     }
 }

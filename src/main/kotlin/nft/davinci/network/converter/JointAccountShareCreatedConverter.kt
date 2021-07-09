@@ -1,7 +1,7 @@
 package nft.davinci.network.converter
 
 import nft.davinci.event.JointAccountShareCreated
-import nft.davinci.network.dto.DecodedContractEvent
+import nft.davinci.network.dto.ContractEvent
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -14,11 +14,15 @@ class JointAccountShareCreatedConverter : DecodedContractEventConverter<JointAcc
 
     override val supportedClass = JointAccountShareCreated::class.java
 
-    override fun convert(source: DecodedContractEvent): JointAccountShareCreated {
+    override fun convert(source: ContractEvent): JointAccountShareCreated {
+        val (blockSignedAt, _, txHash, decoded) = source
+        requireNotNull(decoded)
         return JointAccountShareCreated(
-            source.getParamStringValue(PARAM_ACCOUNT),
-            source.getParamStringValue(PARAM_OWNER),
-            source.getParamStringValue(PARAM_FRACTION).toInt()
+            blockSignedAt,
+            txHash,
+            decoded.getParamStringValue(PARAM_ACCOUNT),
+            decoded.getParamStringValue(PARAM_OWNER),
+            decoded.getParamStringValue(PARAM_FRACTION).toInt()
         )
     }
 }

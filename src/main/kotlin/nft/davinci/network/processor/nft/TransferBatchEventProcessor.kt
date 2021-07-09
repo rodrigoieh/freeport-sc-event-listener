@@ -10,10 +10,9 @@ class TransferBatchEventProcessor(private val nftEventProcessor: NftEventProcess
     override val supportedClass = TransferBatch::class.java
 
     override suspend fun process(event: TransferBatch) {
-        val (operator, from, to, ids, amounts) = event
-        ids.indices.forEach { i ->
-            val nftEvent = NftTransferred(operator, from, to, ids[i], amounts[i])
-            nftEventProcessor.onNftEvent(nftEvent)
+        event.ids.indices.forEach { i ->
+            val nftEvent = NftTransferred(event.operator, event.from, event.to, event.ids[i], event.amounts[i])
+            nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt, event.txHash)
         }
     }
 }
