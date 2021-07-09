@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nft.davinci.event.SmartContractEvent
 import nft.davinci.network.converter.DecodedContractEventConverter
-import nft.davinci.network.dto.DecodedContractEvent
+import nft.davinci.network.dto.ContractEvent
 import nft.davinci.network.processor.EventProcessor
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.jboss.resteasy.reactive.server.runtime.kotlin.ApplicationCoroutineScope
@@ -103,23 +103,22 @@ class ContractEventsListener(
             return@coroutineScope false
         }
         rs.data!!.items.forEach {
-            if (it.decoded != null) {
-                convertAndProcess(it.decoded)
-            }
+            convertAndProcess(it)
             updateLastScannedBlockNumber(it.blockHeight)
         }
         updateLastScannedBlockNumber(toBlock)
         true
     }
 
-    private suspend fun convertAndProcess(event: DecodedContractEvent) = coroutineScope {
-        log.info("Received event {}", event.name)
-        val converter = convertersMap[event.name]
+    private suspend fun convertAndProcess(event: ContractEvent) = coroutineScope {
+        val decoded = event.decoded ?: return@coroutineScope
+        log.info("Received event {}", decoded.name)
+        val converter = convertersMap[decoded.name]
         if (converter == null) {
-            log.info("Unable to find converter for event {}. Skip.", event.name)
+            log.info("Unable to find converter for event {}. Skip.", decoded.name)
             return@coroutineScope
         }
-        log.info("Converting event {}", event.name)
+        log.info("Converting event {}", decoded.name)
         val converted = converter.convert(event)
         val processor = processorsMap[converted.javaClass.simpleName]
         if (processor == null) {

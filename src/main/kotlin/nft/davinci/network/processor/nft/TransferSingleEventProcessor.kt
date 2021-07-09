@@ -16,12 +16,11 @@ class TransferSingleEventProcessor(private val nftEventProcessor: NftEventProces
     override val supportedClass = TransferSingle::class.java
 
     override suspend fun process(event: TransferSingle) = coroutineScope {
-        val (operator, from, to, id, amount) = event
-        val nftEvent = if (from == ZERO_ADDRESS) {
-            NftMinted(operator, to, id, amount)
+        val nftEvent = if (event.from == ZERO_ADDRESS) {
+            NftMinted(event.operator, event.to, event.id, event.amount)
         } else {
-            NftTransferred(operator, from, to, id, amount)
+            NftTransferred(event.operator, event.from, event.to, event.id, event.amount)
         }
-        nftEventProcessor.onNftEvent(nftEvent)
+        nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt, event.txHash)
     }
 }

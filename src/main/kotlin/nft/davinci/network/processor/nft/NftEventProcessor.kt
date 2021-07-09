@@ -15,8 +15,8 @@ class NftEventProcessor(
     private val nftRepository: NftRepository,
     private val walletNftRepository: WalletNftRepository
 ) {
-    suspend fun onNftEvent(event: NftEvent) = coroutineScope {
-        ddcService.sendNftEvent(event)
+    suspend fun onNftEvent(event: NftEvent, blockSignedAt: String, txHash: String) = coroutineScope {
+        ddcService.sendNftEvent(event, blockSignedAt, txHash)
         when (event) {
             is NftMinted -> onNftMinted(event)
             is NftTransferred -> onNftTransferred(event)

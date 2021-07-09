@@ -11,7 +11,6 @@ import network.cere.ddc.client.producer.Piece
 import nft.davinci.event.NftEvent
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import java.util.*
 import javax.enterprise.context.ApplicationScoped
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -24,14 +23,14 @@ class DdcService(
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    suspend fun sendNftEvent(nftEvent: NftEvent) = coroutineScope {
+    suspend fun sendNftEvent(nftEvent: NftEvent, blockSignedAt: String, txHash: String) = coroutineScope {
         log.info("Storing {} event in DDC", nftEvent.eventType())
-        val event = DdcNftEvent(nftEvent.eventType(), nftEvent)
+        val event = DdcNftEvent(nftEvent.eventType(), txHash, blockSignedAt, nftEvent)
         val piece = Piece().apply {
-            id = UUID.randomUUID().toString()
+            id = txHash
             appPubKey = ddcConfig.pubKeyHex()
             userPubKey = nftEvent.operator
-            timestamp = Instant.now()
+            timestamp = Instant.parse(blockSignedAt)
             data = objectMapper.writeValueAsString(event)
         }
         uploadToDdcAsync(piece).await()

@@ -11,7 +11,6 @@ class JointAccountShareCreatedEventProcessor(private val jointAccountRepository:
     override val supportedClass = JointAccountShareCreated::class.java
 
     override suspend fun process(event: JointAccountShareCreated) {
-        val (account, owner, fraction) = event
-        jointAccountRepository.create(account, owner, fraction)
+        jointAccountRepository.create(event.account, event.owner, event.fraction)
     }
 }

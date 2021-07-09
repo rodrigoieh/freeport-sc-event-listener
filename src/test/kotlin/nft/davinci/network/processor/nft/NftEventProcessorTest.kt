@@ -26,11 +26,11 @@ internal class NftEventProcessorTest {
         val event = NftMinted("0x123", "0xabc", "123", BigInteger.TEN)
 
         //when
-        runBlocking { testSubject.onNftEvent(event) }
+        runBlocking { testSubject.onNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe") }
 
         //then
         inOrder(ddcService, nftRepository, walletNftRepository) {
-            verifyBlocking(ddcService) { sendNftEvent(event) }
+            verifyBlocking(ddcService) { sendNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe") }
             verifyBlocking(nftRepository) { create(event.nftId, event.minter, event.quantity) }
             verifyBlocking(walletNftRepository) { updateQuantity(event.minter, event.nftId, event.quantity) }
         }
@@ -43,11 +43,11 @@ internal class NftEventProcessorTest {
         val event = NftTransferred("0x123", "0xabc", "0xdef", "123", BigInteger.TEN)
 
         //when
-        runBlocking { testSubject.onNftEvent(event) }
+        runBlocking { testSubject.onNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe") }
 
         //then
         inOrder(ddcService, walletNftRepository) {
-            verifyBlocking(ddcService) { sendNftEvent(event) }
+            verifyBlocking(ddcService) { sendNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe") }
             verifyBlocking(walletNftRepository) { updateQuantity(event.from, event.nftId, -event.quantity) }
             verifyBlocking(walletNftRepository) { updateQuantity(event.to, event.nftId, event.quantity) }
         }
