@@ -9,6 +9,7 @@ import nft.davinci.event.SmartContractEvent
 import nft.davinci.network.converter.ContractEventConverter
 import nft.davinci.network.dto.ContractEvent
 import nft.davinci.network.processor.EventProcessor
+import nft.davinci.reset.CleanUp
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.jboss.resteasy.reactive.server.runtime.kotlin.ApplicationCoroutineScope
 import org.slf4j.LoggerFactory
@@ -26,6 +27,7 @@ class ContractEventsListener(
     @RestClient private val covalentClient: CovalentClient,
     private val converters: Instance<ContractEventConverter<*>>,
     private val processorsMap: Map<String, EventProcessor<SmartContractEvent>>,
+    private val cleanUp: CleanUp
 ) {
     private companion object {
         private const val OUT_OF_SYNC_THRESHOLD = 100
@@ -36,6 +38,7 @@ class ContractEventsListener(
 
     private val lastScannedBlock = AtomicLong()
     private val isRunning = AtomicBoolean(true)
+    private val isProcessing = AtomicBoolean(false)
 
     fun scheduleInit(@Observes e: StartupEvent) {
         applicationCoroutineScope.launch { init() }
@@ -55,6 +58,7 @@ class ContractEventsListener(
 
     private suspend fun listen() = coroutineScope {
         while (isRunning.get()) {
+            isProcessing.set(true)
             runCatching {
                 val latestBlockFromNetwork = getLatestBlockFromNetwork()
                 if (latestBlockFromNetwork != UNDEFINED_BLOCK) {
@@ -68,6 +72,7 @@ class ContractEventsListener(
             }.onFailure {
                 log.error("Error on consuming events", it)
             }
+            isProcessing.set(false)
             delay(networkConfig.pollInterval().toMillis())
         }
         log.info("Contract Event Listener consumer was stopped")
@@ -142,6 +147,17 @@ class ContractEventsListener(
             UNDEFINED_BLOCK
         }
         rs.data!!.items[0].height
+    }
+
+    suspend fun reset() {
+        log.info("Reset Contract Event Listener")
+        isRunning.set(false)
+        while (isProcessing.get()) {
+            log.info("Waiting for current events to be processed")
+            delay(500)
+        }
+        cleanUp.truncateDb()
+        applicationCoroutineScope.launch { init() }
     }
 
     fun onStop(@Observes ev: ShutdownEvent) {
