@@ -10,14 +10,15 @@ import javax.enterprise.context.ApplicationScoped
 class CleanUp(private val db: PgPool) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private val query = sequenceOf("nft", "wallet_nft", "wallet_nft", "joint_account")
-        .map { "TRUNCATE TABLE $it;" }
-        .joinToString(separator = "\n")
+    private val tables = listOf("nft", "wallet_nft", "wallet_nft", "joint_account")
 
     suspend fun truncateDb() {
         log.info("Truncating database")
-        SqlClientHelper.inTransactionUni(db) {
-            db.query(query).execute()
-        }.awaitSuspending()
+        tables.forEach { table ->
+            log.info("Truncating table $table")
+            SqlClientHelper.inTransactionUni(db) {
+                it.query("TRUNCATE TABLE $table").execute()
+            }.awaitSuspending()
+        }
     }
 }

@@ -157,6 +157,7 @@ class ContractEventsListener(
             delay(500)
         }
         cleanUp.truncateDb()
+        isRunning.set(true)
         applicationCoroutineScope.launch { init() }
     }
 
