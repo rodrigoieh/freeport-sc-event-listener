@@ -2,6 +2,7 @@ package nft.davinci.network
 
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
+import io.vertx.pgclient.PgException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -131,7 +132,15 @@ class ContractEventsListener(
             log.warn("Unable to find processor for event type {}. Skip.", convertedType)
             return@coroutineScope
         }
-        processor.process(converted)
+        runCatching {
+            processor.process(converted)
+        }.onFailure {
+            if (it is PgException && it.code == "23505") {
+                log.warn("Duplicate event {}", converted, it)
+            } else {
+                throw it
+            }
+        }
     }
 
     private suspend fun updateLastScannedBlockNumber(blockNumber: Long) = coroutineScope {
