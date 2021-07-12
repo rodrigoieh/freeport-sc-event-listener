@@ -14,4 +14,6 @@ interface NetworkConfig {
     fun covalentApiKey(): String
 
     fun pollInterval(): Duration
+
+    fun eventTopics(): Map<String, String>
 }

@@ -8,6 +8,8 @@ network:
   first-block-number: 15960010
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
   poll-interval: 'PT30S'
+  event-topics:
+    JointAccountShareCreated: '0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b'
 quarkus:
   datasource:
     db-kind: 'postgresql'

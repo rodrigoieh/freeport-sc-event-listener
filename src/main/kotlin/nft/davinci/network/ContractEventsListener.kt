@@ -6,7 +6,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nft.davinci.event.SmartContractEvent
-import nft.davinci.network.converter.DecodedContractEventConverter
+import nft.davinci.network.converter.ContractEventConverter
 import nft.davinci.network.dto.ContractEvent
 import nft.davinci.network.processor.EventProcessor
 import nft.davinci.reset.CleanUp
@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
+import javax.enterprise.inject.Instance
 
 @ApplicationScoped
 class ContractEventsListener(
@@ -24,7 +25,7 @@ class ContractEventsListener(
     private val lastScannedBlockRepository: LastScannedBlockRepository,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
     @RestClient private val covalentClient: CovalentClient,
-    private val convertersMap: Map<String, DecodedContractEventConverter<SmartContractEvent>>,
+    private val converters: Instance<ContractEventConverter<*>>,
     private val processorsMap: Map<String, EventProcessor<SmartContractEvent>>,
     private val cleanUp: CleanUp
 ) {
@@ -116,18 +117,18 @@ class ContractEventsListener(
     }
 
     private suspend fun convertAndProcess(event: ContractEvent) = coroutineScope {
-        val decoded = event.decoded ?: return@coroutineScope
-        log.info("Received event {}", decoded.name)
-        val converter = convertersMap[decoded.name]
+        val converter = converters.firstOrNull { it.canConvert(event) }
         if (converter == null) {
-            log.info("Unable to find converter for event {}. Skip.", decoded.name)
+            log.info("Unable to find converter for event at tx {}", event.txHash)
             return@coroutineScope
         }
-        log.info("Converting event {}", decoded.name)
+        log.info("Converting event at tx {}", event.txHash)
         val converted = converter.convert(event)
-        val processor = processorsMap[converted.javaClass.simpleName]
+        val convertedType = converted::class.java.simpleName
+        log.info("Converted event type is {}", convertedType)
+        val processor = processorsMap[convertedType]
         if (processor == null) {
-            log.warn("Unable to find processor for event {}. Skip.", converted.javaClass.simpleName)
+            log.warn("Unable to find processor for event type {}. Skip.", convertedType)
             return@coroutineScope
         }
         processor.process(converted)
