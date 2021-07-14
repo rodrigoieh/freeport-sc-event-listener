@@ -10,6 +10,7 @@ network:
   poll-interval: 'PT30S'
   event-topics:
     JointAccountShareCreated: '0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b'
+    RoyaltiesConfigured: '0x3df2272e42784a2455bbbdcdf25ae0f67d41f801896514cc4cd255aa8ee75e4c'
 quarkus:
   datasource:
     db-kind: 'postgresql'
