@@ -20,7 +20,7 @@ internal class JointAccountShareCreatedEventProcessorTest {
     }
 
     @Test
-    fun `Process joint accouts share created event`() {
+    fun `Process joint accounts share created event`() {
         //given
         val event = JointAccountShareCreated(
             "2021-07-08T00:47:30Z",

@@ -34,3 +34,15 @@ data class JointAccountShareCreated(
     val owner: String,
     val fraction: Int
 ) : SmartContractEvent(blockSignedAt, txHash)
+
+data class RoyaltiesConfigured(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val nftId: String,
+    val primaryRoyaltyAccount: String,
+    val primaryRoyaltyCut: Int,
+    val primaryRoyaltyMinimum: BigInteger,
+    val secondaryRoyaltyAccount: String,
+    val secondaryRoyaltyCut: Int,
+    val secondaryRoyaltyMinimum: BigInteger
+) : SmartContractEvent(blockSignedAt, txHash)

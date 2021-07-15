@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped
 class CleanUp(private val db: PgPool) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private val tables = listOf("nft", "wallet_nft", "last_scanned_block", "joint_account")
+    private val tables = listOf("nft", "wallet_nft", "last_scanned_block", "joint_account", "nft_royalty")
 
     suspend fun truncateDb() {
         log.info("Truncating database")
