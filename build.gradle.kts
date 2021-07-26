@@ -29,7 +29,7 @@ dependencies {
     implementation("io.quarkus:quarkus-reactive-pg-client")
 
     // Clients
-    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.0.0-RC14")
+    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.0.0-RC17")
     implementation("io.quarkus:quarkus-rest-client-reactive-jackson")
 
     // Kotlin
