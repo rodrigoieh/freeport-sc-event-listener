@@ -34,6 +34,10 @@ class DdcService(
             data = objectMapper.writeValueAsString(event)
         }
         uploadToDdcAsync(piece).await()
+        uploadToDdcAsync(piece.copy(
+            id = "$txHash-${nftEvent.nftId}",
+            userPubKey = nftEvent.nftId
+        )).await()
     }
 
     private suspend fun uploadToDdcAsync(piece: Piece): Deferred<String> = coroutineScope {
