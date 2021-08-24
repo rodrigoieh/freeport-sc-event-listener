@@ -4,8 +4,8 @@ ddc:
   sec-key-hex: '0x3c18b7b6e1fe67af056e77870c65a019c65a7ed7052d550fcc191ca54d16ca9116047c8f17b13b15021a1c2be99259fb08dda9bf517746795c6fb5fb3f461178'
 network:
   chain-id: 80001
-  contract-address: '0x509Dfd7c670AC89246723EFe0f80f433BfbB6E5c'
-  first-block-number: 15960010
+  contract-address: '0x4F908981A3CFdd440f7a3d114b06b1695DA8373b'
+  first-block-number: 17508849
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
   poll-interval: 'PT30S'
   event-topics:
