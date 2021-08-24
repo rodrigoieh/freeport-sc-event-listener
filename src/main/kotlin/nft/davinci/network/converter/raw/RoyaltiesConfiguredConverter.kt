@@ -18,6 +18,7 @@ class RoyaltiesConfiguredConverter(
     }
 
     override fun convert(source: ContractEvent): RoyaltiesConfigured {
+        requireNotNull(source.rawLogData)
         val output = source.rawLogData.substring(2).chunked(64)
         return RoyaltiesConfigured(
             source.blockSignedAt,

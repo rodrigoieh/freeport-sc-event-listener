@@ -18,6 +18,7 @@ class JointAccountShareCreatedConverter(
     }
 
     override fun convert(source: ContractEvent): JointAccountShareCreated {
+        requireNotNull(source.rawLogData)
         return JointAccountShareCreated(
             source.blockSignedAt,
             source.txHash,

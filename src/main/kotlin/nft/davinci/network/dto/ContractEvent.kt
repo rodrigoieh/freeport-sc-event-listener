@@ -18,7 +18,7 @@ data class ContractEvent(
     val rawLogTopics: List<String>,
 
     @field:JsonProperty("raw_log_data")
-    val rawLogData: String,
+    val rawLogData: String?,
 
     val decoded: DecodedContractEvent?
 )
