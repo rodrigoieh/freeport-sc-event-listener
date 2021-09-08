@@ -46,3 +46,21 @@ data class RoyaltiesConfigured(
     val secondaryRoyaltyCut: Int,
     val secondaryRoyaltyMinimum: BigInteger
 ) : SmartContractEvent(blockSignedAt, txHash)
+
+data class MakeOffer(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val seller: String,
+    val nftId: String,
+    val price: BigInteger
+) : SmartContractEvent(blockSignedAt, txHash)
+
+data class TakeOffer(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val buyer: String,
+    val seller: String,
+    val nftId: String,
+    val price: BigInteger,
+    val amount: BigInteger
+) : SmartContractEvent(blockSignedAt, txHash)
