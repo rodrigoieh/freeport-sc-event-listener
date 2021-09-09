@@ -64,3 +64,9 @@ data class TakeOffer(
     val price: BigInteger,
     val amount: BigInteger
 ) : SmartContractEvent(blockSignedAt, txHash)
+
+data class SetExchangeRate(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val cereUnitsPerPenny: BigInteger
+) : SmartContractEvent(blockSignedAt, txHash)
