@@ -16,6 +16,16 @@ class TakeOfferConverter(
     }
 
     override fun convert(source: ContractEvent): TakeOffer {
-        TODO("Not yet implemented")
+        requireNotNull(source.rawLogData)
+        val output = source.rawLogData.substring(2).chunked(64)
+        return TakeOffer(
+            source.blockSignedAt,
+            source.txHash,
+            abiDecoder.decodeAddress(source.rawLogTopics[1]),
+            abiDecoder.decodeAddress(source.rawLogTopics[2]),
+            abiDecoder.decodeUint256(source.rawLogTopics[3]).toString(),
+            abiDecoder.decodeUint256(output[0]),
+            abiDecoder.decodeUint256(output[1])
+        )
     }
 }
