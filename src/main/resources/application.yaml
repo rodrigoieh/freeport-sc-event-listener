@@ -9,7 +9,7 @@ contracts:
     event-topics:
       JointAccountShareCreated: '0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b'
       RoyaltiesConfigured: '0x3df2272e42784a2455bbbdcdf25ae0f67d41f801896514cc4cd255aa8ee75e4c'
-      MakeOffer: '0xe90359125940e7c9b26005d19d4d8a2a5335ea8bef094bcd61bb8f8091cad117'
+      MakeOffer: '0x040259e2f9c7930380b3a5c979ad8a30ecf8d344d3bcdb149e2c454ab85fcd8f'
       TakeOffer: '0xe90359125940e7c9b26005d19d4d8a2a5335ea8bef094bcd61bb8f8091cad117'
   fiat-gateway:
     address: '0xe4708fcCEA49b9305f48901bc2195664dC198097'
