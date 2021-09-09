@@ -1,7 +1,6 @@
 package nft.davinci.network.converter.raw
 
 import nft.davinci.event.MakeOffer
-import nft.davinci.event.RoyaltiesConfigured
 import nft.davinci.network.NetworkConfig
 import nft.davinci.network.converter.ContractEventConverter
 import nft.davinci.network.dto.ContractEvent
@@ -19,6 +18,13 @@ class MakeOfferConverter(
     }
 
     override fun convert(source: ContractEvent): MakeOffer {
-        TODO("Not yet implemented")
+        requireNotNull(source.rawLogData)
+        return MakeOffer(
+            source.blockSignedAt,
+            source.txHash,
+            abiDecoder.decodeAddress(source.rawLogTopics[1]),
+            abiDecoder.decodeUint256(source.rawLogTopics[2]).toString(),
+            abiDecoder.decodeUint256(source.rawLogData)
+        )
     }
 }
