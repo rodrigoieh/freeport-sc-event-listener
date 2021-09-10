@@ -1,6 +1,7 @@
 package nft.davinci.network.converter.raw
 
-import nft.davinci.network.NetworkConfig
+import nft.davinci.network.config.ContractConfig
+import nft.davinci.network.config.ContractsConfig
 import nft.davinci.network.dto.ContractEvent
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -11,11 +12,15 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
 internal class JointAccountShareCreatedConverterTest {
-    private val networkConfig: NetworkConfig = mock {
+    private val davinciConfig: ContractConfig = mock {
         on { eventTopics() } doReturn mapOf("JointAccountShareCreated" to "0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b")
     }
 
-    private val testSubject = JointAccountShareCreatedConverter(networkConfig, AbiDecoder())
+    private val contractsConfig: ContractsConfig = mock {
+        on { contracts() } doReturn mapOf("davinci" to davinciConfig)
+    }
+
+    private val testSubject = JointAccountShareCreatedConverter(contractsConfig, AbiDecoder())
 
     private val source = ContractEvent(
         "2021-07-09T10:51:42Z",

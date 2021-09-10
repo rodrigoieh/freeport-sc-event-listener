@@ -6,6 +6,7 @@ import io.vertx.mutiny.sqlclient.SqlClientHelper
 import io.vertx.mutiny.sqlclient.Tuple
 import nft.davinci.event.MakeOffer
 import nft.davinci.event.TakeOffer
+import java.math.BigInteger
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -21,6 +22,7 @@ class PriceRepository(private val db: PgPool) {
             INSERT INTO take_offer (buyer, seller, nftId, price, amount)
             VALUES ($1, $2, $3, $4, $5)
         """
+        private const val SQL_UPDATE_EXCHANGE_RATE = "UPDATE exchange_rate SET cere_units_per_penny = $1"
     }
 
     suspend fun createOrUpdateMakeOffer(event: MakeOffer) {
@@ -34,6 +36,13 @@ class PriceRepository(private val db: PgPool) {
         SqlClientHelper.inTransactionUni(db) {
             db.preparedQuery(SQL_CREATE_TAKE_OFFER)
                 .execute(Tuple.of(event.buyer, event.seller, event.nftId, event.price, event.amount))
+        }.awaitSuspending()
+    }
+
+    suspend fun updateExchangeRate(cereUnitsPerPenny: BigInteger) {
+        SqlClientHelper.inTransactionUni(db) {
+            db.preparedQuery(SQL_UPDATE_EXCHANGE_RATE)
+                .execute(Tuple.of(cereUnitsPerPenny))
         }.awaitSuspending()
     }
 }

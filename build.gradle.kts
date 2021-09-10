@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.4.32"
-    kotlin("plugin.allopen") version "1.4.32"
+    kotlin("jvm") version "1.5.21"
+    kotlin("plugin.allopen") version "1.5.21"
 
-    id("io.quarkus") version "2.0.2.Final"
+    id("io.quarkus") version "2.2.1.Final"
 
     idea
 }
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     // Quarkus
-    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.0.2.Final"))
+    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.2.1.Final"))
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 

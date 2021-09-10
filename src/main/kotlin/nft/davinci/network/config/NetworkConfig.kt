@@ -1,4 +1,4 @@
-package nft.davinci.network
+package nft.davinci.network.config
 
 import io.smallrye.config.ConfigMapping
 import java.time.Duration
@@ -7,13 +7,7 @@ import java.time.Duration
 interface NetworkConfig {
     fun chainId(): Int
 
-    fun contractAddress(): String
-
-    fun firstBlockNumber(): Long
-
     fun covalentApiKey(): String
 
     fun pollInterval(): Duration
-
-    fun eventTopics(): Map<String, String>
 }

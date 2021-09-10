@@ -1,27 +1,25 @@
 package nft.davinci.network.converter.raw
 
-import nft.davinci.event.MakeOffer
+import nft.davinci.event.SetExchangeRate
 import nft.davinci.network.config.ContractsConfig
 import nft.davinci.network.converter.ContractEventConverter
 import nft.davinci.network.dto.ContractEvent
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class MakeOfferConverter(
+class SetExchangeRateConverter(
     private val contractsConfig: ContractsConfig,
     private val abiDecoder: AbiDecoder
-) : ContractEventConverter<MakeOffer> {
+) : ContractEventConverter<SetExchangeRate> {
     override fun canConvert(source: ContractEvent): Boolean {
-        return source.rawLogTopics.firstOrNull() == eventTopic(contractsConfig, MakeOffer::class.java)
+        return source.rawLogTopics.firstOrNull() == eventTopic(contractsConfig, SetExchangeRate::class.java)
     }
 
-    override fun convert(source: ContractEvent): MakeOffer {
+    override fun convert(source: ContractEvent): SetExchangeRate {
         requireNotNull(source.rawLogData)
-        return MakeOffer(
+        return SetExchangeRate(
             source.blockSignedAt,
             source.txHash,
-            abiDecoder.decodeAddress(source.rawLogTopics[1]),
-            abiDecoder.decodeUint256(source.rawLogTopics[2]).toString(),
             abiDecoder.decodeUint256(source.rawLogData)
         )
     }
