@@ -12,15 +12,15 @@ import javax.enterprise.context.ApplicationScoped
 class RoyaltyRepository(private val db: PgPool) {
     private companion object {
         private const val SQL_EXISTS = """
-            SELECT 1 FROM nft_royalty
+            SELECT 1 FROM api.nft_royalty
             WHERE nft_id = $1 AND sale_type = $2
         """
         private const val SQL_CREATE = """
-            INSERT INTO nft_royalty (nft_id, sale_type, beneficiary, sale_cut, minimum_fee)
+            INSERT INTO api.nft_royalty (nft_id, sale_type, beneficiary, sale_cut, minimum_fee)
             VALUES ($1, $2, $3, $4, $5)
         """
         private const val SQL_UPDATE = """
-            UPDATE nft_royalty 
+            UPDATE api.nft_royalty 
             SET beneficiary = $3, sale_cut = $4, minimum_fee = $5
             WHERE nft_id = $1 AND sale_type = $2
         """
