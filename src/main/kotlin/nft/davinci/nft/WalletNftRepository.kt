@@ -14,18 +14,18 @@ import javax.enterprise.context.ApplicationScoped
 class WalletNftRepository(private val db: PgPool) {
     private companion object {
         private const val SQL_SELECT = """
-            SELECT quantity FROM wallet_nft
+            SELECT quantity FROM api.wallet_nft
             WHERE nft_id = $1 AND wallet = $2
         """
         private const val SQL_CREATE = """
-            INSERT INTO wallet_nft (nft_id, wallet, quantity)
+            INSERT INTO api.wallet_nft (nft_id, wallet, quantity)
             VALUES ($1, $2, 0)
         """
         private const val SQL_UPDATE = """
-            UPDATE wallet_nft SET quantity = $1 
+            UPDATE api.wallet_nft SET quantity = $1 
             WHERE nft_id = $2 AND wallet = $3
         """
-        private const val SQL_DELETE = "DELETE FROM wallet_nft WHERE nft_id = $1 AND wallet = $2"
+        private const val SQL_DELETE = "DELETE FROM api.wallet_nft WHERE nft_id = $1 AND wallet = $2"
     }
 
     suspend fun updateQuantity(wallet: String, nftId: String, delta: BigInteger) {

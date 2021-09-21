@@ -26,7 +26,7 @@ class CleanUp(private val db: PgPool) {
         tables.forEach { table ->
             log.info("Truncating table $table")
             SqlClientHelper.inTransactionUni(db) {
-                it.query("TRUNCATE TABLE $table").execute()
+                it.query("TRUNCATE TABLE api.$table").execute()
             }.awaitSuspending()
         }
     }

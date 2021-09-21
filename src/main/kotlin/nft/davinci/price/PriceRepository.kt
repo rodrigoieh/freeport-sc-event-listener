@@ -13,16 +13,16 @@ import javax.enterprise.context.ApplicationScoped
 class PriceRepository(private val db: PgPool) {
     private companion object {
         private const val SQL_CREATE_OR_UPDATE_MAKE_OFFER = """
-            INSERT INTO make_offer (seller, nftId, price) 
+            INSERT INTO api.make_offer (seller, nftId, price) 
             VALUES ($1, $2, $3) 
             ON CONFLICT ON CONSTRAINT make_offer_pk DO UPDATE 
             SET price = $3
         """
         private const val SQL_CREATE_TAKE_OFFER = """
-            INSERT INTO take_offer (buyer, seller, nftId, price, amount)
+            INSERT INTO api.take_offer (buyer, seller, nftId, price, amount)
             VALUES ($1, $2, $3, $4, $5)
         """
-        private const val SQL_UPDATE_EXCHANGE_RATE = "UPDATE exchange_rate SET cere_units_per_penny = $1"
+        private const val SQL_UPDATE_EXCHANGE_RATE = "UPDATE api.exchange_rate SET cere_units_per_penny = $1"
     }
 
     suspend fun createOrUpdateMakeOffer(event: MakeOffer) {

@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped
 class JointAccountRepository(private val db: PgPool) {
     private companion object {
         private const val SQL_INSERT = """
-            INSERT INTO joint_account (account, owner, fraction) VALUES ($1, $2, $3)
+            INSERT INTO api.joint_account (account, owner, fraction) VALUES ($1, $2, $3)
         """
     }
 

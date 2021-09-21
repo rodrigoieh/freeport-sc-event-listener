@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped
 class NftRepository(private val db: PgPool) {
     private companion object {
         private const val SQL_CREATE = """
-            INSERT INTO nft (nft_id, minter, supply)
+            INSERT INTO api.nft (nft_id, minter, supply)
             VALUES ($1, $2, $3)
         """
     }

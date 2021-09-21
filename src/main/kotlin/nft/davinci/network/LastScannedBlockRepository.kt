@@ -11,9 +11,9 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class LastScannedBlockRepository(private val db: PgPool, contractsConfig: ContractsConfig) {
     private companion object {
-        private const val SQL_SELECT = "SELECT block_height FROM last_scanned_block WHERE contract = $1"
-        private const val SQL_INSERT = "INSERT INTO last_scanned_block (contract, block_height) VALUES ($1, $2)"
-        private const val SQL_UPDATE = "UPDATE last_scanned_block SET block_height = $1  WHERE contract = $2"
+        private const val SQL_SELECT = "SELECT block_height FROM api.last_scanned_block WHERE contract = $1"
+        private const val SQL_INSERT = "INSERT INTO api.last_scanned_block (contract, block_height) VALUES ($1, $2)"
+        private const val SQL_UPDATE = "UPDATE api.last_scanned_block SET block_height = $1  WHERE contract = $2"
     }
 
     suspend fun getLastScannedBlock(contract: ContractConfig): Long {
