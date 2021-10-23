@@ -2,7 +2,7 @@
 
 ## Description
 
-Listens for events of Davinci smart contract and holds the state.
+Listens for events of Feeport smart contracts, calculates the state and stores it in DDC.
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
