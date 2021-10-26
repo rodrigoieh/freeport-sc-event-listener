@@ -14,14 +14,29 @@ import nft.freeport.network.processor.EventProcessor
 import org.eclipse.microprofile.context.ManagedExecutor
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
 import javax.enterprise.inject.Instance
 import javax.transaction.Transactional
 
+/**
+ * On application start - read last scanned block for each contract from database
+ * or uses start block from config.
+ *
+ * Schedules periodic task that reads all events from last scanned block to the current block.
+ * Each event is converted and processed if Converter and Processor implementation exists, skipped otherwice.
+ *
+ * To make sync process faster, we are trying to read 1 000 000 blocks per each call - this is a current limit
+ * of Covalent API which is used to retrieve events information. However, API also have a limit of 100 events
+ * per response. That is why we have a check if we have 100 events in response and if so, split current
+ * synchronisation call to two recursive calls by dividing current number of scanning blocks by two.
+ *
+ * On application stop tries to wait current jobs until they finish processing for graceful shutdown.
+ */
 @ApplicationScoped
-class ContractEventsListenerLifecycle(
+class ContractsEventsListener(
     contractsConfig: ContractsConfig,
     private val executor: ManagedExecutor,
     private val networkConfig: NetworkConfig,
@@ -38,8 +53,8 @@ class ContractEventsListenerLifecycle(
     private val log = LoggerFactory.getLogger(javaClass)
 
     private val contracts = contractsConfig.contracts().values
-    private val lastScannedBlocks = mutableMapOf<String, Long>()
-    private val runningStatuses = mutableMapOf<String, Boolean>()
+    private val lastScannedBlocks = ConcurrentHashMap<String, Long>()
+    private val runningStatuses = ConcurrentHashMap<String, Boolean>()
     private val shuttingDown = AtomicBoolean(false)
 
     @Transactional
