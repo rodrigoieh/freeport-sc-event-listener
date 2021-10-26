@@ -1,2 +1,2 @@
-rootProject.name = "davinci-sc-event-listener"
+rootProject.name = "freeport-sc-event-listener"
 
