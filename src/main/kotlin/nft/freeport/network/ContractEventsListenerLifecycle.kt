@@ -30,7 +30,8 @@ class ContractEventsListenerLifecycle(
     private val processorsMap: Map<String, EventProcessor<SmartContractEvent>>
 ) {
     private companion object {
-        private const val OUT_OF_SYNC_THRESHOLD = 100
+        private const val COVALENT_BLOCKS_LIMIT = 1_000_000
+        private const val COVALENT_EVENTS_LIMIT = 100
         private const val UNDEFINED_BLOCK = -1L
     }
 
@@ -58,7 +59,7 @@ class ContractEventsListenerLifecycle(
             cfg.firstBlockNumber()
         }
         lastScannedBlocks[contract] = lastScannedBlock
-        log.info("Contract Event Listener for contract {} initialized with last scanned block {}", contract, block)
+        log.info("Contract Event Listener for contract {} initialized with last scanned block {}", contract, lastScannedBlock)
         log.info("Starting Contract Event Listener consumer for contract {}", contract)
     }
 
@@ -78,7 +79,7 @@ class ContractEventsListenerLifecycle(
             val latestBlockFromNetwork = getLatestBlockFromNetwork()
             if (latestBlockFromNetwork != UNDEFINED_BLOCK) {
                 val lastScannedBlock = lastScannedBlocks.getValue(contract)
-                if (latestBlockFromNetwork - lastScannedBlock > OUT_OF_SYNC_THRESHOLD) {
+                if (latestBlockFromNetwork - lastScannedBlock > COVALENT_BLOCKS_LIMIT) {
                     log.info("Event scanner for contract $contract out of sync. Syncing events from block $lastScannedBlock to $latestBlockFromNetwork")
                     syncBatch(contract, latestBlockFromNetwork)
                 } else {
@@ -92,12 +93,12 @@ class ContractEventsListenerLifecycle(
     }
 
     private fun syncBatch(contract: String, toBlock: Long) {
-        var endingBlock = lastScannedBlocks.getValue(contract) + OUT_OF_SYNC_THRESHOLD
+        var endingBlock = lastScannedBlocks.getValue(contract) + COVALENT_BLOCKS_LIMIT
         while (endingBlock <= toBlock) {
             if (!sync(contract, endingBlock)) {
                 return
             }
-            endingBlock += OUT_OF_SYNC_THRESHOLD
+            endingBlock += COVALENT_BLOCKS_LIMIT
         }
         log.info("Event scanner for contract {} synced with network", contract)
     }
@@ -125,7 +126,15 @@ class ContractEventsListenerLifecycle(
             log.warn("Skipping consuming until next successful request")
             return false
         }
-        requireNotNull(rs.data).items.forEach {
+        val items = requireNotNull(rs.data).items
+        val numberOfEvents = items.size
+        // Covalent doesn't return more than 100 events per 1 API call
+        // we need to decrease block limit
+        if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
+            val half = (toBlock - startingBlock) / 2
+            return sync(contract, startingBlock + half) && sync(contract, toBlock)
+        }
+        items.forEach {
             convertAndProcess(contract, it)
             updateLastScannedBlockNumber(contract, it.blockHeight)
         }
