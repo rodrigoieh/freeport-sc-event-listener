@@ -9,7 +9,13 @@ import javax.persistence.*
 @Table(name = "take_offer", schema = "api")
 class TakeOfferEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "api.take_offer_id_seq")
+    @SequenceGenerator(
+        name = "takeOfferSeq",
+        sequenceName = "take_offer_id_seq",
+        schema = "api",
+        allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "takeOfferSeq")
     val id: Long?,
 
     @Column
