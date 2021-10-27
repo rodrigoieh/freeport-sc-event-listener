@@ -2,10 +2,26 @@ ddc:
   boot-node: 'https://node-0.ddc.dev.cere.network'
   pub-key-hex: '0x16047c8f17b13b15021a1c2be99259fb08dda9bf517746795c6fb5fb3f461178'
   sec-key-hex: '0x3c18b7b6e1fe67af056e77870c65a019c65a7ed7052d550fcc191ca54d16ca9116047c8f17b13b15021a1c2be99259fb08dda9bf517746795c6fb5fb3f461178'
+contracts:
+  davinci:
+    address: '0x4F908981A3CFdd440f7a3d114b06b1695DA8373b'
+    first-block-number: 17508849
+    event-topics:
+      address: '${contracts.davinci.address}'
+      first-block-number: '${contracts.davinci.first-block-number}'
+      JointAccountShareCreated: '0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b'
+      RoyaltiesConfigured: '0x3df2272e42784a2455bbbdcdf25ae0f67d41f801896514cc4cd255aa8ee75e4c'
+      MakeOffer: '0x040259e2f9c7930380b3a5c979ad8a30ecf8d344d3bcdb149e2c454ab85fcd8f'
+      TakeOffer: '0xe90359125940e7c9b26005d19d4d8a2a5335ea8bef094bcd61bb8f8091cad117'
+  fiat-gateway:
+    address: '0xe4708fcCEA49b9305f48901bc2195664dC198097'
+    first-block-number: 18593691
+    event-topics:
+      address: '${contracts.fiat-gateway.address}'
+      first-block-number: '${contracts.fiat-gateway.first-block-number}'
+      SetExchangeRate: '0x1d5de90e7c5b244ac5797698b15fe80a92524d933dafd79e001daf844555fb1c'
 network:
   chain-id: 80001
-  contract-address: '0xBb391c59403818A56A4ddb51FeE561c42571aFf4'
-  first-block-number: 15798405
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
   poll-interval: 'PT30S'
 quarkus:
@@ -13,9 +29,8 @@ quarkus:
     db-kind: 'postgresql'
     username: 'pg'
     password: 'pwd'
-    jdbc: false
     reactive:
-      url: 'postgresql://localhost:5432/davinci_sc'
+      url: 'postgresql://localhost:5432/davinci'
   flyway:
     migrate-at-start: false
   log:
@@ -36,8 +51,3 @@ quarkus:
     log:
       console:
         json: true
-
-"%test":
-  network:
-    first-block-number: 0
-    poll-interval: 'PT1S'

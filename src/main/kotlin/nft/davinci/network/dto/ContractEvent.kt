@@ -12,13 +12,13 @@ data class ContractEvent(
     val blockHeight: Long,
 
     @field:JsonProperty("tx_hash")
-    val tx_hash: String,
+    val txHash: String,
 
     @field:JsonProperty("raw_log_topics")
     val rawLogTopics: List<String>,
 
-    @field:JsonProperty("sender_address")
-    val senderAddress: String,
+    @field:JsonProperty("raw_log_data")
+    val rawLogData: String?,
 
-    val decoded: DecodedContractEvent
+    val decoded: DecodedContractEvent?
 )

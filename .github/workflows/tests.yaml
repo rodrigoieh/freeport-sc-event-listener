@@ -1,0 +1,28 @@
+name: 'Run tests'
+on: [ pull_request ]
+jobs:
+  test:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v1'
+      - name: 'Set up Java'
+        uses: 'actions/setup-java@v1'
+        with:
+          java-version: '11'
+      - name: 'Cache build .gradle dir'
+        uses: 'actions/cache@v1'
+        with:
+          path: '.gradle'
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}"
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: 'Cache user .gradle dir'
+        uses: 'actions/cache@v1'
+        with:
+          path: '~/.gradle'
+          key: "${{ runner.os }}-gradleuser-${{ hashFiles('**/build.gradle.kts') }}"
+          restore-keys: |
+            ${{ runner.os }}-gradleuser-
+      - name: 'Run tests'
+        run: ./gradlew test

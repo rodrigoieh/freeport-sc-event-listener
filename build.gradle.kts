@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.4.32"
-    kotlin("plugin.allopen") version "1.4.32"
+    kotlin("jvm") version "1.5.21"
+    kotlin("plugin.allopen") version "1.5.21"
 
-    id("io.quarkus") version "2.0.0.Final"
+    id("io.quarkus") version "2.2.1.Final"
 
     idea
 }
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     // Quarkus
-    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.0.0.Final"))
+    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.2.1.Final"))
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 
@@ -26,16 +26,11 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
     // DB
-    implementation("io.quarkus:quarkus-flyway")
-    implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("io.quarkus:quarkus-reactive-pg-client")
 
     // Clients
-    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.0.0-RC14")
+    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.1.2.Final")
     implementation("io.quarkus:quarkus-rest-client-reactive-jackson")
-
-    // Crypto
-    implementation("com.github.cerebellum-network:ddc-encryption-impl-kotlin:1.5.0")
 
     // Kotlin
     implementation("io.quarkus:quarkus-kotlin")
@@ -51,7 +46,8 @@ dependencies {
 
     // Tests
     testImplementation("io.quarkus:quarkus-junit5")
-    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
 }
 
 tasks {
