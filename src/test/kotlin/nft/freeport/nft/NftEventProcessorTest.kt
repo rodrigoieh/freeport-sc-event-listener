@@ -24,7 +24,7 @@ internal class NftEventProcessorTest {
         testSubject.onNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe")
 
         //then
-        assertThat(NftEntity.findById("123"), notNullValue())
+        assertThat(NftEntity.findById(NftEntityId("123", "0xabc")), notNullValue())
         assertThat(WalletNftEntity.findById(WalletNftEntityId("123", "0xabc")), notNullValue())
     }
 
