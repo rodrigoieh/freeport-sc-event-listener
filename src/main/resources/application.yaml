@@ -28,6 +28,7 @@ contracts:
       address: '${contracts.auction.address}'
       first-block-number: '${contracts.auction.first-block-number}'
       StartAuction: '0x5135842dc9522996ca3d92189d0ded7e70ecbfc5545c115def0c7bdb9ee41f2b'
+      BidOnAuction: '0x39e9b26db60de3ca88f045fdd8954028f1bbd0c6e2ff124121cb5a03da370191'
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'

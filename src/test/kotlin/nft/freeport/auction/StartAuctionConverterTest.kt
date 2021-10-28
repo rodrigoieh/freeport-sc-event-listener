@@ -28,7 +28,7 @@ internal class StartAuctionConverterTest {
     )
 
     @Test
-    fun `Can convert JointAccountShareCreated`() {
+    fun `Can convert StartAuction`() {
         assertTrue(testSubject.canConvert(source))
     }
 

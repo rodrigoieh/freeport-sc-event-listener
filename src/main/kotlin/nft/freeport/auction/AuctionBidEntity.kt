@@ -1,5 +1,6 @@
 package nft.freeport.auction
 
+import io.quarkus.hibernate.orm.panache.kotlin.PanacheCompanionBase
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntityBase
 import java.math.BigInteger
 import java.time.Instant
@@ -18,7 +19,7 @@ class AuctionBidEntity(
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auctionBidSeq")
     val id: Long?,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "auction_id")
     val auction: AuctionEntity,
 
@@ -30,4 +31,6 @@ class AuctionBidEntity(
 
     @Column
     val timestamp: Instant,
-) : PanacheEntityBase
+) : PanacheEntityBase {
+    companion object : PanacheCompanionBase<AuctionBidEntity, Long>
+}

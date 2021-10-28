@@ -2,6 +2,7 @@ package nft.freeport.auction
 
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheCompanionBase
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntityBase
+import io.quarkus.panache.common.Sort
 import java.math.BigInteger
 import java.time.Instant
 import javax.persistence.*
@@ -23,16 +24,22 @@ class AuctionEntity(
     val seller: String,
 
     @Column
-    val buyer: String,
+    var buyer: String,
 
     @Column(name = "nft_id")
     val nftId: String,
 
     @Column
-    val price: BigInteger,
+    var price: BigInteger,
 
     @Column(name = "ends_at")
-    val endsAt: Instant
+    var endsAt: Instant
 ) : PanacheEntityBase {
-    companion object : PanacheCompanionBase<AuctionEntity, Long>
+    companion object : PanacheCompanionBase<AuctionEntity, Long> {
+        fun findActive(seller: String, nftId: String): AuctionEntity {
+            return find("seller = ?1 AND nftId = ?2", Sort.descending("endsAt"), seller, nftId)
+                .firstResult()
+                .let(::requireNotNull)
+        }
+    }
 }

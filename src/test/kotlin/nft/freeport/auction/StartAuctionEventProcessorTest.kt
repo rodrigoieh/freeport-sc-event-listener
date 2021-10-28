@@ -1,5 +1,6 @@
 package nft.freeport.auction
 
+import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.event.StartAuction
 import org.hamcrest.MatcherAssert.assertThat
@@ -22,6 +23,7 @@ internal class StartAuctionEventProcessorTest {
     }
 
     @Test
+    @TestTransaction
     fun `Process StartAuction event`() {
         //given
         val event = StartAuction(
