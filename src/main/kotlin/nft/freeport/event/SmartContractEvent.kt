@@ -70,3 +70,31 @@ data class SetExchangeRate(
     override val txHash: String,
     val cereUnitsPerPenny: BigInteger
 ) : SmartContractEvent(blockSignedAt, txHash)
+
+data class StartAuction(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val seller: String,
+    val nftId: String,
+    val price: BigInteger,
+    val closeTimeSec: BigInteger
+) : SmartContractEvent(blockSignedAt, txHash)
+
+data class BidOnAuction(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val seller: String,
+    val nftId: String,
+    val price: BigInteger,
+    val closeTimeSec: BigInteger,
+    val buyer: String,
+) : SmartContractEvent(blockSignedAt, txHash)
+
+data class SettleAuction(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val seller: String,
+    val nftId: String,
+    val price: BigInteger,
+    val buyer: String,
+) : SmartContractEvent(blockSignedAt, txHash)

@@ -23,6 +23,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |CONTRACTS_FREEPORT_FIRST_BLOCK_NUMBER|Freeport Smart Contract first block number|`17508849`|
 |CONTRACTS_FIAT_GATEWAY_ADDRESS|Fiat Gateway Smart Contract address|`0xe4708fcCEA49b9305f48901bc2195664dC198097`|
 |CONTRACTS_FIAT_GATEWAY_FIRST_BLOCK_NUMBER|Fiat Gateway Smart Contract first block number|`18593691`|
+|CONTRACTS_AUCTION_ADDRESS|Auction Smart Contract address|`0x573fc9819FD436C9Dc74b10949b2404C99C54A33`|
+|CONTRACTS_AUCTION_FIRST_BLOCK_NUMBER|Auction Smart Contract first block number|`20458313`|
 |QUARKUS_DATASOURCE_USERNAME|Postgres user||
 |QUARKUS_DATASOURCE_PASSWORD|Postgres password||
 |QUARKUS_DATASOURCE_JDBC_URL|Postgres URL||
