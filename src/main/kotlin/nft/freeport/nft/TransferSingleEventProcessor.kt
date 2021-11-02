@@ -20,6 +20,6 @@ class TransferSingleEventProcessor(private val nftEventProcessor: NftEventProces
         } else {
             NftTransferred(event.operator, event.from, event.to, event.id, event.amount)
         }
-        nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt, event.txHash)
+        nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt)
     }
 }

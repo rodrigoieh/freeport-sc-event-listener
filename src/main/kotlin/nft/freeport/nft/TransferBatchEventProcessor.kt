@@ -12,7 +12,7 @@ class TransferBatchEventProcessor(private val nftEventProcessor: NftEventProcess
     override fun process(event: TransferBatch) {
         event.ids.indices.forEach { i ->
             val nftEvent = NftTransferred(event.operator, event.from, event.to, event.ids[i], event.amounts[i])
-            nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt, event.txHash)
+            nftEventProcessor.onNftEvent(nftEvent, event.blockSignedAt)
         }
     }
 }
