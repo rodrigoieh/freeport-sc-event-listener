@@ -46,7 +46,6 @@ internal class TransferSingleEventProcessorTest {
                 onNftEvent(
                     capture(),
                     eq("2021-07-08T00:47:30Z"),
-                    eq("0xcafebabe")
                 )
             }
             assertThat(firstValue, instanceOf(NftMinted::class.java))
@@ -75,7 +74,6 @@ internal class TransferSingleEventProcessorTest {
                 onNftEvent(
                     capture(),
                     eq("2021-07-08T00:47:30Z"),
-                    eq("0xcafebabe")
                 )
             }
             assertThat(firstValue, instanceOf(NftTransferred::class.java))
