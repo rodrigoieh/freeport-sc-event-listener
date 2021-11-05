@@ -11,8 +11,8 @@ import javax.transaction.Transactional
 @ApplicationScoped
 class NftEventProcessor(private val ddcService: DdcService) {
     @Transactional
-    fun onNftEvent(event: NftEvent, blockSignedAt: String, txHash: String) {
-        ddcService.sendNftEvent(event, blockSignedAt, txHash)
+    fun onNftEvent(event: NftEvent, blockSignedAt: String) {
+        ddcService.sendNftEvent(event, blockSignedAt)
         when (event) {
             is NftMinted -> onNftMinted(event)
             is NftTransferred -> onNftTransferred(event)
