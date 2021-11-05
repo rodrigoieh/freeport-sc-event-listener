@@ -32,7 +32,8 @@ internal class SettleAuctionEventProcessorTest {
             buyer = "0x0000000000000000000000000000000000000000",
             nftId = "36986023997667029293600386870102381703350581417154820997185762068350256545802",
             price = 90909090909.toBigInteger(),
-            endsAt = Instant.ofEpochSecond(1635422403)
+            endsAt = Instant.ofEpochSecond(1635422403),
+            isSettled = false
         ).persist()
         val event = SettleAuction(
             "2021-10-28T12:28:52Z",
@@ -63,6 +64,7 @@ internal class SettleAuctionEventProcessorTest {
                 assertThat(hour, equalTo(12))
                 assertThat(minute, equalTo(28))
                 assertThat(second, equalTo(52))
+                assertThat(isSettled, equalTo(true))
             }
         }
     }

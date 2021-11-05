@@ -22,7 +22,8 @@ class StartAuctionEventProcessor : EventProcessor<StartAuction> {
             buyer = ZERO_ADDRESS,
             nftId = event.nftId,
             price = event.price,
-            endsAt = Instant.ofEpochSecond(event.closeTimeSec.longValueExact())
+            endsAt = Instant.ofEpochSecond(event.closeTimeSec.longValueExact()),
+            isSettled = false
         ).persist()
     }
 }

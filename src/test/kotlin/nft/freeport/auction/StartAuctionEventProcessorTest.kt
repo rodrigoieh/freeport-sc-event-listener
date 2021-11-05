@@ -53,6 +53,7 @@ internal class StartAuctionEventProcessorTest {
                 assertThat(hour, equalTo(12))
                 assertThat(minute, equalTo(0))
                 assertThat(second, equalTo(3))
+                assertThat(isSettled, equalTo(false))
             }
         }
     }
