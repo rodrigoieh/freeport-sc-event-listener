@@ -16,6 +16,7 @@ class SettleAuctionEventProcessor : EventProcessor<SettleAuction> {
             buyer = event.buyer
             price = event.price
             endsAt = Instant.parse(event.blockSignedAt)
+            isSettled = true
         }.persist()
     }
 }

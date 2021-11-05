@@ -33,7 +33,10 @@ class AuctionEntity(
     var price: BigInteger,
 
     @Column(name = "ends_at")
-    var endsAt: Instant
+    var endsAt: Instant,
+
+    @Column(name = "is_settled")
+    var isSettled: Boolean
 ) : PanacheEntityBase {
     companion object : PanacheCompanionBase<AuctionEntity, Long> {
         fun findActive(seller: String, nftId: String): AuctionEntity {
