@@ -32,7 +32,8 @@ internal class BidOnAuctionEventProcessorTest {
             buyer = "0x0000000000000000000000000000000000000000",
             nftId = "36986023997667029293600386870102381703350581417154820997185762068350256545802",
             price = 90909090909.toBigInteger(),
-            endsAt = Instant.ofEpochSecond(1635422403)
+            endsAt = Instant.ofEpochSecond(1635422403),
+            isSettled = false
         ).persist()
         val event = BidOnAuction(
             "2021-10-28T11:58:10Z",
