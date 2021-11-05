@@ -21,7 +21,7 @@ internal class NftEventProcessorTest {
         val event = NftMinted("0x123", "0xabc", "123", BigInteger.TEN)
 
         //when
-        testSubject.onNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe")
+        testSubject.onNftEvent(event, "2021-07-08T00:47:30Z")
 
         //then
         assertThat(NftEntity.findById(NftEntityId("123", "0xabc")), notNullValue())
@@ -31,11 +31,11 @@ internal class NftEventProcessorTest {
     @Test
     fun `Process NFT transferred event`() {
         //given
-        testSubject.onNftEvent(NftMinted("0x123", "0xabc", "456", BigInteger.TEN), "2021-07-08T00:47:30Z", "0xcafebabe")
+        testSubject.onNftEvent(NftMinted("0x123", "0xabc", "456", BigInteger.TEN), "2021-07-08T00:47:30Z")
         val event = NftTransferred("0x123", "0xabc", "0xdef", "456", BigInteger.ONE)
 
         //when
-        testSubject.onNftEvent(event, "2021-07-08T00:47:30Z", "0xcafebabe")
+        testSubject.onNftEvent(event, "2021-07-08T00:47:30Z")
 
         //then
         assertThat(WalletNftEntity.findById(WalletNftEntityId("456", "0xabc"))?.quantity, equalTo(9.toBigInteger()))
