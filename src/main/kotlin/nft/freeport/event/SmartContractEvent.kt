@@ -98,3 +98,11 @@ data class SettleAuction(
     val price: BigInteger,
     val buyer: String,
 ) : SmartContractEvent(blockSignedAt, txHash)
+
+data class AttachToNFT(
+    override val blockSignedAt: String,
+    override val txHash: String,
+    val sender: String,
+    val nftId: String,
+    val cid: String
+) : SmartContractEvent(blockSignedAt, txHash)
