@@ -1,3 +1,4 @@
+covalent/mp-rest/url: 'https://api.covalenthq.com'
 ddc:
   enabled: false
   boot-node: 'http://localhost:8888'
@@ -33,7 +34,7 @@ contracts:
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
-  poll-interval: 'PT30S'
+  poll-interval: 'PT1S'
 quarkus:
   datasource:
     db-kind: 'postgresql'
