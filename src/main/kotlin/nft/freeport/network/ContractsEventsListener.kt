@@ -181,7 +181,7 @@ class ContractsEventsListener(
     }
 
     @Transactional
-    private fun updateLastScannedBlockNumber(contract: String, blockNumber: Long) {
+    internal fun updateLastScannedBlockNumber(contract: String, blockNumber: Long) {
         LastScannedBlockEntity.findById(contract)?.apply {
             blockHeight = blockNumber
             persist()
