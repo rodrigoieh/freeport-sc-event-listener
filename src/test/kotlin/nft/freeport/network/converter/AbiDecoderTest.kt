@@ -30,4 +30,16 @@ internal class AbiDecoderTest {
         //then
         assertThat(result, equalTo(9000.toBigInteger()))
     }
+
+    @Test
+    fun `Decode CID`() {
+        //given
+        val input = "0x017dfd85d4f6cb4dcd715a88101f7b1f06cd1e009b2327a0809d01eb9c91f231"
+
+        //when
+        val result = testSubject.decodeCid(input)
+
+        //then
+        assertThat(result, equalTo("QmNSUYVKDSvPUnRLKmuxk9diJ6yS96r1TrAXzjTiBcCLAL"))
+    }
 }

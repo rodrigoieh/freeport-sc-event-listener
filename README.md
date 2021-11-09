@@ -25,6 +25,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |CONTRACTS_FIAT_GATEWAY_FIRST_BLOCK_NUMBER|Fiat Gateway Smart Contract first block number|`18593691`|
 |CONTRACTS_AUCTION_ADDRESS|Auction Smart Contract address|`0x573fc9819FD436C9Dc74b10949b2404C99C54A33`|
 |CONTRACTS_AUCTION_FIRST_BLOCK_NUMBER|Auction Smart Contract first block number|`20458313`|
+|CONTRACTS_NFT_ATTACHMENT_ADDRESS|NFT Attachment Smart Contract address|`0x1282fdeC36aC4aaf025059D69077d4450703eeD0`|
+|CONTRACTS_NFT_ATTACHMENT_FIRST_BLOCK_NUMBER|NFT Attachment Smart Contract first block number|`21202116`|
 |QUARKUS_DATASOURCE_USERNAME|Postgres user||
 |QUARKUS_DATASOURCE_PASSWORD|Postgres password||
 |QUARKUS_DATASOURCE_JDBC_URL|Postgres URL||

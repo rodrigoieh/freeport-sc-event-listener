@@ -30,6 +30,13 @@ contracts:
       StartAuction: '0x5135842dc9522996ca3d92189d0ded7e70ecbfc5545c115def0c7bdb9ee41f2b'
       BidOnAuction: '0x39e9b26db60de3ca88f045fdd8954028f1bbd0c6e2ff124121cb5a03da370191'
       SettleAuction: '0xfe2c1531a975fce0584787c5e2643df8c1fe92f870c9dbadb24e366e31e79f44'
+  nft-attachment:
+    address: '0x1282fdeC36aC4aaf025059D69077d4450703eeD0'
+    first-block-number: 21202116
+    event-topics:
+      address: '${contracts.nft-attachment.address}'
+      first-block-number: '${contracts.nft-attachment.first-block-number}'
+      AttachToNFT: '0xcb0dbc631188ff7e4c5831ec907b2d9ca2786dd0314af3e43a7269821a19e2b4'
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
