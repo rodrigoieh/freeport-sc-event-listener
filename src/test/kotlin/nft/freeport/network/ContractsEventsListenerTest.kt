@@ -31,7 +31,7 @@ class ContractsEventsListenerTest {
 
     // just to prevent runs
     @InjectMock
-    internal lateinit var contractsEventScheduler: ContractsEventListenerHelper
+    internal lateinit var contractsEventScheduler: ContractsEventListenerScheduler
 
     @Inject
     internal lateinit var contractsConfig: ContractsConfig
