@@ -33,6 +33,9 @@ dependencies {
     implementation("com.github.cerebellum-network:ddc-client-kotlin:1.1.2.Final")
     implementation("io.quarkus:quarkus-rest-client-jackson")
 
+    // Hash
+    implementation("com.github.komputing:kbase58:0.2")
+
     // Kotlin
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
