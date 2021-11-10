@@ -50,8 +50,10 @@ dependencies {
 
     // Tests
     testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
 
 tasks {

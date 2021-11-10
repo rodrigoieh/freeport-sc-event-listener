@@ -1,17 +1,13 @@
 package nft.freeport.network
 
 import io.quarkus.runtime.ShutdownEvent
-import io.quarkus.runtime.StartupEvent
-import io.quarkus.scheduler.Scheduled
 import nft.freeport.event.SmartContractEvent
 import nft.freeport.network.block.LastScannedBlockEntity
 import nft.freeport.network.config.ContractConfig
-import nft.freeport.network.config.ContractsConfig
 import nft.freeport.network.config.NetworkConfig
 import nft.freeport.network.converter.ContractEventConverter
 import nft.freeport.network.dto.ContractEvent
 import nft.freeport.network.processor.EventProcessor
-import org.eclipse.microprofile.context.ManagedExecutor
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
@@ -26,7 +22,7 @@ import javax.transaction.Transactional
  * or uses start block from config.
  *
  * Schedules periodic task that reads all events from last scanned block to the current block.
- * Each event is converted and processed if Converter and Processor implementation exists, skipped otherwice.
+ * Each event is converted and processed if Converter and Processor implementation exists, skipped otherwise.
  *
  * To make sync process faster, we are trying to read 1 000 000 blocks per each call - this is a current limit
  * of Covalent API which is used to retrieve events information. However, API also have a limit of 100 events
@@ -37,8 +33,6 @@ import javax.transaction.Transactional
  */
 @ApplicationScoped
 class ContractsEventsListener(
-    contractsConfig: ContractsConfig,
-    private val executor: ManagedExecutor,
     private val networkConfig: NetworkConfig,
     @RestClient private val covalentClient: CovalentClient,
     private val converters: Instance<ContractEventConverter<*>>,
@@ -52,17 +46,9 @@ class ContractsEventsListener(
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private val contracts = contractsConfig.contracts().values
     private val lastScannedBlocks = ConcurrentHashMap<String, Long>()
-    private val runningStatuses = ConcurrentHashMap<String, Boolean>()
-    private val shuttingDown = AtomicBoolean(false)
 
-    @Transactional
-    fun onStart(@Observes e: StartupEvent) {
-        contracts.forEach(::init)
-    }
-
-    private fun init(cfg: ContractConfig) {
+    fun init(cfg: ContractConfig) {
         val contract = cfg.address()
         log.info("Initializing Contract Event Listener for contract {}", contract)
         log.info("Updating last scanned block for contract {}", contract)
@@ -74,26 +60,38 @@ class ContractsEventsListener(
             cfg.firstBlockNumber()
         }
         lastScannedBlocks[contract] = lastScannedBlock
-        log.info("Contract Event Listener for contract {} initialized with last scanned block {}", contract, lastScannedBlock)
+        log.info(
+            "Contract Event Listener for contract {} initialized with last scanned block {}",
+            contract,
+            lastScannedBlock
+        )
         log.info("Starting Contract Event Listener consumer for contract {}", contract)
     }
 
-    @Scheduled(every = "{network.poll-interval}", skipExecutionIf = TestModeEnabled::class)
-    fun sync() {
-        contracts.map(ContractConfig::address)
-            .forEach { contract -> executor.execute { sync(contract) } }
-    }
+    /**
+     * It helps to prevent parallel running of sync jobs.
+     * [ContractsEventListenerScheduler] doesn't trigger [sync] method multiple times, but we don't have guarantees that all jobs will be completed by the time of the next trigger.
+     */
+    private val syncingContracts = ConcurrentHashMap.newKeySet<String>()
+    private val shuttingDown = AtomicBoolean(false)
 
-    private fun sync(contract: String) {
-        if (runningStatuses.getOrDefault(contract, false)) {
-            // skip contract which is syncing
+    fun sync(contract: String) {
+        // skip if shutdown is enabled
+        if (shuttingDown.get()) return
+
+        // skip contract which is syncing
+        if (!syncingContracts.add(contract)) {
+            log.warn("attempt to sync contract: $contract, but sync is already in progress.")
             return
         }
-        runningStatuses[contract] = true
+
         runCatching {
             val latestBlockFromNetwork = getLatestBlockFromNetwork()
             if (latestBlockFromNetwork != UNDEFINED_BLOCK) {
                 val lastScannedBlock = lastScannedBlocks.getValue(contract)
+
+                // skip already actual contract
+                if (lastScannedBlock == latestBlockFromNetwork) return@runCatching
                 if (latestBlockFromNetwork - lastScannedBlock > COVALENT_BLOCKS_LIMIT) {
                     log.info("Event scanner for contract $contract out of sync. Syncing events from block $lastScannedBlock to $latestBlockFromNetwork")
                     syncBatch(contract, latestBlockFromNetwork)
@@ -104,7 +102,17 @@ class ContractsEventsListener(
         }.onFailure {
             log.error("Error on consuming events for contract {}", contract, it)
         }
-        runningStatuses[contract] = false
+
+        syncingContracts.remove(contract)
+    }
+
+    fun onStop(@Observes ev: ShutdownEvent) {
+        shuttingDown.set(true)
+        while (syncingContracts.isNotEmpty()) {
+            log.info("Waiting for listeners to stop")
+            Thread.sleep(500)
+        }
+        log.info("All listeners stopped")
     }
 
     private fun syncBatch(contract: String, toBlock: Long) {
@@ -119,9 +127,6 @@ class ContractsEventsListener(
     }
 
     private fun sync(contract: String, toBlock: Long): Boolean {
-        if (shuttingDown.get()) {
-            return false
-        }
         val startingBlock = lastScannedBlocks.getValue(contract)
         val rs = covalentClient.getContractEvents(
             networkConfig.chainId(),
@@ -194,12 +199,4 @@ class ContractsEventsListener(
         return requireNotNull(rs.data).items[0].height
     }
 
-    fun onStop(@Observes ev: ShutdownEvent) {
-        shuttingDown.set(true)
-        while (runningStatuses.any { it.value }) {
-            log.info("Waiting for listeners to stop")
-            Thread.sleep(500)
-        }
-        log.info("All listeners stopped")
-    }
 }

@@ -10,7 +10,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.QueryParam
 
-@RegisterRestClient(baseUri = "https://api.covalenthq.com")
+@RegisterRestClient(configKey = "covalent")
 @Path("/v1")
 @ApplicationScoped
 interface CovalentClient {
