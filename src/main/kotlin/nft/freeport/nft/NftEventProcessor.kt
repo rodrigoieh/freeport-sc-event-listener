@@ -10,6 +10,10 @@ import javax.transaction.Transactional
 
 @ApplicationScoped
 class NftEventProcessor(private val ddcService: DdcService) {
+    private companion object {
+        private const val CERE_TOKEN_ID = "0"
+    }
+
     @Transactional
     fun onNftEvent(event: NftEvent, blockSignedAt: String) {
         ddcService.sendNftEvent(event, blockSignedAt)
@@ -20,7 +24,9 @@ class NftEventProcessor(private val ddcService: DdcService) {
     }
 
     private fun onNftMinted(event: NftMinted) {
-        NftEntity(NftEntityId(event.nftId, event.minter), event.quantity).persist()
+        if (event.nftId != CERE_TOKEN_ID) {
+            NftEntity(NftEntityId(event.nftId, event.minter), event.quantity).persist()
+        }
         updateQuantity(event.minter, event.nftId, event.quantity)
     }
 
