@@ -9,7 +9,7 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 @Entity
-@Table(name = "nft_royalty", schema = "api")
+@Table(name = "nft_royalty")
 class RoyaltyEntity(
     @EmbeddedId
     val id: RoyaltyEntityId,

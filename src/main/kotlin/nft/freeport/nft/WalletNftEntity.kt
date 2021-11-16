@@ -9,7 +9,7 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 @Entity
-@Table(name = "wallet_nft", schema = "api")
+@Table(name = "wallet_nft")
 class WalletNftEntity(
     @EmbeddedId
     val id: WalletNftEntityId,

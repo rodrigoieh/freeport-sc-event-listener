@@ -5,7 +5,7 @@ import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntityBase
 import javax.persistence.*
 
 @Entity
-@Table(name = "joint_account", schema = "api")
+@Table(name = "joint_account")
 class JointAccountEntity(
     @EmbeddedId
     val id: JointAccountEntityId,

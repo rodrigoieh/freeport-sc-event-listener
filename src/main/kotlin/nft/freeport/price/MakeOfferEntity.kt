@@ -9,7 +9,7 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 @Entity
-@Table(name = "make_offer", schema = "api")
+@Table(name = "make_offer")
 class MakeOfferEntity(
     @EmbeddedId
     val id: MakeOfferEntityId,

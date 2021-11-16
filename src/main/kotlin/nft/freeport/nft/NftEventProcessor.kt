@@ -25,7 +25,7 @@ class NftEventProcessor(private val ddcService: DdcService) {
 
     private fun onNftMinted(event: NftMinted) {
         if (event.nftId != CERE_TOKEN_ID) {
-            NftEntity(NftEntityId(event.nftId, event.minter), event.quantity).persist()
+            NftEntity(event.nftId, event.minter, event.quantity).persist()
         }
         updateQuantity(event.minter, event.nftId, event.quantity)
     }

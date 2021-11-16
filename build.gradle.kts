@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "1.5.30"
-    kotlin("plugin.allopen") version "1.5.30"
-    kotlin("plugin.jpa") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
+    kotlin("plugin.allopen") version "1.5.31"
+    kotlin("plugin.jpa") version "1.5.31"
 
-    id("io.quarkus") version "2.3.1.Final"
+    id("io.quarkus") version "2.4.2.Final"
 
     idea
 }
@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     // Quarkus
-    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.3.1.Final"))
+    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.4.2.Final"))
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 
@@ -28,9 +28,10 @@ dependencies {
     // DB
     implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
+    implementation("io.quarkus:quarkus-flyway")
 
     // Clients
-    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.1.2.Final")
+    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.1.3.Final")
     implementation("io.quarkus:quarkus-rest-client-jackson")
 
     // Hash
@@ -52,7 +53,7 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 }
 

@@ -8,13 +8,12 @@ import java.time.Instant
 import javax.persistence.*
 
 @Entity
-@Table(name = "auction", schema = "api")
+@Table(name = "auction")
 class AuctionEntity(
     @Id
     @SequenceGenerator(
         name = "auctionSeq",
         sequenceName = "auction_id_seq",
-        schema = "api",
         allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auctionSeq")

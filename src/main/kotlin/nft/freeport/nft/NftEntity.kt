@@ -6,13 +6,16 @@ import java.math.BigInteger
 import javax.persistence.*
 
 @Entity
-@Table(name = "nft", schema = "api")
+@Table(name = "nft")
 class NftEntity(
-    @EmbeddedId
-    val id: NftEntityId,
+    @Id
+    val nftId: String,
+
+    @Column
+    val minter: String,
 
     @Column
     val supply: BigInteger,
 ) : PanacheEntityBase {
-    companion object : PanacheCompanionBase<NftEntity, NftEntityId>
+    companion object : PanacheCompanionBase<NftEntity, String>
 }

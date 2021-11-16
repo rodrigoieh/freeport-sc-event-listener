@@ -9,6 +9,6 @@ class MakeOfferEntityId(
     @Column
     val seller: String,
 
-    @Column
+    @Column(name = "nft_id")
     val nftId: String
 ) : Serializable

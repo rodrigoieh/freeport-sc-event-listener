@@ -5,13 +5,12 @@ import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntityBase
 import javax.persistence.*
 
 @Entity
-@Table(name = "nft_cid", schema = "api")
+@Table(name = "nft_cid")
 class NftCidEntity(
     @Id
     @SequenceGenerator(
         name = "nftCidSeq",
         sequenceName = "nft_cid_id_seq",
-        schema = "api",
         allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "nftCidSeq")

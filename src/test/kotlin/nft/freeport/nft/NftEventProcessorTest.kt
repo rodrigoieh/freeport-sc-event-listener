@@ -23,7 +23,7 @@ internal class NftEventProcessorTest {
         testSubject.onNftEvent(event, "2021-07-08T00:47:30Z")
 
         //then
-        assertThat(NftEntity.findById(NftEntityId("123", "0xabc")), notNullValue())
+        assertThat(NftEntity.findById("123"), notNullValue())
         assertThat(WalletNftEntity.findById(WalletNftEntityId("123", "0xabc")), notNullValue())
     }
 
@@ -50,7 +50,7 @@ internal class NftEventProcessorTest {
         testSubject.onNftEvent(event, "2021-07-08T00:47:30Z")
 
         //then
-        assertThat(NftEntity.findById(NftEntityId("0", "0xabc")), nullValue())
+        assertThat(NftEntity.findById("0"), nullValue())
         assertThat(WalletNftEntity.findById(WalletNftEntityId("0", "0xabc"))?.quantity, equalTo(BigInteger.TEN))
     }
 }

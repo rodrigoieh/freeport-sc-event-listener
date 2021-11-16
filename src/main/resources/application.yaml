@@ -45,11 +45,12 @@ network:
 quarkus:
   datasource:
     db-kind: 'postgresql'
+  flyway:
+    baseline-on-migrate: true
+    migrate-at-start: true
+    validate-on-migrate: true
+    out-of-order: false
   hibernate-orm:
-    database:
-      generation:
-        ~: 'drop-and-create'
-        create-schemas: true
     log:
       sql: true
   log:
@@ -70,8 +71,6 @@ quarkus:
     enabled: true
   quarkus:
     hibernate-orm:
-      database:
-        generation: 'none'
       log:
         sql: false
     log:

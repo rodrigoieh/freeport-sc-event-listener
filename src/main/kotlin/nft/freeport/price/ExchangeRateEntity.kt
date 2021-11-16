@@ -10,7 +10,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "exchange_rate", schema = "api")
+@Table(name = "exchange_rate")
 class ExchangeRateEntity(
     @Id
     @Column(name = "cere_units_per_penny")

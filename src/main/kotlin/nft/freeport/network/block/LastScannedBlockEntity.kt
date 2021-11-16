@@ -8,7 +8,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "last_scanned_block", schema = "api")
+@Table(name = "last_scanned_block")
 class LastScannedBlockEntity(
     @Id
     val contract: String,

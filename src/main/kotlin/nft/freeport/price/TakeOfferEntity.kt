@@ -6,13 +6,12 @@ import java.math.BigInteger
 import javax.persistence.*
 
 @Entity
-@Table(name = "take_offer", schema = "api")
+@Table(name = "take_offer")
 class TakeOfferEntity(
     @Id
     @SequenceGenerator(
         name = "takeOfferSeq",
         sequenceName = "take_offer_id_seq",
-        schema = "api",
         allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "takeOfferSeq")
@@ -24,7 +23,7 @@ class TakeOfferEntity(
     @Column
     val seller: String,
 
-    @Column
+    @Column(name = "nft_id")
     val nftId: String,
 
     @Column
