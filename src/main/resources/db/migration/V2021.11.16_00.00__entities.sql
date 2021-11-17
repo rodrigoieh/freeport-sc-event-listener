@@ -5,6 +5,10 @@ create table nft
     supply numeric(78) not null
 );
 
+-- currency
+insert into nft(nft_id, minter, supply)
+values ('0', '0x0000000000000000000000000000000000000000', 10000000000);
+
 create index nft_minter_index
     on nft (minter);
 
@@ -77,7 +81,7 @@ create table make_offer
     seller text        not null,
     nft_id text        not null references nft,
     price  numeric(78) not null,
-    primary key (seller, nftId)
+    primary key (seller, nft_id)
 );
 
 create table take_offer
