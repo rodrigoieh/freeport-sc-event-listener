@@ -1,6 +1,6 @@
 package nft.freeport.processor.freeport
 
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import java.time.Instant
 
-fun eventEntity(date: String) = EventEntity(1, "", "", Instant.parse(date), "")
+fun eventEntity(date: String) = SmartContractEventEntity(1, "", "", Instant.parse(date), "")

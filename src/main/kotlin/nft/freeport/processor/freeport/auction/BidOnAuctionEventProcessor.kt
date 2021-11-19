@@ -1,7 +1,7 @@
 package nft.freeport.processor.freeport.auction
 
 import nft.freeport.listener.event.BidOnAuction
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
@@ -12,7 +12,7 @@ class BidOnAuctionEventProcessor : FreeportEventProcessor<BidOnAuction> {
     override val supportedClass = BidOnAuction::class.java
 
     @Transactional
-    override fun process(event: BidOnAuction, e: EventEntity) {
+    override fun process(event: BidOnAuction, e: SmartContractEventEntity) {
         val auction = AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
             price = event.price

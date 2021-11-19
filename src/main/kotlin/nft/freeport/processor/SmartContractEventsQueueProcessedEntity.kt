@@ -6,8 +6,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "events_queue_processed")
-class EventsQueueProcessedEntity(
+@Table(name = "sc_events_queue_processed")
+class SmartContractEventsQueueProcessedEntity(
     @Id
-    val id: EventsQueueProcessedEntityId
+    val id: SmartContractEventsQueueProcessedEntityId
 ) : PanacheEntityBase

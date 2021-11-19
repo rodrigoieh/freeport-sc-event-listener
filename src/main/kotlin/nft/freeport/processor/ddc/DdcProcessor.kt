@@ -34,7 +34,7 @@ class DdcProcessor(
         AttachToNFT::class.java,
     ).associateBy { it.simpleName }
 
-    override fun process(e: EventEntity) {
+    override fun process(e: SmartContractEventEntity) {
         val eventType = supportedEvents[e.name] ?: return
         when (eventType) {
             TransferBatch::class.java -> processBatch(e)
@@ -42,13 +42,13 @@ class DdcProcessor(
         }
     }
 
-    private fun processBatch(e: EventEntity) {
+    private fun processBatch(e: SmartContractEventEntity) {
         objectMapper.readValue<TransferBatch>(e.payload)
             .convertToSingle()
             .forEach { uploadToDdc(it.nftId, e) }
     }
 
-    private fun uploadToDdc(nftId: String, e: EventEntity) {
+    private fun uploadToDdc(nftId: String, e: SmartContractEventEntity) {
         log.info("Uploading event {} to DDC", e.payload)
         val piece = Piece().apply {
             id = UUID.randomUUID().toString()

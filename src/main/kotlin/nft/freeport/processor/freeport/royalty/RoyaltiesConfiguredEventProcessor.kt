@@ -1,6 +1,6 @@
 package nft.freeport.processor.freeport.royalty
 
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.RoyaltiesConfigured
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import java.math.BigInteger
@@ -12,7 +12,7 @@ class RoyaltiesConfiguredEventProcessor : FreeportEventProcessor<RoyaltiesConfig
     override val supportedClass = RoyaltiesConfigured::class.java
 
     @Transactional
-    override fun process(event: RoyaltiesConfigured, e: EventEntity) {
+    override fun process(event: RoyaltiesConfigured, e: SmartContractEventEntity) {
         save(event.nftId, 1, event.primaryRoyaltyAccount, event.primaryRoyaltyCut, event.primaryRoyaltyMinimum)
         save(event.nftId, 2, event.secondaryRoyaltyAccount, event.secondaryRoyaltyCut, event.secondaryRoyaltyMinimum)
     }

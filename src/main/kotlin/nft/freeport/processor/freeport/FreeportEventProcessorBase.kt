@@ -1,7 +1,7 @@
 package nft.freeport.processor.freeport
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.processor.EventProcessor
 import javax.enterprise.context.ApplicationScoped
@@ -18,7 +18,7 @@ class FreeportEventProcessorBase(
 
     override val id = 1
 
-    override fun process(e: EventEntity) {
+    override fun process(e: SmartContractEventEntity) {
         val eventClass = eventClasses.getValue(e.name)
         val event = objectMapper.readValue(e.payload, eventClass)
         processorsMap[e.name]?.process(event, e)

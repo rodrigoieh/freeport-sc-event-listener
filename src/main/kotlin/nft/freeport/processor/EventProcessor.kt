@@ -1,23 +1,23 @@
 package nft.freeport.processor
 
 import io.quarkus.vertx.ConsumeEvent
-import nft.freeport.EVENTS_TOPIC_NAME
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
+import nft.freeport.listener.event.SmartContractEventEntity
 import javax.transaction.Transactional
 
 interface EventProcessor {
     val id: Int
 
-    @ConsumeEvent(EVENTS_TOPIC_NAME, blocking = true, ordered = true)
+    @ConsumeEvent(SMART_CONTRACT_EVENTS_TOPIC_NAME, blocking = true, ordered = true)
     @Transactional
-    fun processAndCommit(e: EventEntity) {
+    fun processAndCommit(e: SmartContractEventEntity) {
         process(e)
         commit(requireNotNull(e.id))
     }
 
-    fun process(e: EventEntity)
+    fun process(e: SmartContractEventEntity)
 
     fun commit(eventId: Long) {
-        EventsQueueProcessedEntity(EventsQueueProcessedEntityId(eventId, id)).persist()
+        SmartContractEventsQueueProcessedEntity(SmartContractEventsQueueProcessedEntityId(eventId, id)).persist()
     }
 }

@@ -1,14 +1,14 @@
-package nft.freeport.processor
+package nft.freeport.processor.webhook.entity
 
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
 @Embeddable
-class EventsQueueProcessedEntityId(
+class WebhookEventsQueueProcessedEntityId(
     @Column(name = "event_id")
     val eventId: Long,
 
-    @Column(name = "worker_id")
-    val workerId: Int
+    @Column(name = "wh_name")
+    val webhookName: String
 ) : Serializable

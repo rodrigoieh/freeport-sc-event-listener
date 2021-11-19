@@ -1,6 +1,6 @@
 package nft.freeport.processor.freeport.price
 
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.TakeOffer
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import javax.enterprise.context.ApplicationScoped
@@ -11,7 +11,7 @@ class TakeOfferEventProcessor : FreeportEventProcessor<TakeOffer> {
     override val supportedClass = TakeOffer::class.java
 
     @Transactional
-    override fun process(event: TakeOffer, e: EventEntity) {
+    override fun process(event: TakeOffer, e: SmartContractEventEntity) {
         TakeOfferEntity(
             null,
             event.buyer,

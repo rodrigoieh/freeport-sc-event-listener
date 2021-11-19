@@ -3,7 +3,8 @@ covalent/mp-rest/connectTimeout: 5000
 covalent/mp-rest/readTimeout: 30000
 ddc:
   enabled: false
-  boot-nodes: 'http://localhost:8888'
+  boot-nodes:
+    - 'http://localhost:8888'
   pub-key-hex: '0xcafebabe'
   sec-key-hex: '0xcafebabe'
 contracts:
@@ -19,6 +20,8 @@ contracts:
   nft-attachment:
     address: '0x270693f873287a39172856Ad8cfbCd79b040b287'
     first-block-number: 21202148
+webhooks:
+  enabled: false
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'

@@ -1,7 +1,7 @@
 package nft.freeport.processor.freeport.nft
 
 import nft.freeport.listener.event.AttachToNFT
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
@@ -14,7 +14,7 @@ class AttachToNFTEventProcessor : FreeportEventProcessor<AttachToNFT> {
     override val supportedClass = AttachToNFT::class.java
 
     @Transactional
-    override fun process(event: AttachToNFT, e: EventEntity) {
+    override fun process(event: AttachToNFT, e: SmartContractEventEntity) {
         if (NftEntity.findById(event.nftId) == null) {
             log.warn("Received AttachToNFT event for non-existing NFT {}. Skip.", event)
             return

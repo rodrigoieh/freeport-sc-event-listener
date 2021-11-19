@@ -5,15 +5,15 @@ import java.time.Instant
 import javax.persistence.*
 
 @Entity
-@Table(name = "events")
-class EventEntity(
+@Table(name = "sc_events")
+class SmartContractEventEntity(
     @Id
     @SequenceGenerator(
-        name = "eventsSeq",
-        sequenceName = "events_id_seq",
+        name = "scEventsSeq",
+        sequenceName = "sc_events_id_seq",
         allocationSize = 1
     )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventsSeq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "scEventsSeq")
     val id: Long?,
 
     @Column

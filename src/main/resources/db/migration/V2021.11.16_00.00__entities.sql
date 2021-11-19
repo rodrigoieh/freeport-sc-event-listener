@@ -110,7 +110,7 @@ create table last_scanned_block
     block_height bigint not null
 );
 
-create table events
+create table sc_events
 (
     id        serial primary key,
     name      text      not null,
@@ -119,9 +119,24 @@ create table events
     tx_hash   text      not null
 );
 
-create table events_queue_processed
+create table sc_events_queue_processed
 (
-    event_id  integer references events,
+    event_id  integer references sc_events,
     worker_id integer not null,
     primary key (event_id, worker_id)
+);
+
+create table wh_events
+(
+    id          serial primary key,
+    entity_name text not null,
+    event       text not null,
+    payload     text not null
+);
+
+create table wh_events_queue_processed
+(
+    event_id integer references wh_events,
+    wh_name  text not null,
+    primary key (event_id, wh_name)
 );

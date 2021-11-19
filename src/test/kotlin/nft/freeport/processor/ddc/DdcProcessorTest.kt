@@ -61,7 +61,7 @@ internal class DdcProcessorTest {
     @Test
     fun `Process events`() {
         payloads.mapIndexed { i, e ->
-            EventEntity(
+            SmartContractEventEntity(
                 id = i.toLong(),
                 name = e::class.java.simpleName,
                 payload = objectMapper.writeValueAsString(e),

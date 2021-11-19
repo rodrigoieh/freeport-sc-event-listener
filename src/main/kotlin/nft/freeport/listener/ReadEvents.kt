@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.quarkus.runtime.StartupEvent
 import io.quarkus.scheduler.Scheduled
 import io.vertx.core.eventbus.EventBus
-import nft.freeport.EVENTS_TOPIC_NAME
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.SmartContractEventConverter
 import nft.freeport.covalent.CovalentClient
 import nft.freeport.listener.config.ContractConfig
@@ -135,21 +135,21 @@ class ReadEvents(
         }
         events.forEach {
             processEvent(contract, it)
-                ?.also { bus.publish(EVENTS_TOPIC_NAME, it) }
+                ?.also { bus.publish(SMART_CONTRACT_EVENTS_TOPIC_NAME, it) }
         }
         updateLastScannedBlockNumber(contract, toBlock)
         return true
     }
 
     @Transactional
-    internal fun processEvent(contract: String, event: ContractEvent): EventEntity? {
+    internal fun processEvent(contract: String, event: ContractEvent): SmartContractEventEntity? {
         val converted = converter.convert(event)
-        var entity: EventEntity? = null
+        var entity: SmartContractEventEntity? = null
         if (converted != null) {
             log.info("Converting event at tx {}", event.txHash)
             val convertedType = converted::class.java.simpleName
             log.info("Converted event type is {}", convertedType)
-            entity = EventEntity(
+            entity = SmartContractEventEntity(
                 id = null,
                 name = convertedType,
                 payload = objectMapper.writeValueAsString(converted),

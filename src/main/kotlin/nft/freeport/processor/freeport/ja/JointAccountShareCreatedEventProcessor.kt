@@ -1,6 +1,6 @@
 package nft.freeport.processor.freeport.ja
 
-import nft.freeport.listener.event.EventEntity
+import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.JointAccountShareCreated
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import javax.enterprise.context.ApplicationScoped
@@ -11,7 +11,7 @@ class JointAccountShareCreatedEventProcessor : FreeportEventProcessor<JointAccou
     override val supportedClass = JointAccountShareCreated::class.java
 
     @Transactional
-    override fun process(event: JointAccountShareCreated, e: EventEntity) {
+    override fun process(event: JointAccountShareCreated, e: SmartContractEventEntity) {
         JointAccountEntity(JointAccountEntityId(event.account, event.owner), event.fraction).persist()
     }
 }
