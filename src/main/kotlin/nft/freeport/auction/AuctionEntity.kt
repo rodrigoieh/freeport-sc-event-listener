@@ -29,8 +29,8 @@ class AuctionEntity(
     @Column(name = "nft_id")
     val nftId: String,
 
-    @Column
-    var price: BigInteger,
+    @Column(name = "price")
+    var nextBidPrice: BigInteger,
 
     @Column(name = "ends_at")
     var endsAt: Instant,
