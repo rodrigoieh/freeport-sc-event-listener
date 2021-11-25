@@ -14,7 +14,7 @@ class BidOnAuctionEventProcessor : EventProcessor<BidOnAuction>  {
     override fun process(event: BidOnAuction) {
         val auction = AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
-            price = event.price
+            nextBidPrice = event.price
             endsAt = Instant.ofEpochSecond(event.closeTimeSec.longValueExact())
         }
         AuctionBidEntity(

@@ -14,7 +14,7 @@ class SettleAuctionEventProcessor : EventProcessor<SettleAuction> {
     override fun process(event: SettleAuction) {
         AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
-            price = event.price
+            nextBidPrice = event.price
             endsAt = Instant.parse(event.blockSignedAt)
             isSettled = true
         }.persist()

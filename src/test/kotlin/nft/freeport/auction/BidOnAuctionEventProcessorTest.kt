@@ -31,7 +31,7 @@ internal class BidOnAuctionEventProcessorTest {
             seller = "0x51c5590504251a5993ba6a46246f87fa0eae5897",
             buyer = "0x0000000000000000000000000000000000000000",
             nftId = "36986023997667029293600386870102381703350581417154820997185762068350256545802",
-            price = 90909090909.toBigInteger(),
+            nextBidPrice = 90909090909.toBigInteger(),
             endsAt = Instant.ofEpochSecond(1635422403),
             isSettled = false
         ).persist()
@@ -61,7 +61,7 @@ internal class BidOnAuctionEventProcessorTest {
                 nftId,
                 equalTo("36986023997667029293600386870102381703350581417154820997185762068350256545802")
             )
-            assertThat(price, equalTo(200000000000.toBigInteger()))
+            assertThat(nextBidPrice, equalTo(200000000000.toBigInteger()))
             assertThat(endsAt.epochSecond, equalTo(1635423003L))
             LocalDateTime.ofInstant(endsAt, ZoneOffset.UTC).apply {
                 assertThat(year, equalTo(2021))
