@@ -1,17 +1,15 @@
 package nft.freeport.processor
 
 import nft.freeport.NO_EVENTS_BLOCK_OFFSET
-import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
 import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.listener.event.SmartContractEventData
-import nft.freeport.listener.processorsPosition.entity.ProcessorLastScannedEventPositionEntity
 import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
+import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
 import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState
 import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.DONE
 import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.PARTIALLY_DONE
-import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
-import org.eclipse.microprofile.reactive.messaging.Incoming
+import nft.freeport.listener.processorsPosition.entity.ProcessorLastScannedEventPositionEntity
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 import kotlin.reflect.KClass
@@ -23,7 +21,8 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
         SmartContractEvent::class.sealedSubclasses.filter { it != BlockProcessedEvent::class }
             .toSet()
 
-    @Incoming(SMART_CONTRACT_EVENTS_TOPIC_NAME)
+    abstract fun process(eventData: SmartContractEventData<out SmartContractEvent>)
+
     @Transactional
     fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) {
         if (eventData.event is BlockProcessedEvent) {
@@ -52,7 +51,10 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
         updatePosition(eventData = eventData, newState = PARTIALLY_DONE)
     }
 
-    private fun updatePosition(eventData: SmartContractEventData<out SmartContractEvent>, newState: ProcessingBlockState) {
+    private fun updatePosition(
+        eventData: SmartContractEventData<out SmartContractEvent>,
+        newState: ProcessingBlockState
+    ) {
         val offset = if (eventData.rawEvent.logOffset == NO_EVENTS_BLOCK_OFFSET) null
         else eventData.rawEvent.logOffset
 
@@ -63,6 +65,4 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
             )
         )
     }
-
-    abstract fun process(eventData: SmartContractEventData<out SmartContractEvent>)
 }

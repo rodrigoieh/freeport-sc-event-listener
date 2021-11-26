@@ -1,6 +1,7 @@
 package nft.freeport.listener.processorsPosition
 
 import io.quarkus.runtime.StartupEvent
+import nft.freeport.DDC_PROCESSOR_ID
 import nft.freeport.listener.config.ContractsConfig
 import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
 import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.NEW
@@ -14,7 +15,7 @@ import javax.transaction.Transactional
 class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private val lastPositionByProcessorAndContract: MutableMap<StateKey, ProcessedEventPosition> = mutableMapOf()
+    private val lastPositionByProcessorAndContract: MutableMap<PositionKey, ProcessedEventPosition> = mutableMapOf()
 
     /** Fetch the latest state from the database **/
     @Transactional
@@ -28,7 +29,22 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
     /**
      * It returns the lowest [ProcessedEventPosition] from all [ProcessorLastScannedEventPositionEntity.processorId].
      */
-    fun getGeneralChainMostOutdatedPosition(contract: String): ProcessedEventPosition = TODO()
+    fun getCommonChannelMostOutdatedPosition(contract: String): ProcessedEventPosition =
+        lastPositionByProcessorAndContract.asSequence()
+            .filter { (key, _) -> key.processorId != DDC_PROCESSOR_ID && key.contract == contract }
+            .map { it.value }
+            .sortedWith(
+                compareByDescending<ProcessedEventPosition> { position -> position.block }
+                    .thenByDescending { position -> position.offset }
+                    .thenByDescending { position -> position.currentState }
+            )
+            .firstOrNull()
+            ?: run {
+                val block: Long = startBlockByContract[contract]
+                    ?: error("can't find starting position for contract $contract in both database and configs")
+
+                ProcessedEventPosition(block, null, NEW)
+            }
 
     /** from configs, is used as fallback when we don't have data about the position in the db **/
     private val startBlockByContract: Map<String, Long> =
@@ -39,7 +55,7 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
      * It can get data from database or fallback to configs.
      */
     fun getCurrentPosition(processorId: String, contract: String): ProcessedEventPosition {
-        return lastPositionByProcessorAndContract[StateKey(processorId, contract)] ?: run {
+        return lastPositionByProcessorAndContract[PositionKey(processorId, contract)] ?: run {
             val block: Long = (startBlockByContract[contract]
                 ?: error("can't find starting position for $processorId, contract $contract in both database and configs"))
 
@@ -63,12 +79,12 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
         lastPositionByProcessorAndContract[entity.toKey()] = entity.toValue()
     }
 
-    private data class StateKey(
+    private data class PositionKey(
         val processorId: String,
         val contract: String,
     )
 
-    private fun ProcessorLastScannedEventPositionEntity.toKey(): StateKey = StateKey(
+    private fun ProcessorLastScannedEventPositionEntity.toKey(): PositionKey = PositionKey(
         processorId = processorId, contract = contract
     )
 

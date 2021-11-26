@@ -5,6 +5,7 @@ import io.smallrye.reactive.messaging.annotations.Broadcast
 import nft.freeport.DDC_PROCESSOR_ID
 import nft.freeport.NO_EVENTS_BLOCK_OFFSET
 import nft.freeport.SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME
+import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
 import nft.freeport.covalent.CovalentClient
 import nft.freeport.covalent.config.NetworkConfig
 import nft.freeport.covalent.dto.ContractEvent
@@ -18,7 +19,6 @@ import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
 import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
 import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.DONE
 import nft.freeport.processor.ddc.DdcProcessor
-import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
@@ -56,36 +56,45 @@ class SmartContractEventsReader(
      * Read events from the blockchain and stream them to [DdcProcessor]
      */
     @Outgoing(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
+    fun ddcChanel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
+        stateProvider.getCurrentPosition(DDC_PROCESSOR_ID, it)
+    }
+
+    /**
+     * Read events from the blockchain and broadcast them to all processors except ddc.
+     */
     @Broadcast
-    fun ddcStream(): Multi<SmartContractEventData<out SmartContractEvent>> {
-        return Multi.createFrom()
+    @Outgoing(SMART_CONTRACT_EVENTS_TOPIC_NAME)
+    fun commonChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
+        runCatching { stateProvider.getCommonChannelMostOutdatedPosition(it) }.onFailure {
+            System.err.println(it)
+        }.getOrThrow()
+    }
+
+    /**
+     * Creates infinity multi which fetches events from covalent with [NetworkConfig.pollInterval]
+     *  and converts them to [SmartContractEventData] that contains all data related to smart contract event.
+     *
+     *  [currentPositionProvider] says which block should be used as start point.
+     */
+    fun createMultiFromCovalentEvents(currentPositionProvider: (contract: String) -> ProcessedEventPosition): Multi<SmartContractEventData<out SmartContractEvent>> =
+        Multi.createFrom()
             .ticks().every(networkConfig.pollInterval())
             .flatMap {
                 contracts
-                    .map {
-                        // TODO for others get the most outdated position (others == all processors without ddc)
-                        val ddcPosition = stateProvider.getCurrentPosition(DDC_PROCESSOR_ID, it)
-                        val nextEvents = readEvents(it, ddcPosition)
+                    .map { contract ->
+                        val nextEvents = readEvents(contract, currentPositionProvider(contract))
 
                         nextEvents ?: Multi.createFrom().empty()
                     }
                     .fold(Multi.createFrom().empty()) { a, b -> Multi.createBy().merging().streams(a, b) }
             }
-    }
-
-    // todo remove, just for debug
-    @Incoming(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
-    @Transactional
-    fun testConsume(event: SmartContractEventData<out SmartContractEvent>) {
-        println("processed: ${event.rawEvent.blockHeight} ${event.rawEvent.logOffset} ${event.event::class}")
-    }
 
     /**
      * Reads events for contract after [position]
      */
     fun readEvents(
         contract: String,
-        // todo to think is it okay, it's the lowest position in pool, so we have to take care about offset block and state also
         position: ProcessedEventPosition
     ): Multi<SmartContractEventData<out SmartContractEvent>>? {
         return runCatching {

@@ -12,7 +12,6 @@ import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
-import javax.transaction.Transactional
 import kotlin.reflect.KClass
 
 /**
@@ -46,7 +45,6 @@ class DdcProcessor(
     // to override channel name, because ddc works in the separate one.
     // we decided to do it because of ddc latency, so it can slow down other consumers of events
     @Incoming(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
-    @Transactional
     override fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) =
         super.processAndCommit(eventData)
 
