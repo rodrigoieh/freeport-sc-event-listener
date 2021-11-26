@@ -1,5 +1,6 @@
 package nft.freeport.covalent
 
+import io.quarkus.cache.CacheResult
 import nft.freeport.covalent.dto.Block
 import nft.freeport.covalent.dto.ContractEvent
 import nft.freeport.covalent.dto.CovalentResponse
@@ -23,6 +24,7 @@ interface CovalentClient {
 
     @GET
     @Path("/{chainId}/events/address/{address}/")
+    @CacheResult(cacheName = "covalent")
     fun getContractEvents(
         @PathParam("chainId") chainId: Int,
         @PathParam("address") contractAddress: String,

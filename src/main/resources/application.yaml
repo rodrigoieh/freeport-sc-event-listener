@@ -25,8 +25,13 @@ webhooks:
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
-  poll-interval: 'PT1S'
+  poll-interval: '1S'
 quarkus:
+  cache:
+    caffeine:
+      covalent:
+        maximum-size: 2000
+        expire-after-write: 1800S
   datasource:
     db-kind: 'postgresql'
   flyway:

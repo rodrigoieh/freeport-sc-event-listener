@@ -1,6 +1,13 @@
 package nft.freeport.processor.freeport
 
-import nft.freeport.listener.event.SmartContractEventEntity
-import java.time.Instant
+import nft.freeport.covalent.dto.ContractEvent
 
-fun eventEntity(date: String) = SmartContractEventEntity(1, "", "", Instant.parse(date), "")
+fun contractEvent(date: String) = ContractEvent(
+    blockSignedAt = date,
+    blockHeight = 0,
+    txHash = "",
+    rawLogTopics = emptyList(),
+    rawLogData = "",
+    decoded = null,
+    logOffset = 0
+)

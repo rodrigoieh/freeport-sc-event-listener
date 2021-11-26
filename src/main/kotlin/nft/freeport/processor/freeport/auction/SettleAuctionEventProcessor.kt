@@ -1,8 +1,9 @@
 package nft.freeport.processor.freeport.auction
 
-import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.SettleAuction
+import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.processor.freeport.FreeportEventProcessor
+import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
@@ -11,11 +12,11 @@ class SettleAuctionEventProcessor : FreeportEventProcessor<SettleAuction> {
     override val supportedClass = SettleAuction::class.java
 
     @Transactional
-    override fun process(event: SettleAuction, e: SmartContractEventEntity) {
+    override fun process(eventData: SmartContractEventData<out SettleAuction>) = with(eventData) {
         AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
             price = event.price
-            endsAt = e.timestamp
+            endsAt = Instant.parse(rawEvent.blockSignedAt)
             isSettled = true
         }.persist()
     }

@@ -14,6 +14,11 @@ import org.hibernate.type.Type
 import java.io.Serializable
 import java.util.concurrent.ArrayBlockingQueue
 
+/** todo
+ *      remove it, webhooks should listen the same channel as freeport proessor
+ *      each webhook should be a processor
+ *      webhook should be child of the processor (the same entity, but it can be configured dinamycally and works with http)
+ */
 @PersistenceUnitExtension
 class DatabaseInterceptor(
     private val objectMapper: ObjectMapper,

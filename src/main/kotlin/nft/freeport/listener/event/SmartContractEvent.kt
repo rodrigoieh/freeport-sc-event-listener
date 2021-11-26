@@ -4,6 +4,11 @@ import java.math.BigInteger
 
 sealed class SmartContractEvent
 
+/**
+ * Technical event, just to indicate that it's the last event of the block.
+ */
+object BlockProcessedEvent : SmartContractEvent()
+
 data class TransferSingle(
     val operator: String,
     val from: String,
@@ -19,7 +24,7 @@ data class TransferBatch(
     val ids: List<String>,
     val amounts: List<BigInteger>
 ) : SmartContractEvent() {
-    fun convertToSingle() : List<TransferSingle> {
+    fun convertToSingle(): List<TransferSingle> {
         return ids.indices.map { TransferSingle(operator, from, to, ids[it], amounts[it]) }
     }
 }

@@ -2,7 +2,7 @@ package nft.freeport.processor.freeport.nft
 
 import nft.freeport.CURRENCY_TOKEN_ID
 import nft.freeport.ZERO_ADDRESS
-import nft.freeport.listener.event.SmartContractEventEntity
+import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.TransferSingle
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import javax.enterprise.context.ApplicationScoped
@@ -14,14 +14,14 @@ class TransferSingleEventProcessor(private val nftEventProcessor: NftEventProces
     override val supportedClass = TransferSingle::class.java
 
     @Transactional
-    override fun process(event: TransferSingle, e: SmartContractEventEntity) {
-        if (event.from == ZERO_ADDRESS) {
-            if (event.nftId != CURRENCY_TOKEN_ID) {
-                NftEntity(event.nftId, event.to, event.amount).persist()
+    override fun process(eventData: SmartContractEventData<out TransferSingle>) = with(eventData.event) {
+        if (from == ZERO_ADDRESS) {
+            if (nftId != CURRENCY_TOKEN_ID) {
+                NftEntity(nftId, to, amount).persist()
             }
         } else {
-            nftEventProcessor.updateQuantity(event.from, event.nftId, -event.amount)
+            nftEventProcessor.updateQuantity(from, nftId, -amount)
         }
-        nftEventProcessor.updateQuantity(event.to, event.nftId, event.amount)
+        nftEventProcessor.updateQuantity(to, nftId, amount)
     }
 }

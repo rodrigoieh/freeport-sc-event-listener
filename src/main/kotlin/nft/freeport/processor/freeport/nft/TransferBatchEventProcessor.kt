@@ -1,6 +1,6 @@
 package nft.freeport.processor.freeport.nft
 
-import nft.freeport.listener.event.SmartContractEventEntity
+import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.TransferBatch
 import nft.freeport.processor.freeport.FreeportEventProcessor
 import javax.enterprise.context.ApplicationScoped
@@ -12,10 +12,10 @@ class TransferBatchEventProcessor(private val nftEventProcessor: NftEventProcess
     override val supportedClass = TransferBatch::class.java
 
     @Transactional
-    override fun process(event: TransferBatch, e: SmartContractEventEntity) {
-        event.ids.indices.forEach { i ->
-            nftEventProcessor.updateQuantity(event.from, event.ids[i], -event.amounts[i])
-            nftEventProcessor.updateQuantity(event.to, event.ids[i], event.amounts[i])
+    override fun process(eventData: SmartContractEventData<out TransferBatch>) = with(eventData.event) {
+        ids.indices.forEach { i ->
+            nftEventProcessor.updateQuantity(from, ids[i], -amounts[i])
+            nftEventProcessor.updateQuantity(to, ids[i], amounts[i])
         }
     }
 }

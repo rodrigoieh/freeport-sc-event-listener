@@ -3,7 +3,8 @@ package nft.freeport.processor.freeport.price
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.SetExchangeRate
-import nft.freeport.processor.freeport.eventEntity
+import nft.freeport.listener.event.SmartContractEventData
+import nft.freeport.processor.freeport.contractEvent
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
@@ -29,7 +30,7 @@ internal class SetExchangeRateEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-07-08T00:47:30Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-07-08T00:47:30Z")))
 
         //then
         assertThat(ExchangeRateEntity.findById(BigInteger.TEN), notNullValue())
