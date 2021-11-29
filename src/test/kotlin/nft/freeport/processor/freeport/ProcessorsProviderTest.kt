@@ -1,10 +1,10 @@
 package nft.freeport.processor.freeport
 
+import io.kotest.matchers.collections.shouldContainExactly
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.AbstractIntegrationTest
+import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
@@ -17,6 +17,8 @@ internal class ProcessorsProviderTest : AbstractIntegrationTest() {
     fun `Has processors for all supported events`() {
         //given
         val supportedEvents = SmartContractEvent::class.sealedSubclasses
+            // tech event should not have special freeport processor
+            .filter { it != BlockProcessedEvent::class }
             .map { it.simpleName }
             .sortedBy { it }
 
@@ -24,6 +26,6 @@ internal class ProcessorsProviderTest : AbstractIntegrationTest() {
         val eventsWithProcessors = processorsMap.keys.sorted()
 
         //then
-        assertThat(eventsWithProcessors, equalTo(supportedEvents))
+        eventsWithProcessors shouldContainExactly supportedEvents
     }
 }

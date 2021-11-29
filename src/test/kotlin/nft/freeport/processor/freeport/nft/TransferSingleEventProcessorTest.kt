@@ -5,8 +5,9 @@ import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.AbstractIntegrationTest
 import nft.freeport.CURRENCY_TOKEN_ID
 import nft.freeport.ZERO_ADDRESS
+import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.TransferSingle
-import nft.freeport.processor.freeport.eventEntity
+import nft.freeport.processor.freeport.contractEvent
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
@@ -37,7 +38,7 @@ internal class TransferSingleEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-07-08T00:47:30Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-07-08T00:47:30Z")))
 
         //then
         assertThat(NftEntity.findById("123"), notNullValue())
@@ -58,7 +59,7 @@ internal class TransferSingleEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-07-08T00:47:30Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-07-08T00:47:30Z")))
 
         //then
         assertThat(WalletNftEntity.findById(WalletNftEntityId("123", "0xabc"))?.quantity, equalTo(9.toBigInteger()))
@@ -78,9 +79,12 @@ internal class TransferSingleEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-07-08T00:47:30Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-07-08T00:47:30Z")))
 
         //then
-        assertThat(WalletNftEntity.findById(WalletNftEntityId(CURRENCY_TOKEN_ID, "0xdef"))?.quantity, equalTo(BigInteger.ONE))
+        assertThat(
+            WalletNftEntity.findById(WalletNftEntityId(CURRENCY_TOKEN_ID, "0xdef"))?.quantity,
+            equalTo(BigInteger.ONE)
+        )
     }
 }

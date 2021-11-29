@@ -1,10 +1,10 @@
 package nft.freeport.processor.freeport
 
-import nft.freeport.listener.event.SmartContractEventEntity
 import nft.freeport.listener.event.SmartContractEvent
+import nft.freeport.listener.event.SmartContractEventData
 
 interface FreeportEventProcessor<T : SmartContractEvent> {
     val supportedClass: Class<T>
 
-    fun process(event: T, e: SmartContractEventEntity)
+    fun process(eventData: SmartContractEventData<out T>)
 }

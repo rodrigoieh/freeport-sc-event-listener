@@ -19,6 +19,8 @@ repositories {
 dependencies {
     // Quarkus
     implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.4.2.Final"))
+    implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
+    implementation("io.quarkus:quarkus-cache")
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 
@@ -55,6 +57,8 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
+    // nice asserts
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.6.3")
 }
 
 tasks {

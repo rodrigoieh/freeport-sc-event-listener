@@ -28,7 +28,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000001000000000000000a"
             ),
             "0x0000000000000000000000000000000000000000000000000000002e90edd00000000000000000000000000000000000000000000000000000000000617a931b00000000000000000000000063846e2d234e4f854f43423014430b4e131f697b",
-            null
+            null,
+            0
         )
 
         //when
@@ -58,7 +59,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000001000000000000000a"
             ),
             "0x0000000000000000000000000000000000000000000000000000002e90edd00000000000000000000000000063846e2d234e4f854f43423014430b4e131f697b",
-            null
+            null,
+            0
         )
 
         //when
@@ -87,7 +89,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000001000000000000000a"
             ),
             "0x000000000000000000000000000000000000000000000000000000152a9aa45d00000000000000000000000000000000000000000000000000000000617a90c3",
-            null
+            null,
+            0
         )
 
         //when
@@ -113,7 +116,8 @@ internal class SmartContractEventConverterTest {
                 "0x0000000000000000000000006d2b28389d3153689c57909829dfcf6241d36388"
             ),
             "0x0000000000000000000000000000000000000000000000000000000000002328",
-            null
+            null,
+            0
         )
 
         //when
@@ -138,7 +142,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000001000000000000000a"
             ),
             "0x1122334455667788990011223344556677889900112233445566778899001122",
-            null
+            null,
+            0
         )
 
         //when
@@ -181,7 +186,8 @@ internal class SmartContractEventConverterTest {
                         )
                     )
                 )
-            )
+            ),
+            0
         )
 
         //when
@@ -212,7 +218,8 @@ internal class SmartContractEventConverterTest {
                     ContractEventParam("_id", TextNode("111")),
                     ContractEventParam("_amount", TextNode("10"))
                 )
-            )
+            ),
+            0
         )
 
         //when
@@ -239,7 +246,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000000000000000000000a"
             ),
             "0x000000000000000000000000000000000000000000000000000001d1a94a2000",
-            null
+            null,
+            0
         )
 
         //when
@@ -262,7 +270,8 @@ internal class SmartContractEventConverterTest {
                 "0x1d5de90e7c5b244ac5797698b15fe80a92524d933dafd79e001daf844555fb1c",
             ),
             "0x000000000000000000000000000000000000000000000000000000003b9aca00",
-            null
+            null,
+            0
         )
 
         //when
@@ -286,7 +295,8 @@ internal class SmartContractEventConverterTest {
                 "0x51c5590504251a5993ba6a46246f87fa0eae589700000001000000000000000a"
             ),
             "0x00000000000000000000000000000000000000000000000000000574fbde60000000000000000000000000000000000000000000000000000000000000000001",
-            null
+            null,
+            0
         )
 
         //when
@@ -315,7 +325,8 @@ internal class SmartContractEventConverterTest {
                 "0x1bf6fca28253a1257e4b5b3440f7fbe0c59d1546000000010000000000000001"
             ),
             "0x0000000000000000000000001bf6fca28253a1257e4b5b3440f7fbe0c59d1546000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000060000000000000000000000008aaab81aff26d0f4e34520b87c608b183dcf5bb800000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000008",
-            null
+            null,
+            0
         )
 
         //when

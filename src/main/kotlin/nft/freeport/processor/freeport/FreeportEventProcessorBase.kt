@@ -1,26 +1,26 @@
 package nft.freeport.processor.freeport
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import nft.freeport.listener.event.SmartContractEventEntity
+import nft.freeport.FREEPORT_PROCESSOR_ID
+import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
 import nft.freeport.listener.event.SmartContractEvent
+import nft.freeport.listener.event.SmartContractEventData
+import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
 import nft.freeport.processor.EventProcessor
-import javax.enterprise.context.ApplicationScoped
+import org.eclipse.microprofile.reactive.messaging.Incoming
 
-@ApplicationScoped
 class FreeportEventProcessorBase(
-    private val objectMapper: ObjectMapper,
-    private val processorsMap: Map<String, FreeportEventProcessor<SmartContractEvent>>
-) : EventProcessor {
-    private val eventClasses: Map<String, Class<out SmartContractEvent>> = SmartContractEvent::class
-        .sealedSubclasses
-        .map { it.java }
-        .associateBy { it.simpleName }
+    private val processorsMap: Map<String, FreeportEventProcessor<SmartContractEvent>>,
 
-    override val id = 1
+    stateProvider: ProcessorsPositionManager,
+) : EventProcessor(stateProvider) {
+    override val id = FREEPORT_PROCESSOR_ID
 
-    override fun process(e: SmartContractEventEntity) {
-        val eventClass = eventClasses.getValue(e.name)
-        val event = objectMapper.readValue(e.payload, eventClass)
-        processorsMap[e.name]?.process(event, e)
+    @Incoming(SMART_CONTRACT_EVENTS_TOPIC_NAME)
+    override fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) =
+        super.processAndCommit(eventData)
+
+    override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
+        processorsMap[eventData.event::class.java.simpleName]?.process(eventData)
     }
+
 }

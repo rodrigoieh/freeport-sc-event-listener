@@ -20,5 +20,8 @@ data class ContractEvent(
     @field:JsonProperty("raw_log_data")
     val rawLogData: String?,
 
-    val decoded: DecodedContractEvent?
+    val decoded: DecodedContractEvent?,
+
+    @field:JsonProperty("log_offset")
+    val logOffset: Long,
 )

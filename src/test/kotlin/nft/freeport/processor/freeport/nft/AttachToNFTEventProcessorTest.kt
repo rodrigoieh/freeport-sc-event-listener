@@ -4,7 +4,8 @@ import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.AttachToNFT
-import nft.freeport.processor.freeport.eventEntity
+import nft.freeport.listener.event.SmartContractEventData
+import nft.freeport.processor.freeport.contractEvent
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -37,7 +38,7 @@ internal class AttachToNFTEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-11-08T10:50:36Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-11-08T10:50:36Z")))
 
         //then
         requireNotNull(NftCidEntity.findAll().firstResult()).apply {

@@ -104,26 +104,15 @@ create table nft_royalty
     primary key (nft_id, sale_type, beneficiary)
 );
 
-create table last_scanned_block
+create table last_scanned_event_position_by_processor
 (
-    contract     text   not null primary key,
-    block_height bigint not null
-);
+    processor_id text   not null,
+    contract     text   not null,
+    block        bigint not null,
+    event_offset bigint,
+    state        text   not null,
 
-create table sc_events
-(
-    id        serial primary key,
-    name      text      not null,
-    payload   text      not null,
-    timestamp timestamp not null,
-    tx_hash   text      not null
-);
-
-create table sc_events_queue_processed
-(
-    event_id  integer references sc_events,
-    worker_id integer not null,
-    primary key (event_id, worker_id)
+    primary key (processor_id, contract)
 );
 
 create table wh_events

@@ -3,8 +3,9 @@ package nft.freeport.processor.freeport.auction
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.AbstractIntegrationTest
+import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.StartAuction
-import nft.freeport.processor.freeport.eventEntity
+import nft.freeport.processor.freeport.contractEvent
 import nft.freeport.processor.freeport.nft.NftEntity
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -42,7 +43,7 @@ internal class StartAuctionEventProcessorTest : AbstractIntegrationTest() {
         )
 
         //when
-        testSubject.process(event, eventEntity("2021-10-28T11:58:06Z"))
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-10-28T11:58:06Z")))
 
         //then
         val e = requireNotNull(AuctionEntity.findAll().firstResult())
