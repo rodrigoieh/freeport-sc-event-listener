@@ -4,6 +4,10 @@ import java.math.BigInteger
 
 sealed class SmartContractEvent
 
+interface NftRelatedEvent {
+    val nftId: String
+}
+
 /**
  * Technical event, just to indicate that it's the last event of the block.
  */
@@ -13,9 +17,9 @@ data class TransferSingle(
     val operator: String,
     val from: String,
     val to: String,
-    val nftId: String,
+    override val nftId: String,
     val amount: BigInteger
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class TransferBatch(
     val operator: String,
@@ -36,28 +40,28 @@ data class JointAccountShareCreated(
 ) : SmartContractEvent()
 
 data class RoyaltiesConfigured(
-    val nftId: String,
+    override val nftId: String,
     val primaryRoyaltyAccount: String,
     val primaryRoyaltyCut: Int,
     val primaryRoyaltyMinimum: BigInteger,
     val secondaryRoyaltyAccount: String,
     val secondaryRoyaltyCut: Int,
     val secondaryRoyaltyMinimum: BigInteger
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class MakeOffer(
     val seller: String,
-    val nftId: String,
+    override val nftId: String,
     val price: BigInteger
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class TakeOffer(
     val buyer: String,
     val seller: String,
-    val nftId: String,
+    override val nftId: String,
     val price: BigInteger,
     val amount: BigInteger
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class SetExchangeRate(
     val cereUnitsPerPenny: BigInteger
@@ -65,28 +69,28 @@ data class SetExchangeRate(
 
 data class StartAuction(
     val seller: String,
-    val nftId: String,
+    override val nftId: String,
     val price: BigInteger,
     val closeTimeSec: BigInteger
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class BidOnAuction(
     val seller: String,
-    val nftId: String,
+    override val nftId: String,
     val price: BigInteger,
     val closeTimeSec: BigInteger,
     val buyer: String,
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class SettleAuction(
     val seller: String,
-    val nftId: String,
+    override val nftId: String,
     val price: BigInteger,
     val buyer: String,
-) : SmartContractEvent()
+) : NftRelatedEvent ,SmartContractEvent()
 
 data class AttachToNFT(
     val sender: String,
-    val nftId: String,
+    override val nftId: String,
     val cid: String
-) : SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()

@@ -17,7 +17,7 @@ internal class ProcessorsProviderTest : AbstractIntegrationTest() {
     fun `Has processors for all supported events`() {
         //given
         val supportedEvents = SmartContractEvent::class.sealedSubclasses
-            // todo a little bit ugly, all this staff related to events hierarchy
+            // tech event should not have special freeport processor
             .filter { it != BlockProcessedEvent::class }
             .map { it.simpleName }
             .sortedBy { it }

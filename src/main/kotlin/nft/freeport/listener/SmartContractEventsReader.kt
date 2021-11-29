@@ -126,26 +126,28 @@ class SmartContractEventsReader(
         }.getOrNull()
     }
 
-    /** TODO check if it works after my changes, refactor (remove state)
-     * @author vadim.hleif
-     */
     private fun readBatch(
         contract: String,
         fromBlock: Long,
         toBlock: Long
     ): Multi<SmartContractEventData<out SmartContractEvent>> {
-        var endingBlock = fromBlock + COVALENT_BLOCKS_LIMIT
-
         var result: Multi<SmartContractEventData<out SmartContractEvent>> = Multi.createFrom().empty()
-        while (endingBlock <= toBlock) {
-            var multi = read(contract, fromBlock = fromBlock, toBlock = endingBlock)
 
-            while (multi != null) {
+        var from = fromBlock
+        var to = fromBlock + COVALENT_BLOCKS_LIMIT
+
+        while (to <= toBlock) {
+            val multi = read(contract, fromBlock = from, toBlock = to)
+
+            if (multi != null) {
                 result = Multi.createBy().merging().streams(result, multi)
-                multi = read(contract, endingBlock, toBlock)
+            } else {
+                log.error("can't read data for contract $contract, from: $from to: $to. Will retry.")
+                continue
             }
 
-            endingBlock += COVALENT_BLOCKS_LIMIT
+            from = to
+            to += COVALENT_BLOCKS_LIMIT
         }
         log.info("Event scanner for contract {} synced with network", contract)
 

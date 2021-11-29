@@ -51,12 +51,8 @@ class DdcProcessor(
     override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
         when (eventData.event) {
             is TransferBatch -> processBatch(eventData.event, eventData)
-            // todo fix getting id via models
-            else -> uploadToDdc(
-                nftId = objectMapper.readTree(objectMapper.writeValueAsString(eventData.event)).get("nftId")
-                    .textValue(),
-                eventData = eventData
-            )
+            is NftRelatedEvent -> uploadToDdc(nftId = eventData.event.nftId, eventData = eventData)
+            else -> error("An unexpected smart contract event type, it can't be uploaded to ddc. The type is ${eventData.event::class}")
         }
     }
 

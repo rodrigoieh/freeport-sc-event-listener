@@ -30,7 +30,6 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
             return
         }
 
-        // todo hierarchy? to specify all events (but it also takes tech events..)
         if (!supportedEvents.contains(eventData.event::class)) return
 
         val currentPosition: ProcessedEventPosition = stateProvider.getCurrentPosition(id, eventData.contract)
