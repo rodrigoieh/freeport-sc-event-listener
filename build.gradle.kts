@@ -37,6 +37,8 @@ dependencies {
 
     // Hash
     implementation("com.github.komputing:kbase58:0.2")
+    implementation("com.github.komputing.khex:core:1.1.2")
+    implementation("com.github.komputing.khex:extensions:1.1.2")
 
     // Kotlin
     implementation("io.quarkus:quarkus-kotlin")
@@ -57,6 +59,7 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.6.3")
+
 }
 
 tasks {
