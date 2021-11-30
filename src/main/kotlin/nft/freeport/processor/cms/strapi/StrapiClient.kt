@@ -26,9 +26,17 @@ interface StrapiClient {
 
     @Path("/{entity}")
     @POST
-    fun <T : Any> create(
+    fun create(
         @PathParam("entity") entity: String,
-        payload: StrapiRequest<T>,
+        payload: Any,
+        @HeaderParam("Authorization") authorization: String
+    ): Response
+
+    @Path("/{entity}")
+    @PUT
+    fun updateSingle(
+        @PathParam("entity") entity: String,
+        payload: Any,
         @HeaderParam("Authorization") authorization: String
     ): Response
 
