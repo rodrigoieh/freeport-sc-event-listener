@@ -66,9 +66,7 @@ class SmartContractEventsReader(
     @Broadcast
     @Outgoing(SMART_CONTRACT_EVENTS_TOPIC_NAME)
     fun commonChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
-        runCatching { stateProvider.getCommonChannelMostOutdatedPosition(it) }.onFailure {
-            System.err.println(it)
-        }.getOrThrow()
+        stateProvider.getCommonChannelMostOutdatedPosition(it)
     }
 
     /**
@@ -87,7 +85,7 @@ class SmartContractEventsReader(
 
                         nextEvents ?: Multi.createFrom().empty()
                     }
-                    .fold(Multi.createFrom().empty()) { a, b -> Multi.createBy().merging().streams(a, b) }
+                    .fold(Multi.createFrom().empty()) { a, b -> Multi.createBy().concatenating().streams(a, b) }
             }
 
     /**
@@ -140,7 +138,7 @@ class SmartContractEventsReader(
             val multi = read(contract, fromBlock = from, toBlock = to)
 
             if (multi != null) {
-                result = Multi.createBy().merging().streams(result, multi)
+                result = Multi.createBy().concatenating().streams(result, multi)
             } else {
                 log.error("can't read data for contract $contract, from: $from to: $to. Will retry.")
                 continue
@@ -186,7 +184,7 @@ class SmartContractEventsReader(
         if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
             val half = (toBlock - fromBlock) / 2
 
-            return Multi.createBy().merging()
+            return Multi.createBy().concatenating()
                 .streams(
                     read(contract, fromBlock = fromBlock, toBlock = half),
                     read(contract, fromBlock = half, toBlock = toBlock)
