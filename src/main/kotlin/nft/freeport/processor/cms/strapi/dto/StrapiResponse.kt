@@ -1,6 +1,8 @@
-package nft.freeport.processor.webhook.impl.strapi.dto
+package nft.freeport.processor.cms.strapi.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class AuthData(val token: String)
+data class StrapiResponse<T : Any>(
+    val data: T
+)

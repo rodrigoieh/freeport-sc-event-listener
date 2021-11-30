@@ -42,8 +42,6 @@ class DdcProcessor(
         AttachToNFT::class,
     )
 
-    // to override channel name, because ddc works in the separate one.
-    // we decided to do it because of ddc latency, so it can slow down other consumers of events
     @Incoming(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
     override fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) =
         super.processAndCommit(eventData)

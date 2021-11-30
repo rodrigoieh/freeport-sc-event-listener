@@ -1,8 +1,8 @@
-# Freeport Smart Contract Events Listener
+# Freeport Smart Contract Events Processor
 
 ## Description
 
-Listens for events of Feeport smart contracts, calculates the state and stores it in DDC and Freeport database.
+Listens for events of Feeport smart contracts, calculates the state and stores it in DDC, Freeport database and CMS.
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -30,53 +30,11 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |QUARKUS_DATASOURCE_USERNAME|Postgres user||
 |QUARKUS_DATASOURCE_PASSWORD|Postgres password||
 |QUARKUS_DATASOURCE_JDBC_URL|Postgres URL||
-|WEBHOOKS_ENABLED|Is CDC webhooks enabled|`false`|
-|WEBHOOKS_WEBHOOKS_NAME[{INDEX}]|Webhook name||
-|WEBHOOKS_WEBHOOKS_TYPE[{INDEX}]|Webhook type (currently we support only `STRAPI`)||
-|WEBHOOKS_WEBHOOKS_BASE_URL[{INDEX}]|Webhook base URL||
-|WEBHOOKS_WEBHOOKS_CONFIG[{INDEX}]|JSON config for webhook (see below)||
-|WEBHOOKS_WEBHOOKS_ENTITIES[{INDEX}]|JSON config for entities (see below)||
-
-## Webhooks configuration
-
-Application can send data changes to remote servers. Current implementation supports only integration
-with [Strapi](https://strapi.io/). Webhooks can be configured in `application.yaml` file or using environment
-variables (see above).
-
-Example of webhook configuration (yaml):
-
-```yaml
-webhooks:
-  enabled: true
-  webhooks:
-    - name: 'cms'
-      type: 'STRAPI'
-      base-url: 'https://cms.freeport.dev.cere.network'
-      config: '{ "login": "$USER_EMAIL", "password": "$USER_PASSWORD" }'
-      entities: '{ "nft": "/content-manager/collection-types/application::freeport-nft.freeport-nft" }'
-```
-
-Example of webhook configuration (env):
-
-```yaml
-WEBHOOKS_ENABLED=true
-  WEBHOOKS_WEBHOOKS_NAME[0]=cms
-  WEBHOOKS_WEBHOOKS_TYPE[0]=STRAPI
-  WEBHOOKS_WEBHOOKS_BASE_URL[0]=https://cms.freeport.dev.cere.network
-WEBHOOKS_WEBHOOKS_CONFIG[0]={ "login": "$USER_EMAIL", "password": "$USER_PASSWORD" }
-WEBHOOKS_WEBHOOKS_ENTITIES[0]={ "nft": "/content-manager/collection-types/application::freeport-nft.freeport-nft" }
-```
-
-Webhook entities is a key-value (JSON) object that uses supported entity name as a key and path to entity enpoint as
-value.
-Supported entities:
-- `auction`
-- `auctionbid`
-- `nft`
-- `nftcid`
-- `walletnft`
-
-Application will send `POST` request to the configured endpoint on entity creation and `PUT` request on entity update.
+|CMS_ENABLED|Is CMS integration enabled|`false`|
+|CMS_BASE_URL|CMS base URL|`http://localhost:8888`|
+|CMS_LOGIN|CMS login|`api-user`|
+|CMS_PASSWORD|CMS password|`api-password`|
+|CMS_ROUTES_NFT|NFT collection route|`/content-manager/collection-types/application::freeport-nft.freeport-nft`|
 
 ## Requirements for development
 

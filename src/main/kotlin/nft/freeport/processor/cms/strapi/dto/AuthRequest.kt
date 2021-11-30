@@ -1,4 +1,4 @@
-package nft.freeport.processor.webhook.impl.strapi.dto
+package nft.freeport.processor.cms.strapi.dto
 
 data class AuthRequest(
     val email: String,
