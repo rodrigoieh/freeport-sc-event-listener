@@ -3,15 +3,14 @@ package nft.freeport.processor.ddc
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import network.cere.ddc.client.producer.Producer
 import nft.freeport.covalent.dto.ContractEvent
-import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.listener.event.*
+import nft.freeport.listener.position.ProcessorsPositionManager
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.junit.jupiter.api.TestFactory
+import org.mockito.kotlin.*
 import java.math.BigInteger
 import java.time.Instant
 
@@ -53,6 +52,15 @@ internal class DdcProcessorTest {
         SettleAuction("0x0", "0x1", BigInteger.TEN, "0x2"),
         AttachToNFT("0x0", "0x1", "0x2"),
     )
+    val mockedRawEvent = ContractEvent(
+        blockSignedAt = Instant.now().toString(),
+        blockHeight = 0,
+        txHash = "0xcafebabe",
+        rawLogTopics = emptyList(),
+        rawLogData = "",
+        decoded = null,
+        logOffset = 0
+    )
 
     @Test
     fun `Processor ID is ddc`() {
@@ -62,20 +70,57 @@ internal class DdcProcessorTest {
     @Test
     fun `Process events`() {
         payloads.mapIndexed { _, e ->
-            SmartContractEventData(
-                contract = "some-contract",
-                event = e,
-                rawEvent = ContractEvent(
-                    blockSignedAt = Instant.now().toString(),
-                    blockHeight = 0,
-                    txHash = "0xcafebabe",
-                    rawLogTopics = emptyList(),
-                    rawLogData = "",
-                    decoded = null,
-                    logOffset = 0
-                )
-            )
+            SmartContractEventData(contract = "some-contract", event = e, rawEvent = mockedRawEvent)
         }.forEach(testSubject::process)
         verify(ddcProducer, times(10)).send(any())
+    }
+
+    @TestFactory
+    fun `cid should be derived from event itself`(): List<DynamicTest> = listOf(
+        TransferSingle(
+            operator = "0x0",
+            from = "0x1",
+            to = "0x2",
+            nftId = "0x3",
+            amount = BigInteger.TEN
+        ) to "0xf66798ac3053788ae439647a8012762b623aa3b6de0b2ddd69c3188fa64e0e2c",
+        MakeOffer(
+            seller = "0x0",
+            nftId = "0x1",
+            price = BigInteger.TEN
+        ) to "0xf66798ac3053788ae439647a8012762b623aa3b6de0b2ddd69c3188fa64e0e2c",
+        StartAuction(
+            seller = "0x0",
+            nftId = "0x1",
+            price = BigInteger.TEN,
+            closeTimeSec = BigInteger.ONE
+        ) to "0x5a2e903bdeac17fc49173103328841e320d793c80daa6566dece9edc7c8b7cd5",
+        BidOnAuction(
+            seller = "0x0",
+            nftId = "0x1",
+            price = BigInteger.TEN,
+            closeTimeSec = BigInteger.ONE,
+            buyer = "0x2"
+        ) to "0xf66798ac3053788ae439647a8012762b623aa3b6de0b2ddd69c3188fa64e0e2c",
+        SettleAuction(
+            seller = "0x0",
+            nftId = "0x1",
+            price = BigInteger.TEN,
+            buyer = "0x2"
+        ) to "0xf66798ac3053788ae439647a8012762b623aa3b6de0b2ddd69c3188fa64e0e2c",
+    ).map { (event: SmartContractEvent, hashedId) ->
+        DynamicTest.dynamicTest("$event id should be $hashedId") {
+            testSubject.process(
+                SmartContractEventData(contract = "some-contract", event = event, rawEvent = mockedRawEvent)
+            )
+
+            verify(ddcProducer) {
+                1 * {
+                    send(argForWhich {
+                        id == hashedId
+                    })
+                }
+            }
+        }
     }
 }

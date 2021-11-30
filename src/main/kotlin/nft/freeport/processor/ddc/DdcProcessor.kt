@@ -7,18 +7,15 @@ import nft.freeport.DDC_PROCESSOR_ID
 import nft.freeport.SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME
 import nft.freeport.listener.event.*
 import nft.freeport.listener.position.ProcessorsPositionManager
+import nft.freeport.listener.position.entity.ProcessorLastScannedEventPositionEntity
 import nft.freeport.processor.EventProcessor
 import org.eclipse.microprofile.reactive.messaging.Incoming
+import org.komputing.khex.extensions.toHexString
 import org.slf4j.LoggerFactory
+import java.security.MessageDigest
 import java.time.Instant
-import java.util.*
 import kotlin.reflect.KClass
 
-/**
- * TODO
- *  is it possible to provide cid from out side? Hash from data maybe.
- *  to prevent data duplicates in case of failing after publishing event to ddc but before saving position in the db.
- */
 class DdcProcessor(
     private val objectMapper: ObjectMapper,
     private val ddcProducer: Producer,
@@ -66,7 +63,7 @@ class DdcProcessor(
         log.info("Uploading event {} to DDC", event)
 
         val piece = Piece().apply {
-            id = UUID.randomUUID().toString()
+            id = deriveIdFromEvent(event)
             appPubKey = pubKey
             userPubKey = nftId
             timestamp = Instant.parse(rawEvent.blockSignedAt)
@@ -74,5 +71,16 @@ class DdcProcessor(
         }
 
         ddcProducer.send(piece).await().indefinitely()
+    }
+
+    /**
+     * To prevent data duplication in case of app failure after sending event to ddc, but before committing state [ProcessorLastScannedEventPositionEntity].
+     */
+    private fun deriveIdFromEvent(event: SmartContractEvent): String {
+        val digest = MessageDigest.getInstance("SHA3-256")
+
+        digest.update(objectMapper.writeValueAsBytes(event))
+
+        return digest.digest().toHexString()
     }
 }
