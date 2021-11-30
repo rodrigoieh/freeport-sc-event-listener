@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.allopen") version "1.5.31"
     kotlin("plugin.jpa") version "1.5.31"
 
-    id("io.quarkus") version "2.4.2.Final"
+    id("io.quarkus") version "2.5.0.Final"
 
     idea
 }
@@ -18,14 +18,13 @@ repositories {
 
 dependencies {
     // Quarkus
-    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.4.2.Final"))
-    implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
+    implementation(enforcedPlatform("io.quarkus:quarkus-universe-bom:2.5.0.Final"))
     implementation("io.quarkus:quarkus-cache")
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 
-    // Schedule
-    implementation("io.quarkus:quarkus-scheduler")
+    // Messaging
+    implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
 
     // DB
     implementation("io.quarkus:quarkus-jdbc-postgresql")
@@ -33,7 +32,7 @@ dependencies {
     implementation("io.quarkus:quarkus-flyway")
 
     // Clients
-    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.1.3.Final")
+    implementation("com.github.cerebellum-network:ddc-client-kotlin:1.2.0.Final")
     implementation("io.quarkus:quarkus-rest-client-jackson")
 
     // Hash
@@ -57,7 +56,6 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
-    // nice asserts
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.6.3")
 }
 

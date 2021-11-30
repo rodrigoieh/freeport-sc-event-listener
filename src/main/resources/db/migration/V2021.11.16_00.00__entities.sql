@@ -114,18 +114,3 @@ create table last_scanned_event_position_by_processor
 
     primary key (processor_id, contract)
 );
-
-create table wh_events
-(
-    id          serial primary key,
-    entity_name text not null,
-    event       text not null,
-    payload     text not null
-);
-
-create table wh_events_queue_processed
-(
-    event_id integer references wh_events,
-    wh_name  text not null,
-    primary key (event_id, wh_name)
-);
