@@ -12,6 +12,12 @@ interface CmsConfig {
 
     interface Routes {
         fun nft(): String
+        fun nftCid(): String
+        fun makeOffer(): String
+        fun takeOffer(): String
+        fun auction(): String
+        fun auctionBid(): String
+        fun wallet(): String
         fun exchangeRate(): String
     }
 }

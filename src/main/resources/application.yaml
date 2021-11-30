@@ -14,6 +14,12 @@ cms:
   password: 'api-password'
   routes:
     nft: '/content-manager/collection-types/application::freeport-nft.freeport-nft'
+    nft-cid: '/content-manager/collections/application::freeport-nft-cid.freeport-nft-cid'
+    make-offer: '/content-manager/collections/application::freeport-make-offer.freeport-make-offer'
+    take-offer: '/content-manager/collections/application::freeport-take-offer.freeport-take-offer'
+    auction: '/content-manager/collection-types/application::freeport-auction.freeport-auction'
+    auction-bid: '/content-manager/collection-types/application::freeport-auction-bid.freeport-auction-bid'
+    wallet: '/content-manager/collection-types/application::freeport-wallet.freeport-wallet'
     exchange-rate: '/content-manager/single-types/application::freeport-exchange.freeport-exchange'
 strapi/mp-rest/url: '${cms.base-url}'
 strapi/mp-rest/connectTimeout: 5000
