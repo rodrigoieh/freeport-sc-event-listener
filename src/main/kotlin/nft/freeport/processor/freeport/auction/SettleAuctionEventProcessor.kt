@@ -15,7 +15,7 @@ class SettleAuctionEventProcessor : FreeportEventProcessor<SettleAuction> {
     override fun process(eventData: SmartContractEventData<out SettleAuction>) = with(eventData) {
         AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
-            price = event.price
+            nextBidPrice = event.price
             endsAt = Instant.parse(rawEvent.blockSignedAt)
             isSettled = true
         }.persist()
