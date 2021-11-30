@@ -104,7 +104,7 @@ create table nft_royalty
     primary key (nft_id, sale_type, beneficiary)
 );
 
-create table last_scanned_event_position_by_processor
+create table last_scanned_position
 (
     processor_id text   not null,
     contract     text   not null,

@@ -6,7 +6,7 @@ import nft.freeport.listener.position.dto.ProcessingBlockState
 import javax.persistence.*
 
 @Entity
-@Table(name = "last_scanned_event_position_by_processor")
+@Table(name = "last_scanned_position")
 @IdClass(ProcessorLastScannedEventPositionEntityId::class)
 class ProcessorLastScannedEventPositionEntity(
 
