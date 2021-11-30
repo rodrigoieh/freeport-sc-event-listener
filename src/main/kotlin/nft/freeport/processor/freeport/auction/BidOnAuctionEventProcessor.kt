@@ -15,7 +15,7 @@ class BidOnAuctionEventProcessor : FreeportEventProcessor<BidOnAuction> {
     override fun process(eventData: SmartContractEventData<out BidOnAuction>) = with(eventData) {
         val auction = AuctionEntity.findActive(event.seller, event.nftId).apply {
             buyer = event.buyer
-            price = event.price
+            nextBidPrice = event.price
             endsAt = Instant.ofEpochSecond(event.closeTimeSec.longValueExact())
         }
 

@@ -51,7 +51,7 @@ internal class StartAuctionEventProcessorTest : AbstractIntegrationTest() {
             assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
             assertThat(buyer, equalTo("0x0000000000000000000000000000000000000000"))
             assertThat(nftId, equalTo("36986023997667029293600386870102381703350581417154820997185762068350256545802"))
-            assertThat(price, equalTo(90909090909.toBigInteger()))
+            assertThat(nextBidPrice, equalTo(100000000000.toBigInteger()))
             assertThat(endsAt.epochSecond, equalTo(1635422403L))
             LocalDateTime.ofInstant(endsAt, ZoneOffset.UTC).apply {
                 assertThat(year, equalTo(2021))
