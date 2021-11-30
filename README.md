@@ -34,14 +34,14 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |CMS_BASE_URL|CMS base URL|`http://localhost:8888`|
 |CMS_LOGIN|CMS login|`api-user`|
 |CMS_PASSWORD|CMS password|`api-password`|
-|CMS_ROUTES_NFT|NFT collection route|`/content-manager/collection-types/application::freeport-nft.freeport-nft`|
-|CMS_ROUTES_NFT_CID|NFT CID collection route|`/content-manager/collection-types/application::freeport-nft-cid.freeport-nft-cid`|
-|CMS_ROUTES_MAKE_OFFER|Make offer collection route|`/content-manager/collection-types/application::freeport-make-offer.freeport-make-offer`|
-|CMS_ROUTES_TAKE_OFFER|Take offer collection route|`/content-manager/collection-types/application::freeport-take-offer.freeport-take-offer`|
-|CMS_ROUTES_AUCTION|Auction collection route|`/content-manager/collection-types/application::freeport-auction.freeport-auction`|
-|CMS_ROUTES_AUCTION_BID|Auction bid collection route|`/content-manager/collection-types/application::freeport-auction-bid.freeport-auction-bid`|
-|CMS_ROUTES_WALLET|Wallet collection route|`/content-manager/collection-types/application::freeport-wallet.freeport-wallet`|
-|CMS_ROUTES_EXCHANGE_RATE|Exchange rate route|`/content-manager/collection-types/application::freeport-exchange.freeport-exchange`|
+|CMS_ROUTES_NFT|NFT collection route|`/content-manager/collection-types/application::creator-nft.creator-nft`|
+|CMS_ROUTES_NFT_CID|NFT CID collection route|`/content-manager/collection-types/application::creator-nft-cid.creator-nft-cid`|
+|CMS_ROUTES_MAKE_OFFER|Make offer collection route|`/content-manager/collection-types/application::creator-make-offer.creator-make-offer`|
+|CMS_ROUTES_TAKE_OFFER|Take offer collection route|`/content-manager/collection-types/application::creator-take-offer.creator-take-offer`|
+|CMS_ROUTES_AUCTION|Auction collection route|`/content-manager/collection-types/application::creator-auction.creator-auction`|
+|CMS_ROUTES_AUCTION_BID|Auction bid collection route|`/content-manager/collection-types/application::creator-auction-bid.creator-auction-bid`|
+|CMS_ROUTES_WALLET|Wallet collection route|`/content-manager/collection-types/application::creator-wallet.creator-wallet`|
+|CMS_ROUTES_EXCHANGE_RATE|Exchange rate route|`/content-manager/single-types/application::creator-exchange.creator-exchange`|
 
 ## Requirements for development
 
