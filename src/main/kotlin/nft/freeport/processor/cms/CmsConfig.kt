@@ -12,5 +12,6 @@ interface CmsConfig {
 
     interface Routes {
         fun nft(): String
+        fun exchangeRate(): String
     }
 }
