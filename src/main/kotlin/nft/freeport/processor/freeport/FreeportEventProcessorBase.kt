@@ -1,26 +1,26 @@
 package nft.freeport.processor.freeport
 
 import nft.freeport.FREEPORT_PROCESSOR_ID
-import nft.freeport.SMART_CONTRACT_EVENTS_FREEPORT_TOPIC_NAME
+import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.processor.EventProcessor
-import org.eclipse.microprofile.reactive.messaging.Incoming
+import javax.enterprise.context.ApplicationScoped
+import kotlin.reflect.KClass
 
+@ApplicationScoped
 class FreeportEventProcessorBase(
+    override val stateProvider: ProcessorsPositionManager,
     private val processorsMap: Map<String, FreeportEventProcessor<SmartContractEvent>>,
-
-    stateProvider: ProcessorsPositionManager,
-) : EventProcessor(stateProvider) {
+) : EventProcessor {
     override val id = FREEPORT_PROCESSOR_ID
-
-    @Incoming(SMART_CONTRACT_EVENTS_FREEPORT_TOPIC_NAME)
-    override fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) =
-        super.processAndCommit(eventData)
+    override val supportedEvents: Set<KClass<out SmartContractEvent>> =
+        SmartContractEvent::class.sealedSubclasses
+            .filter { it != BlockProcessedEvent::class }
+            .toSet()
 
     override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
         processorsMap[eventData.event::class.java.simpleName]?.process(eventData)
     }
-
 }

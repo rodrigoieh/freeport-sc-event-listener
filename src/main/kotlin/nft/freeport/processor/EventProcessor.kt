@@ -14,14 +14,14 @@ import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 import kotlin.reflect.KClass
 
-@ApplicationScoped
-abstract class EventProcessor(private val stateProvider: ProcessorsPositionManager) {
-    abstract val id: String
-    internal val supportedEvents: Set<KClass<out SmartContractEvent>> =
-        SmartContractEvent::class.sealedSubclasses.filter { it != BlockProcessedEvent::class }
-            .toSet()
+interface EventProcessor {
+    val id: String
 
-    abstract fun process(eventData: SmartContractEventData<out SmartContractEvent>)
+    val supportedEvents: Set<KClass<out SmartContractEvent>>
+
+    val stateProvider: ProcessorsPositionManager
+
+    fun process(eventData: SmartContractEventData<out SmartContractEvent>)
 
     @Transactional
     fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) {

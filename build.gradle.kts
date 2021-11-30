@@ -23,8 +23,8 @@ dependencies {
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-smallrye-health")
 
-    // Messaging
-    implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
+    // Schedule
+    implementation("io.quarkus:quarkus-scheduler")
 
     // DB
     implementation("io.quarkus:quarkus-jdbc-postgresql")

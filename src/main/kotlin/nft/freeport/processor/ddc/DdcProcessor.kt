@@ -4,25 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import network.cere.ddc.client.producer.Piece
 import network.cere.ddc.client.producer.Producer
 import nft.freeport.DDC_PROCESSOR_ID
-import nft.freeport.SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME
 import nft.freeport.listener.event.*
 import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.listener.position.entity.ProcessorLastScannedEventPositionEntity
 import nft.freeport.processor.EventProcessor
-import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.komputing.khex.extensions.toHexString
 import org.slf4j.LoggerFactory
 import java.security.MessageDigest
 import java.time.Instant
+import javax.enterprise.context.ApplicationScoped
 import kotlin.reflect.KClass
 
+@ApplicationScoped
 class DdcProcessor(
+    override val stateProvider: ProcessorsPositionManager,
     private val objectMapper: ObjectMapper,
     private val ddcProducer: Producer,
 
     ddcConfig: DdcConfig,
-    stateProvider: ProcessorsPositionManager,
-) : EventProcessor(stateProvider) {
+) : EventProcessor {
     private val log = LoggerFactory.getLogger(javaClass)
     private val pubKey = ddcConfig.pubKeyHex()
 
@@ -38,10 +38,6 @@ class DdcProcessor(
         SettleAuction::class,
         AttachToNFT::class,
     )
-
-    @Incoming(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
-    override fun processAndCommit(eventData: SmartContractEventData<out SmartContractEvent>) =
-        super.processAndCommit(eventData)
 
     override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
         when (eventData.event) {
@@ -78,9 +74,7 @@ class DdcProcessor(
      */
     private fun deriveIdFromEvent(event: SmartContractEvent): String {
         val digest = MessageDigest.getInstance("SHA3-256")
-
         digest.update(objectMapper.writeValueAsBytes(event))
-
         return digest.digest().toHexString()
     }
 }

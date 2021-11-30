@@ -25,7 +25,7 @@ internal class DdcProcessorTest {
     private val ddcProducer = mock<Producer>()
     private val stateProvider = mock<ProcessorsPositionManager>()
 
-    private val testSubject = DdcProcessor(objectMapper, ddcProducer, ddcConfig, stateProvider)
+    private val testSubject = DdcProcessor(stateProvider, objectMapper, ddcProducer, ddcConfig)
 
     private val payloads = listOf(
         TransferSingle("0x0", "0x1", "0x2", "0x3", BigInteger.TEN),

@@ -1,7 +1,10 @@
 package nft.freeport.listener
 
-import io.smallrye.mutiny.Multi
-import nft.freeport.*
+import io.quarkus.scheduler.Scheduled
+import nft.freeport.CMS_PROCESSOR_ID
+import nft.freeport.DDC_PROCESSOR_ID
+import nft.freeport.FREEPORT_PROCESSOR_ID
+import nft.freeport.NO_EVENTS_BLOCK_OFFSET
 import nft.freeport.covalent.CovalentClient
 import nft.freeport.covalent.config.NetworkConfig
 import nft.freeport.covalent.dto.ContractEvent
@@ -12,19 +15,16 @@ import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.listener.event.SmartContractEventConverter
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.position.ProcessorsPositionManager
-import nft.freeport.listener.position.dto.ProcessedEventPosition
 import nft.freeport.listener.position.dto.ProcessingBlockState.DONE
-import org.eclipse.microprofile.reactive.messaging.Outgoing
+import nft.freeport.processor.EventProcessor
+import nft.freeport.processor.cms.CmsEventProcessorBase
+import nft.freeport.processor.ddc.DdcProcessor
+import nft.freeport.processor.freeport.FreeportEventProcessorBase
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
-import javax.transaction.Transactional
-import kotlin.streams.asStream
 
-/**
- * It reads event from covalent and broadcast them to in memory channels.
- */
 @ApplicationScoped
 class SmartContractEventsReader(
     private val networkConfig: NetworkConfig,
@@ -32,11 +32,16 @@ class SmartContractEventsReader(
     private val converter: SmartContractEventConverter,
     private val stateProvider: ProcessorsPositionManager,
 
+    private val freeportEventProcessor: FreeportEventProcessorBase,
+    private val ddcEventProcessor: DdcProcessor,
+    private val cmsEventProcessor: CmsEventProcessorBase,
+
     contractsConfig: ContractsConfig,
 ) {
     private companion object {
         /**
-         * For decoded log events and other endpoints where you are asked to specify a block range, you are limited to a million block range after which point you need to make a follow-up call using the pagination info.
+         * For decoded log events and other endpoints where you are asked to specify a block range, you are limited to
+         * a million block range after which point you need to make a follow-up call using the pagination info.
          */
         private const val COVALENT_BLOCKS_LIMIT = 1_000_000
         private const val COVALENT_EVENTS_LIMIT = 100
@@ -47,109 +52,73 @@ class SmartContractEventsReader(
 
     private val contracts = contractsConfig.contracts().values.map { it.address() }
 
-    @Outgoing(SMART_CONTRACT_EVENTS_FREEPORT_TOPIC_NAME)
-    fun freeportChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
-        stateProvider.getCurrentPosition(FREEPORT_PROCESSOR_ID, it)
+    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    fun freeportProcessor() {
+        readAndProcess(freeportEventProcessor, FREEPORT_PROCESSOR_ID)
     }
 
-    @Outgoing(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
-    fun ddcChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
-        stateProvider.getCurrentPosition(DDC_PROCESSOR_ID, it)
+    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    fun ddcProcessor() {
+        readAndProcess(ddcEventProcessor, DDC_PROCESSOR_ID)
     }
 
-    @Outgoing(SMART_CONTRACT_EVENTS_CMS_TOPIC_NAME)
-    fun cmsChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
-        stateProvider.getCurrentPosition(CMS_PROCESSOR_ID, it)
+    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    fun cmsProcessor() {
+        readAndProcess(cmsEventProcessor, CMS_PROCESSOR_ID)
     }
 
-    /**
-     * Creates infinity multi which fetches events from covalent with [NetworkConfig.pollInterval]
-     *  and converts them to [SmartContractEventData] that contains all data related to smart contract event.
-     *
-     *  [currentPositionProvider] says which block should be used as start point.
-     */
-    fun createMultiFromCovalentEvents(currentPositionProvider: (contract: String) -> ProcessedEventPosition): Multi<SmartContractEventData<out SmartContractEvent>> =
-        Multi.createFrom()
-            .ticks().every(networkConfig.pollInterval())
-            .flatMap {
-                contracts
-                    .map { contract ->
-                        val nextEvents = readEvents(contract, currentPositionProvider(contract))
+    private fun readAndProcess(processor: EventProcessor, processorId: String) {
+        contracts.forEach { readAndProcess(it, processor, processorId) }
+    }
 
-                        nextEvents ?: Multi.createFrom().empty()
-                    }
-                    .fold(Multi.createFrom().empty()) { a, b -> Multi.createBy().concatenating().streams(a, b) }
-            }
+    private fun readAndProcess(contract: String, processor: EventProcessor, processorId: String) {
+        val position = stateProvider.getCurrentPosition(processorId, contract)
+        val latestBlockFromNetwork = getLatestBlockFromNetwork()
+        if (latestBlockFromNetwork == UNDEFINED_BLOCK ||
+            // all processors are handled this block, just skip
+            (position.block == latestBlockFromNetwork && position.currentState == DONE)
+        ) {
+            return
+        }
+        // take next block if the current one was processed to prevent extra data fetching
+        val fromBlock = if (position.currentState == DONE) position.block + 1 else position.block
+        if (latestBlockFromNetwork - fromBlock > COVALENT_BLOCKS_LIMIT) {
+            log.info(
+                "Event scanner for contract {} out of sync. Syncing events from block {} offset {} to {}",
+                contract,
+                fromBlock,
+                position.offset,
+                latestBlockFromNetwork,
+            )
+            readAndProcessBatch(contract, processor, fromBlock, latestBlockFromNetwork)
+        } else {
+            readAndProcess(contract, processor, fromBlock, latestBlockFromNetwork)
+        }
+    }
 
-    /**
-     * Reads events for contract after [position]
-     */
-    fun readEvents(
+    private fun readAndProcessBatch(
         contract: String,
-        position: ProcessedEventPosition
-    ): Multi<SmartContractEventData<out SmartContractEvent>>? {
-        return runCatching {
-            val latestBlockFromNetwork = getLatestBlockFromNetwork()
-
-            when {
-                latestBlockFromNetwork == UNDEFINED_BLOCK -> return null
-                // all processors are handled this block, just skip
-                position.block == latestBlockFromNetwork && position.currentState == DONE -> return null
-            }
-
-            // take next block if the current one was processed to prevent extra data fetching
-            val fromBlock = if (position.currentState == DONE) position.block + 1 else position.block
-
-            if (latestBlockFromNetwork - fromBlock > COVALENT_BLOCKS_LIMIT) {
-                log.info(
-                    "Event scanner for contract {} out of sync. Syncing events from block {} offset {} to {}",
-                    contract,
-                    fromBlock,
-                    position.offset,
-                    latestBlockFromNetwork,
-                )
-                readBatch(contract, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
-            } else {
-                read(contract, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
-            }
-        }.onFailure {
-            log.error("Error on consuming events for contract {}", contract, it)
-        }.getOrNull()
-    }
-
-    private fun readBatch(
-        contract: String,
+        processor: EventProcessor,
         fromBlock: Long,
         toBlock: Long
-    ): Multi<SmartContractEventData<out SmartContractEvent>> {
-        var result: Multi<SmartContractEventData<out SmartContractEvent>> = Multi.createFrom().empty()
-
+    ) {
         var from = fromBlock
         var to = fromBlock + COVALENT_BLOCKS_LIMIT
-
         while (to <= toBlock) {
-            val multi = read(contract, fromBlock = from, toBlock = to)
-
-            if (multi != null) {
-                result = Multi.createBy().concatenating().streams(result, multi)
-            } else {
-                log.error("can't read data for contract $contract, from: $from to: $to. Will retry.")
-                continue
+            if (!readAndProcess(contract, processor, fromBlock = from, toBlock = to)) {
+                return
             }
-
             from = to
             to += COVALENT_BLOCKS_LIMIT
         }
-        log.info("Event scanner for contract {} synced with network", contract)
-
-        return result
     }
 
-    private fun read(
+    private fun readAndProcess(
         contract: String,
+        processor: EventProcessor,
         fromBlock: Long,
         toBlock: Long
-    ): Multi<SmartContractEventData<out SmartContractEvent>>? {
+    ): Boolean {
         val rs: CovalentResponse<ContractEvent> = covalentClient.getContractEvents(
             chainId = networkConfig.chainId(),
             contractAddress = contract,
@@ -167,7 +136,7 @@ class SmartContractEventsReader(
                 rs.errorMessage,
             )
             log.warn("Skipping consuming until next successful request")
-            return null
+            return false
         }
 
         val events: List<ContractEvent> = requireNotNull(rs.data).items
@@ -176,52 +145,44 @@ class SmartContractEventsReader(
         // we need to decrease block limit
         if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
             val half = (toBlock - fromBlock) / 2
-
-            return Multi.createBy().concatenating()
-                .streams(
-                    read(contract, fromBlock = fromBlock, toBlock = fromBlock + half),
-                    read(contract, fromBlock = fromBlock + half, toBlock = toBlock)
-                )
+            return readAndProcess(contract, processor, fromBlock, fromBlock + half)
+                    && readAndProcess(contract, processor, fromBlock + half, toBlock)
         }
 
-        return Multi.createFrom().items(
-            events
-                .groupBy { it.blockHeight }
-                .asSequence()
-                .flatMap { (block, events) ->
-                    val lastEvent = events.last()
+        events
+            .groupBy { it.blockHeight }
+            .asSequence()
+            .flatMap { (block, events) ->
+                val lastEvent = events.last()
 
-                    events.asSequence().mapNotNull { convertEvent(contract, event = it) } + SmartContractEventData(
+                events.asSequence().mapNotNull { convertEvent(contract, event = it) } + SmartContractEventData(
+                    contract = contract,
+                    event = BlockProcessedEvent,
+                    rawEvent = ContractEvent(
+                        blockSignedAt = lastEvent.blockSignedAt,
+                        blockHeight = block, txHash = lastEvent.txHash, logOffset = lastEvent.logOffset,
+                        rawLogTopics = emptyList(), rawLogData = null, decoded = null,
+                    )
+                )
+            }
+            .ifEmpty {
+                sequenceOf(
+                    SmartContractEventData(
                         contract = contract,
                         event = BlockProcessedEvent,
                         rawEvent = ContractEvent(
-                            blockSignedAt = lastEvent.blockSignedAt,
-                            blockHeight = block, txHash = lastEvent.txHash, logOffset = lastEvent.logOffset,
+                            blockHeight = toBlock, logOffset = NO_EVENTS_BLOCK_OFFSET,
+                            txHash = "0x0", blockSignedAt = Instant.MIN.toString(),
                             rawLogTopics = emptyList(), rawLogData = null, decoded = null,
                         )
                     )
-                }
-                .ifEmpty {
-                    sequenceOf(
-                        SmartContractEventData(
-                            contract = contract,
-                            event = BlockProcessedEvent,
-                            rawEvent = ContractEvent(
-                                blockHeight = toBlock, logOffset = NO_EVENTS_BLOCK_OFFSET,
-                                // todo to think what to do with other fields, maybe covalent returns them(time hash)? anyway it's not important thing,
-                                //  because only block, offset and contract fields are used now
-                                txHash = "0x0", blockSignedAt = Instant.MIN.toString(),
-                                rawLogTopics = emptyList(), rawLogData = null, decoded = null,
-                            )
-                        )
-                    )
-                }
-                .asStream()
-        )
+                )
+            }
+            .forEach(processor::processAndCommit)
+        return true
     }
 
-    @Transactional
-    internal fun convertEvent(
+    private fun convertEvent(
         contract: String,
         event: ContractEvent
     ): SmartContractEventData<out SmartContractEvent>? {
