@@ -1,4 +1,4 @@
-package nft.freeport.listener.processorsPosition.dto
+package nft.freeport.listener.position.dto
 
 /**
  * Last processed data position.

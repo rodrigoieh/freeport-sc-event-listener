@@ -1,4 +1,4 @@
-package nft.freeport.listener.processorsPosition.entity
+package nft.freeport.listener.position.entity
 
 import java.io.Serializable
 import javax.persistence.Column

@@ -6,7 +6,7 @@ import network.cere.ddc.client.producer.Producer
 import nft.freeport.DDC_PROCESSOR_ID
 import nft.freeport.SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME
 import nft.freeport.listener.event.*
-import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
+import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.processor.EventProcessor
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.slf4j.LoggerFactory

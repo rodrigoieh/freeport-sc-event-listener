@@ -4,12 +4,12 @@ import nft.freeport.NO_EVENTS_BLOCK_OFFSET
 import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.listener.event.SmartContractEventData
-import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
-import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
-import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState
-import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.DONE
-import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.PARTIALLY_DONE
-import nft.freeport.listener.processorsPosition.entity.ProcessorLastScannedEventPositionEntity
+import nft.freeport.listener.position.ProcessorsPositionManager
+import nft.freeport.listener.position.dto.ProcessedEventPosition
+import nft.freeport.listener.position.dto.ProcessingBlockState
+import nft.freeport.listener.position.dto.ProcessingBlockState.DONE
+import nft.freeport.listener.position.dto.ProcessingBlockState.PARTIALLY_DONE
+import nft.freeport.listener.position.entity.ProcessorLastScannedEventPositionEntity
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 import kotlin.reflect.KClass
@@ -30,8 +30,6 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
             return
         }
 
-        if (!supportedEvents.contains(eventData.event::class)) return
-
         val currentPosition: ProcessedEventPosition = stateProvider.getCurrentPosition(id, eventData.contract)
         when {
             // handle when current block is before a new one
@@ -46,7 +44,9 @@ abstract class EventProcessor(private val stateProvider: ProcessorsPositionManag
             else -> return
         }
 
-        process(eventData)
+        if (supportedEvents.contains(eventData.event::class)) {
+            process(eventData)
+        }
         updatePosition(eventData = eventData, newState = PARTIALLY_DONE)
     }
 

@@ -1,8 +1,8 @@
-package nft.freeport.listener.processorsPosition.entity
+package nft.freeport.listener.position.entity
 
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheCompanionBase
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntityBase
-import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState
+import nft.freeport.listener.position.dto.ProcessingBlockState
 import javax.persistence.*
 
 @Entity

@@ -1,11 +1,7 @@
 package nft.freeport.listener
 
 import io.smallrye.mutiny.Multi
-import io.smallrye.reactive.messaging.annotations.Broadcast
-import nft.freeport.DDC_PROCESSOR_ID
-import nft.freeport.NO_EVENTS_BLOCK_OFFSET
-import nft.freeport.SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME
-import nft.freeport.SMART_CONTRACT_EVENTS_TOPIC_NAME
+import nft.freeport.*
 import nft.freeport.covalent.CovalentClient
 import nft.freeport.covalent.config.NetworkConfig
 import nft.freeport.covalent.dto.ContractEvent
@@ -15,10 +11,9 @@ import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
 import nft.freeport.listener.event.SmartContractEventConverter
 import nft.freeport.listener.event.SmartContractEventData
-import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
-import nft.freeport.listener.processorsPosition.dto.ProcessedEventPosition
-import nft.freeport.listener.processorsPosition.dto.ProcessingBlockState.DONE
-import nft.freeport.processor.ddc.DdcProcessor
+import nft.freeport.listener.position.ProcessorsPositionManager
+import nft.freeport.listener.position.dto.ProcessedEventPosition
+import nft.freeport.listener.position.dto.ProcessingBlockState.DONE
 import org.eclipse.microprofile.reactive.messaging.Outgoing
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.slf4j.LoggerFactory
@@ -52,21 +47,19 @@ class SmartContractEventsReader(
 
     private val contracts = contractsConfig.contracts().values.map { it.address() }
 
-    /**
-     * Read events from the blockchain and stream them to [DdcProcessor]
-     */
+    @Outgoing(SMART_CONTRACT_EVENTS_FREEPORT_TOPIC_NAME)
+    fun freeportChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
+        stateProvider.getCurrentPosition(FREEPORT_PROCESSOR_ID, it)
+    }
+
     @Outgoing(SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME)
-    fun ddcChanel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
+    fun ddcChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
         stateProvider.getCurrentPosition(DDC_PROCESSOR_ID, it)
     }
 
-    /**
-     * Read events from the blockchain and broadcast them to all processors except ddc.
-     */
-    @Broadcast
-    @Outgoing(SMART_CONTRACT_EVENTS_TOPIC_NAME)
-    fun commonChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
-        stateProvider.getCommonChannelMostOutdatedPosition(it)
+    @Outgoing(SMART_CONTRACT_EVENTS_CMS_TOPIC_NAME)
+    fun cmsChannel(): Multi<SmartContractEventData<out SmartContractEvent>> = createMultiFromCovalentEvents {
+        stateProvider.getCurrentPosition(CMS_PROCESSOR_ID, it)
     }
 
     /**

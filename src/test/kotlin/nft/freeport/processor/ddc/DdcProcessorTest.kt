@@ -3,7 +3,7 @@ package nft.freeport.processor.ddc
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import network.cere.ddc.client.producer.Producer
 import nft.freeport.covalent.dto.ContractEvent
-import nft.freeport.listener.processorsPosition.ProcessorsPositionManager
+import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.listener.event.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
