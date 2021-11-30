@@ -13,12 +13,12 @@ class DdcProvider {
     @IfBuildProperty(name = "ddc.enabled", stringValue = "true")
     fun ddcProducer(ddcConfig: DdcConfig, vertx: Vertx): Producer {
         return DdcProducer(
-            ProducerConfig(
-                ddcConfig.pubKeyHex(),
-                ddcConfig.secKeyHex(),
-                ddcConfig.bootNodes()
+            config = ProducerConfig(
+                appPubKey = ddcConfig.pubKeyHex(),
+                appPrivKey = ddcConfig.secKeyHex(),
+                bootstrapNodes = ddcConfig.bootNodes()
             ),
-            vertx
+            vertx = vertx
         )
     }
 
