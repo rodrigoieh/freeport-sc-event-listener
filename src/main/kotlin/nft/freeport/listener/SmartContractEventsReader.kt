@@ -179,8 +179,8 @@ class SmartContractEventsReader(
 
             return Multi.createBy().concatenating()
                 .streams(
-                    read(contract, fromBlock = fromBlock, toBlock = half),
-                    read(contract, fromBlock = half, toBlock = toBlock)
+                    read(contract, fromBlock = fromBlock, toBlock = fromBlock + half),
+                    read(contract, fromBlock = fromBlock + half, toBlock = toBlock)
                 )
         }
 
