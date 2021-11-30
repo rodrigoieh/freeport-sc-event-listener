@@ -16,6 +16,9 @@ import nft.freeport.listener.event.SmartContractEventConverter
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.listener.position.dto.ProcessingBlockState.DONE
+import nft.freeport.listener.skip.SkipCms
+import nft.freeport.listener.skip.SkipDdc
+import nft.freeport.listener.skip.SkipFreeport
 import nft.freeport.processor.EventProcessor
 import nft.freeport.processor.cms.CmsEventProcessorBase
 import nft.freeport.processor.ddc.DdcProcessor
@@ -52,17 +55,29 @@ class SmartContractEventsReader(
 
     private val contracts = contractsConfig.contracts().values.map { it.address() }
 
-    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(
+        every = "{network.poll-interval}",
+        concurrentExecution = Scheduled.ConcurrentExecution.SKIP,
+        skipExecutionIf = SkipFreeport::class
+    )
     fun freeportProcessor() {
         readAndProcess(freeportEventProcessor, FREEPORT_PROCESSOR_ID)
     }
 
-    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(
+        every = "{network.poll-interval}",
+        concurrentExecution = Scheduled.ConcurrentExecution.SKIP,
+        skipExecutionIf = SkipDdc::class
+    )
     fun ddcProcessor() {
         readAndProcess(ddcEventProcessor, DDC_PROCESSOR_ID)
     }
 
-    @Scheduled(every = "{network.poll-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(
+        every = "{network.poll-interval}",
+        concurrentExecution = Scheduled.ConcurrentExecution.SKIP,
+        skipExecutionIf = SkipCms::class
+    )
     fun cmsProcessor() {
         readAndProcess(cmsEventProcessor, CMS_PROCESSOR_ID)
     }

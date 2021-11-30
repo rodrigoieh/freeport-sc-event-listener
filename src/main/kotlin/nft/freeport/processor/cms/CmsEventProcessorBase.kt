@@ -13,7 +13,6 @@ import kotlin.reflect.KClass
 @ApplicationScoped
 class CmsEventProcessorBase(
     override val stateProvider: ProcessorsPositionManager,
-    private val cmsConfig: CmsConfig,
     private val processorsMap: Map<String, CmsEventProcessor<SmartContractEvent>>,
 ) : EventProcessor {
     override val id = CMS_PROCESSOR_ID
@@ -23,8 +22,6 @@ class CmsEventProcessorBase(
     )
 
     override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
-        if (cmsConfig.enabled()) {
-            processorsMap[eventData.event::class.java.simpleName]?.process(eventData)
-        }
+        processorsMap[eventData.event::class.java.simpleName]?.process(eventData)
     }
 }
