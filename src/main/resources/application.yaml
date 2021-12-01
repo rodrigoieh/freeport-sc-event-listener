@@ -15,12 +15,14 @@ cms:
   routes:
     nft: 'creator-nfts'
     nft-cid: 'creator-nft-cids'
+    nft-royality: 'creator-nft-roaylty'
     make-offer: 'creator-make-offers'
     take-offer: 'creator-take-offers'
     auction: 'creator-auctions'
     auction-bid: 'creator-auction-bids'
     wallet: 'creator-wallet-nfts'
     exchange-rate: 'creator-exchange-rate'
+    joint-account: 'creator-joint-account'
 contracts:
   freeport:
     address: '0xd1EdBAC660307c5B6d22E678FB5e22668C70Ad96'
