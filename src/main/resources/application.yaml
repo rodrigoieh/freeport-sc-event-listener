@@ -21,9 +21,6 @@ cms:
     auction-bid: 'creator-auction-bids'
     wallet: 'creator-wallet-nfts'
     exchange-rate: 'creator-exchange-rate'
-strapi/mp-rest/url: '${cms.base-url}'
-strapi/mp-rest/connectTimeout: 5000
-strapi/mp-rest/readTimeout: 5000
 contracts:
   freeport:
     address: '0xd1EdBAC660307c5B6d22E678FB5e22668C70Ad96'
