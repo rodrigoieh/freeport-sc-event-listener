@@ -7,7 +7,7 @@ data class NftRoyalty(
     @field:JsonProperty("nft_id")
     val nftId: Long,
     @field:JsonProperty("sale_type")
-    val saleType: BigInteger,
+    val saleType: Int,
     val beneficiary: String,
     @field:JsonProperty("sale_cut")
     val saleCut: Int,
