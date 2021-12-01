@@ -1,55 +1,60 @@
 covalent/mp-rest/url: 'https://api.covalenthq.com'
+covalent/mp-rest/connectTimeout: 5000
+covalent/mp-rest/readTimeout: 30000
 ddc:
   enabled: false
-  boot-node: 'http://localhost:8888'
+  boot-nodes:
+    - 'http://localhost:8888'
   pub-key-hex: '0xcafebabe'
   sec-key-hex: '0xcafebabe'
+cms:
+  enabled: false
+  base-url: 'http://localhost:8888'
+  login: 'api-user'
+  password: 'api-password'
+  routes:
+    nft: 'creator-nfts'
+    nft-cid: 'creator-nft-cids'
+    make-offer: 'creator-make-offers'
+    take-offer: 'creator-take-offers'
+    auction: 'creator-auctions'
+    auction-bid: 'creator-auction-bids'
+    wallet: 'creator-wallet-nfts'
+    exchange-rate: 'creator-exchange-rate'
+strapi/mp-rest/url: '${cms.base-url}'
+strapi/mp-rest/connectTimeout: 5000
+strapi/mp-rest/readTimeout: 5000
 contracts:
   freeport:
-    address: '0x4F908981A3CFdd440f7a3d114b06b1695DA8373b'
-    first-block-number: 17508849
-    event-topics:
-      address: '${contracts.freeport.address}'
-      first-block-number: '${contracts.freeport.first-block-number}'
-      JointAccountShareCreated: '0x006fb9851f1fd2fbc9fa36680d17e1254999a38e5f3c76c3a1ecc126a464601b'
-      RoyaltiesConfigured: '0x3df2272e42784a2455bbbdcdf25ae0f67d41f801896514cc4cd255aa8ee75e4c'
-      MakeOffer: '0x040259e2f9c7930380b3a5c979ad8a30ecf8d344d3bcdb149e2c454ab85fcd8f'
-      TakeOffer: '0xe90359125940e7c9b26005d19d4d8a2a5335ea8bef094bcd61bb8f8091cad117'
+    address: '0xd1EdBAC660307c5B6d22E678FB5e22668C70Ad96'
+    first-block-number: 20997893
   fiat-gateway:
-    address: '0xe4708fcCEA49b9305f48901bc2195664dC198097'
-    first-block-number: 18593691
-    event-topics:
-      address: '${contracts.fiat-gateway.address}'
-      first-block-number: '${contracts.fiat-gateway.first-block-number}'
-      SetExchangeRate: '0x1d5de90e7c5b244ac5797698b15fe80a92524d933dafd79e001daf844555fb1c'
+    address: '0x1f8eC932B6ec39A0326b74E9648A158F88B24082'
+    first-block-number: 20998037
   auction:
-    address: '0x573fc9819FD436C9Dc74b10949b2404C99C54A33'
-    first-block-number: 20458313
-    event-topics:
-      address: '${contracts.auction.address}'
-      first-block-number: '${contracts.auction.first-block-number}'
-      StartAuction: '0x5135842dc9522996ca3d92189d0ded7e70ecbfc5545c115def0c7bdb9ee41f2b'
-      BidOnAuction: '0x39e9b26db60de3ca88f045fdd8954028f1bbd0c6e2ff124121cb5a03da370191'
-      SettleAuction: '0xfe2c1531a975fce0584787c5e2643df8c1fe92f870c9dbadb24e366e31e79f44'
+    address: '0xd7cd23C84F9109F57f13eF28319e8787628DD7ad'
+    first-block-number: 21074782
   nft-attachment:
-    address: '0x1282fdeC36aC4aaf025059D69077d4450703eeD0'
-    first-block-number: 21202116
-    event-topics:
-      address: '${contracts.nft-attachment.address}'
-      first-block-number: '${contracts.nft-attachment.first-block-number}'
-      AttachToNFT: '0xcb0dbc631188ff7e4c5831ec907b2d9ca2786dd0314af3e43a7269821a19e2b4'
+    address: '0x270693f873287a39172856Ad8cfbCd79b040b287'
+    first-block-number: 21202148
 network:
   chain-id: 80001
   covalent-api-key: 'ckey_103992e94cd94393beb35d1456d'
-  poll-interval: 'PT1S'
+  poll-interval: '1S'
 quarkus:
+  cache:
+    caffeine:
+      covalent:
+        maximum-size: 2000
+        expire-after-write: 1800S
   datasource:
     db-kind: 'postgresql'
+  flyway:
+    baseline-on-migrate: true
+    migrate-at-start: true
+    validate-on-migrate: true
+    out-of-order: false
   hibernate-orm:
-    database:
-      generation:
-        ~: 'drop-and-create'
-        create-schemas: true
     log:
       sql: true
   log:
@@ -70,8 +75,6 @@ quarkus:
     enabled: true
   quarkus:
     hibernate-orm:
-      database:
-        generation: 'none'
       log:
         sql: false
     log:
