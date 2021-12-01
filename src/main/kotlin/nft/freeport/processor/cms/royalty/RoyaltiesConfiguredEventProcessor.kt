@@ -1,4 +1,4 @@
-package nft.freeport.processor.cms.nft
+package nft.freeport.processor.cms.royalty
 
 import nft.freeport.listener.event.RoyaltiesConfigured
 import nft.freeport.listener.event.SmartContractEventData
@@ -25,7 +25,7 @@ class RoyaltiesConfiguredEventProcessor(
         strapiService.create(
             route = CmsConfig.Routes::nftRoyalty,
             payload = NftRoyalty(
-                nftId = nftId,
+                nftId = nft.getLong("id"),
                 beneficiary = primaryRoyaltyAccount,
                 saleCut = primaryRoyaltyCut,
                 minimumFee = primaryRoyaltyMinimum,

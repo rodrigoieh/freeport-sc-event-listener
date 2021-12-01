@@ -1,35 +1,34 @@
-package nft.freeport.processor.cms.nft
+package nft.freeport.processor.cms.price
 
+import nft.freeport.listener.event.MakeOffer
 import nft.freeport.listener.event.SmartContractEventData
-import nft.freeport.listener.event.TakeOffer
 import nft.freeport.processor.cms.CmsConfig
 import nft.freeport.processor.cms.CmsEventProcessor
 import nft.freeport.processor.cms.strapi.StrapiService
 import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
+import nft.freeport.processor.cms.price.MakeOffer as MakeOfferStrapiCreateRequest
 
 @ApplicationScoped
-class TakeOfferEventProcessor(
+class MakeOfferEventProcessor(
     private val strapiService: StrapiService,
-) : CmsEventProcessor<TakeOffer> {
+) : CmsEventProcessor<MakeOffer> {
     private val log = LoggerFactory.getLogger(javaClass)
-    override val supportedClass = TakeOffer::class.java
+    override val supportedClass = MakeOffer::class.java
 
-    override fun process(eventData: SmartContractEventData<out TakeOffer>) = with(eventData.event) {
+    override fun process(eventData: SmartContractEventData<out MakeOffer>) = with(eventData.event) {
         val nft = strapiService.findOne(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
         if (nft == null) {
-            log.warn("Received TakeOffer event for non-existing NFT {}. Skip.", nftId)
+            log.warn("Received MakeOffer event for non-existing NFT {}. Skip.", nftId)
             return@with
         }
 
         strapiService.create(
-            route = CmsConfig.Routes::takeOffer,
-            payload = TakeOfferStrapiModel(
-                nftId = nftId.toLong(),
+            route = CmsConfig.Routes::makeOffer,
+            payload = MakeOfferStrapiCreateRequest(
+                nftId = nft.getLong("id"),
                 seller = seller,
-                buyer = buyer,
-                price = price,
-                amount = amount
+                price = price
             )
         )
     }

@@ -1,11 +1,11 @@
-package nft.freeport.processor.cms.nft
+package nft.freeport.processor.cms.royalty
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigInteger
 
 data class NftRoyalty(
     @field:JsonProperty("nft_id")
-    val nftId: String,
+    val nftId: Long,
     @field:JsonProperty("sale_type")
     val saleType: BigInteger,
     val beneficiary: String,

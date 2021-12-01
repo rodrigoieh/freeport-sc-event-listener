@@ -16,9 +16,7 @@ class JoinAccountEventProcessor(
     override fun process(eventData: SmartContractEventData<out JointAccountShareCreated>) = with(eventData.event) {
         strapiService.create(
             route = CmsConfig.Routes::jointAccount,
-            payload = JointAccountStrapiModel(
-                owner = owner, account = account
-            )
+            payload = JointAccount(owner = owner, account = account)
         )
     }
 }
