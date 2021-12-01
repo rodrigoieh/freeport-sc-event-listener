@@ -52,6 +52,13 @@ class StrapiService(config: CmsConfig, vertx: Vertx) {
             .await()
     }
 
+    fun update(route: CmsConfig.Routes.() -> String, payload: Any) {
+        client.putAbs("$baseUrl/${route(routes)}")
+            .bearerTokenAuthentication(jwt())
+            .sendJson(payload)
+            .await()
+    }
+
     private fun jwt(): String {
         return client.postAbs("$baseUrl/admin/login")
             .sendJson(authRequest)
