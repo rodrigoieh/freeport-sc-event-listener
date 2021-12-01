@@ -16,6 +16,7 @@ class CmsEventProcessorBase(
     override val supportedEvents: Set<KClass<out SmartContractEvent>> = setOf(
         TransferSingle::class,
         TransferBatch::class,
+        AttachToNFT::class,
         SetExchangeRate::class
     )
 
