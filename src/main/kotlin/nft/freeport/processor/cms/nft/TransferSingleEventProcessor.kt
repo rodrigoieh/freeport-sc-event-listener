@@ -10,8 +10,10 @@ import nft.freeport.processor.cms.strapi.StrapiService
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class TransferSingleEventProcessor(private val strapiService: StrapiService) :
-    CmsEventProcessor<TransferSingle> {
+class TransferSingleEventProcessor(
+    private val strapiService: StrapiService,
+    private val nftEventProcessor: NftEventProcessor
+) : CmsEventProcessor<TransferSingle> {
     override val supportedClass = TransferSingle::class.java
 
     override fun process(eventData: SmartContractEventData<out TransferSingle>) = with(eventData.event) {
@@ -19,6 +21,9 @@ class TransferSingleEventProcessor(private val strapiService: StrapiService) :
             if (nftId != CURRENCY_TOKEN_ID) {
                 strapiService.create(CmsConfig.Routes::nft, Nft(nftId, to, amount))
             }
+        } else {
+            nftEventProcessor.updateQuantity(from, nftId, -amount)
         }
+        nftEventProcessor.updateQuantity(to, nftId, amount)
     }
 }
