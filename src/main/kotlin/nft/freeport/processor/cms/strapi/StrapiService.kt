@@ -3,6 +3,7 @@ package nft.freeport.processor.cms.strapi
 import io.vertx.core.Future
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.client.HttpResponse
 import io.vertx.ext.web.client.WebClient
@@ -25,13 +26,17 @@ class StrapiService(config: CmsConfig, vertx: Vertx) {
             .await()
     }
 
-    fun findOne(route: CmsConfig.Routes.() -> String, filters: Map<String, Any>): JsonObject? {
+    fun findAll(route: CmsConfig.Routes.() -> String, filters: Map<String, Any>): JsonArray {
         val queryParams = filters.map { "${it.key}=${it.value}" }.joinToString("&")
         return client.getAbs("$baseUrl/${route(routes)}?$queryParams")
             .bearerTokenAuthentication(jwt())
             .send()
             .await()
             .bodyAsJsonArray()
+    }
+
+    fun findOne(route: CmsConfig.Routes.() -> String, filters: Map<String, Any>): JsonObject? {
+        return findAll(route, filters)
             .firstOrNull()
             ?.let { it as JsonObject }
     }

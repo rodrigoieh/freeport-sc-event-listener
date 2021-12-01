@@ -13,12 +13,10 @@ class CmsEventProcessorBase(
     private val processorsMap: Map<String, CmsEventProcessor<SmartContractEvent>>,
 ) : EventProcessor {
     override val id = CMS_PROCESSOR_ID
-    override val supportedEvents: Set<KClass<out SmartContractEvent>> = setOf(
-        TransferSingle::class,
-        TransferBatch::class,
-        AttachToNFT::class,
-        SetExchangeRate::class
-    )
+    override val supportedEvents: Set<KClass<out SmartContractEvent>> =
+        SmartContractEvent::class.sealedSubclasses
+            .filter { it != BlockProcessedEvent::class }
+            .toSet()
 
     override fun process(eventData: SmartContractEventData<out SmartContractEvent>) {
         processorsMap[eventData.event::class.java.simpleName]?.process(eventData)
