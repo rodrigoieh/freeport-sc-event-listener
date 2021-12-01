@@ -17,7 +17,7 @@ class TakeOfferEventProcessor(
     override val supportedClass = TakeOffer::class.java
 
     override fun process(eventData: SmartContractEventData<out TakeOffer>) = with(eventData.event) {
-        val nft = strapiService.findOne(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
+        val nft = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
         if (nft == null) {
             log.warn("Received TakeOffer event for non-existing NFT {}. Skip.", nftId)
             return@with
@@ -26,7 +26,7 @@ class TakeOfferEventProcessor(
         strapiService.create(
             route = CmsConfig.Routes::takeOffer,
             payload = TakeOfferStrapiCreateRequest(
-                nftId = nft.getLong("id"),
+                nftId = nft,
                 seller = seller,
                 buyer = buyer,
                 price = price,

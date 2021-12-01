@@ -15,7 +15,7 @@ cms:
   routes:
     nft: 'creator-nfts'
     nft-cid: 'creator-nft-cids'
-    nft-royalty: 'creator-nft-roaylty'
+    nft-royalty: 'creator-nft-royalties'
     make-offer: 'creator-make-offers'
     take-offer: 'creator-take-offers'
     auction: 'creator-auctions'
