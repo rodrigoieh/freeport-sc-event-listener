@@ -33,6 +33,7 @@ dependencies {
 
     // Clients
     implementation("com.github.cerebellum-network:ddc-client-kotlin:1.2.0.Final")
+    implementation("io.vertx:vertx-web-client")
     implementation("io.quarkus:quarkus-rest-client-jackson")
 
     // Hash
