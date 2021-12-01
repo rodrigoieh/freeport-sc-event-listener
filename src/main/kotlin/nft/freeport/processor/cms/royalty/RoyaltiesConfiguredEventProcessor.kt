@@ -22,15 +22,29 @@ class RoyaltiesConfiguredEventProcessor(
             return@with
         }
 
-        strapiService.create(
-            route = CmsConfig.Routes::nftRoyalty,
-            payload = NftRoyalty(
+        create(
+            NftRoyalty(
                 nftId = nftId,
+                saleType = 1,
                 beneficiary = primaryRoyaltyAccount,
                 saleCut = primaryRoyaltyCut,
                 minimumFee = primaryRoyaltyMinimum,
-                saleType = TODO()
+            ), NftRoyalty(
+                nftId = nftId,
+                saleType = 2,
+                beneficiary = secondaryRoyaltyAccount,
+                saleCut = secondaryRoyaltyCut,
+                minimumFee = secondaryRoyaltyMinimum,
             )
         )
+    }
+
+    private fun create(vararg royalties: NftRoyalty) {
+        for (royalty in royalties) {
+            strapiService.create(
+                route = CmsConfig.Routes::nftRoyalty,
+                payload = royalty
+            )
+        }
     }
 }
