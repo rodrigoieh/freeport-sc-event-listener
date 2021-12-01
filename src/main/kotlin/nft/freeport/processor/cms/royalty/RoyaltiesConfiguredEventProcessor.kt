@@ -16,16 +16,16 @@ class RoyaltiesConfiguredEventProcessor(
     override val supportedClass = RoyaltiesConfigured::class.java
 
     override fun process(eventData: SmartContractEventData<out RoyaltiesConfigured>) = with(eventData.event) {
-        val nft = strapiService.findOne(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
-        if (nft == null) {
-            log.warn("Received RoyaltiesConfigured event for non-existing NFT {}. Skip.", nftId)
+        val nftId = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
+        if (nftId == null) {
+            log.warn("Received RoyaltiesConfigured event for non-existing NFT {}. Skip.", this.nftId)
             return@with
         }
 
         strapiService.create(
             route = CmsConfig.Routes::nftRoyalty,
             payload = NftRoyalty(
-                nftId = nft.getLong("id"),
+                nftId = nftId,
                 beneficiary = primaryRoyaltyAccount,
                 saleCut = primaryRoyaltyCut,
                 minimumFee = primaryRoyaltyMinimum,

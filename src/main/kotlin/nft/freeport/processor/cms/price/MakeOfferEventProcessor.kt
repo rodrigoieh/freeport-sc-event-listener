@@ -17,16 +17,16 @@ class MakeOfferEventProcessor(
     override val supportedClass = MakeOffer::class.java
 
     override fun process(eventData: SmartContractEventData<out MakeOffer>) = with(eventData.event) {
-        val nft = strapiService.findOne(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
-        if (nft == null) {
-            log.warn("Received MakeOffer event for non-existing NFT {}. Skip.", nftId)
+        val nftId = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
+        if (nftId == null) {
+            log.warn("Received MakeOffer event for non-existing NFT {}. Skip.", this.nftId)
             return@with
         }
 
         strapiService.create(
             route = CmsConfig.Routes::makeOffer,
             payload = MakeOfferStrapiCreateRequest(
-                nftId = nft.getLong("id"),
+                nftId = nftId,
                 seller = seller,
                 price = price
             )
