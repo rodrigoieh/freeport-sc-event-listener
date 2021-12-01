@@ -2,8 +2,6 @@ package nft.freeport.processor.cms.strapi
 
 import nft.freeport.processor.cms.strapi.dto.AuthRequest
 import nft.freeport.processor.cms.strapi.dto.AuthResponse
-import nft.freeport.processor.cms.strapi.dto.StrapiRequest
-import nft.freeport.processor.cms.strapi.dto.StrapiResponse
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.*
@@ -17,35 +15,19 @@ interface StrapiClient {
     fun auth(rq: AuthRequest): AuthResponse
 
     @Path("/{entity}")
-    @GET
-    fun <T : Any> get(
-        @PathParam("entity") entity: String,
-        @MatrixParam("filters") filters: String,
-        @HeaderParam("Authorization") authorization: String
-    ): StrapiResponse<T>
-
-    @Path("/{entity}")
     @POST
     fun create(
         @PathParam("entity") entity: String,
-        payload: Any,
-        @HeaderParam("Authorization") authorization: String
-    ): Response
-
-    @Path("/{entity}")
-    @PUT
-    fun updateSingle(
-        @PathParam("entity") entity: String,
-        payload: Any,
+        rq: Any,
         @HeaderParam("Authorization") authorization: String
     ): Response
 
     @Path("/{entity}/{id}")
     @PUT
-    fun <T : Any> update(
+    fun update(
         @PathParam("entity") entity: String,
         @PathParam("id") id: Long,
-        payload: StrapiRequest<T>,
+        rq: Any,
         @HeaderParam("Authorization") authorization: String
     ): Response
 }

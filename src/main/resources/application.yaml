@@ -13,14 +13,14 @@ cms:
   login: 'api-user'
   password: 'api-password'
   routes:
-    nft: '/content-manager/collection-types/application::creator-nft.creator-nft'
-    nft-cid: '/content-manager/collections/application::creator-nft-cid.creator-nft-cid'
-    make-offer: '/content-manager/collections/application::creator-make-offer.creator-make-offer'
-    take-offer: '/content-manager/collections/application::creator-take-offer.creator-take-offer'
-    auction: '/content-manager/collection-types/application::creator-auction.creator-auction'
-    auction-bid: '/content-manager/collection-types/application::creator-auction-bid.creator-auction-bid'
-    wallet: '/content-manager/collection-types/application::creator-wallet.creator-wallet'
-    exchange-rate: '/content-manager/single-types/application::creator-exchange.creator-exchange'
+    nft: 'creator-nfts'
+    nft-cid: 'creator-nft-cids'
+    make-offer: 'creator-make-offers'
+    take-offer: 'creator-take-offers'
+    auction: 'creator-auctions'
+    auction-bid: 'creator-auction-bids'
+    wallet: 'creator-wallet-nfts'
+    exchange-rate: 'creator-exchange-rate'
 strapi/mp-rest/url: '${cms.base-url}'
 strapi/mp-rest/connectTimeout: 5000
 strapi/mp-rest/readTimeout: 5000

@@ -34,14 +34,14 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |CMS_BASE_URL|CMS base URL|`http://localhost:8888`|
 |CMS_LOGIN|CMS login|`api-user`|
 |CMS_PASSWORD|CMS password|`api-password`|
-|CMS_ROUTES_NFT|NFT collection route|`/content-manager/collection-types/application::creator-nft.creator-nft`|
-|CMS_ROUTES_NFT_CID|NFT CID collection route|`/content-manager/collection-types/application::creator-nft-cid.creator-nft-cid`|
-|CMS_ROUTES_MAKE_OFFER|Make offer collection route|`/content-manager/collection-types/application::creator-make-offer.creator-make-offer`|
-|CMS_ROUTES_TAKE_OFFER|Take offer collection route|`/content-manager/collection-types/application::creator-take-offer.creator-take-offer`|
-|CMS_ROUTES_AUCTION|Auction collection route|`/content-manager/collection-types/application::creator-auction.creator-auction`|
-|CMS_ROUTES_AUCTION_BID|Auction bid collection route|`/content-manager/collection-types/application::creator-auction-bid.creator-auction-bid`|
-|CMS_ROUTES_WALLET|Wallet collection route|`/content-manager/collection-types/application::creator-wallet.creator-wallet`|
-|CMS_ROUTES_EXCHANGE_RATE|Exchange rate route|`/content-manager/single-types/application::creator-exchange.creator-exchange`|
+|CMS_ROUTES_NFT|NFT collection route|`creator-nfts`|
+|CMS_ROUTES_NFT_CID|NFT CID collection route|`creator-nft-cids`|
+|CMS_ROUTES_MAKE_OFFER|Make offer collection route|`creator-make-offers`|
+|CMS_ROUTES_TAKE_OFFER|Take offer collection route|`.creator-take-offers`|
+|CMS_ROUTES_AUCTION|Auction collection route|`creator-auctions`|
+|CMS_ROUTES_AUCTION_BID|Auction bid collection route|`creator-auction-bids`|
+|CMS_ROUTES_WALLET|Wallet collection route|`creator-wallet-nfts`|
+|CMS_ROUTES_EXCHANGE_RATE|Exchange rate route|`creator-exchange-rate`|
 
 ## Requirements for development
 
