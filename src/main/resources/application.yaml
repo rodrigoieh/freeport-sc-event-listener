@@ -15,15 +15,14 @@ cms:
   routes:
     nft: 'creator-nfts'
     nft-cid: 'creator-nft-cids'
+    nft-royalty: 'creator-nft-roaylties'
     make-offer: 'creator-make-offers'
     take-offer: 'creator-take-offers'
     auction: 'creator-auctions'
     auction-bid: 'creator-auction-bids'
     wallet: 'creator-wallet-nfts'
     exchange-rate: 'creator-exchange-rate'
-strapi/mp-rest/url: '${cms.base-url}'
-strapi/mp-rest/connectTimeout: 5000
-strapi/mp-rest/readTimeout: 5000
+    joint-account: 'creator-joint-accounts'
 contracts:
   freeport:
     address: '0xd1EdBAC660307c5B6d22E678FB5e22668C70Ad96'

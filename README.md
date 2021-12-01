@@ -36,6 +36,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 |CMS_PASSWORD|CMS password|`api-password`|
 |CMS_ROUTES_NFT|NFT collection route|`creator-nfts`|
 |CMS_ROUTES_NFT_CID|NFT CID collection route|`creator-nft-cids`|
+|CMS_ROUTES_NFT_ROYALTY|NFT royalties collection route|`creator-nft-royalties`|
 |CMS_ROUTES_MAKE_OFFER|Make offer collection route|`creator-make-offers`|
 |CMS_ROUTES_TAKE_OFFER|Take offer collection route|`.creator-take-offers`|
 |CMS_ROUTES_AUCTION|Auction collection route|`creator-auctions`|

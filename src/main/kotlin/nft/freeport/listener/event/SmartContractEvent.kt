@@ -87,7 +87,7 @@ data class SettleAuction(
     override val nftId: String,
     val price: BigInteger,
     val buyer: String,
-) : NftRelatedEvent ,SmartContractEvent()
+) : NftRelatedEvent, SmartContractEvent()
 
 data class AttachToNFT(
     val sender: String,
