@@ -1,28 +1,30 @@
 package nft.freeport.listener.position
 
-import io.quarkus.runtime.StartupEvent
 import nft.freeport.listener.config.ContractsConfig
 import nft.freeport.listener.position.dto.ProcessedEventPosition
 import nft.freeport.listener.position.dto.ProcessingBlockState.NEW
 import nft.freeport.listener.position.entity.ProcessorLastScannedEventPositionEntity
 import org.slf4j.LoggerFactory
+import javax.annotation.PostConstruct
 import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.event.Observes
 import javax.transaction.Transactional
+import kotlin.streams.asSequence
 
 @ApplicationScoped
 class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private val lastPositionByProcessorAndContract: MutableMap<PositionKey, ProcessedEventPosition> = mutableMapOf()
+    /** it's lateinit to fail on access before [initLastScannedPositions] is called **/
+    private lateinit var lastPositionByProcessorAndContract: MutableMap<PositionKey, ProcessedEventPosition>
 
     /** Fetch the latest state from the database **/
     @Transactional
-    private fun initState(@Observes event: StartupEvent) {
-        ProcessorLastScannedEventPositionEntity.findAll().stream().forEach {
-            lastPositionByProcessorAndContract[it.toKey()] = it.toValue()
-            log.info("The actual processor position: {}", it)
-        }
+    @PostConstruct
+    private fun initLastScannedPositions() {
+        lastPositionByProcessorAndContract = ProcessorLastScannedEventPositionEntity.findAll().stream().asSequence()
+            .onEach { positionEntity -> log.info("The actual processor position: {}", positionEntity) }
+            .map { it.toKey() to it.toValue() }
+            .toMap(mutableMapOf())
     }
 
 
