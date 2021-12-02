@@ -20,7 +20,7 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
     /** Fetch the latest state from the database **/
     @Transactional
     @PostConstruct
-    private fun initLastScannedPositions() {
+    internal fun initLastScannedPositions() {
         lastPositionByProcessorAndContract = ProcessorLastScannedEventPositionEntity.findAll().stream().asSequence()
             .onEach { positionEntity -> log.info("The actual processor position: {}", positionEntity) }
             .map { it.toKey() to it.toValue() }
@@ -37,11 +37,15 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
      * It can get data from database or fallback to configs.
      */
     fun getCurrentPosition(processorId: String, contract: String): ProcessedEventPosition {
-        return lastPositionByProcessorAndContract[PositionKey(processorId, contract)] ?: run {
+        val key = PositionKey(processorId, contract)
+        return lastPositionByProcessorAndContract[key] ?: run {
             val block: Long = (startBlockByContract[contract]
                 ?: error("can't find starting position for $processorId, contract $contract in both database and configs"))
 
-            ProcessedEventPosition(block, null, NEW)
+            val position = ProcessedEventPosition(block, null, NEW)
+            lastPositionByProcessorAndContract[key] = position
+
+            position
         }
     }
 
