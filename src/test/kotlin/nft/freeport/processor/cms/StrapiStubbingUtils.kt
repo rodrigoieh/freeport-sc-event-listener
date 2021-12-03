@@ -2,11 +2,35 @@ package nft.freeport.processor.cms
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.put
 import nft.freeport.buildJsonArrayString
 
-fun WireMockServer.stubGettingStrapiNftId(smartContractNftId: String, strapiNftId: Long = STRAPI_NFT_ID) {
+
+fun WireMockServer.stubGettingStrapiWallet(
+    wallet: String,
+    strapiNftId: Long = STRAPI_NFT_ID,
+    fieldsBuilderAction: (JsonObjectBuilder.() -> Unit)? = null
+) {
+    stubFor(
+        get(urlPathEqualTo("/creator-wallet-nfts"))
+            .withQueryParam("nft_id", equalTo(strapiNftId.toString()))
+            .withQueryParam("wallet", equalTo(wallet))
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json; charset=utf-8")
+                    .withBody(buildJsonArrayString { fieldsBuilderAction?.let { addJsonObject(it) } })
+            )
+    )
+}
+
+
+fun WireMockServer.stubGettingStrapiNft(
+    smartContractNftId: String,
+    strapiNftId: Long = STRAPI_NFT_ID,
+    additionalFieldsBuilderAction: JsonObjectBuilder.() -> Unit = { }
+) {
     stubFor(
         get(urlPathEqualTo("/creator-nfts"))
             .withQueryParam("nft_id", equalTo(smartContractNftId))
@@ -16,6 +40,7 @@ fun WireMockServer.stubGettingStrapiNftId(smartContractNftId: String, strapiNftI
                     .withBody(buildJsonArrayString {
                         addJsonObject {
                             put("id", strapiNftId)
+                            additionalFieldsBuilderAction()
                         }
                     })
             )

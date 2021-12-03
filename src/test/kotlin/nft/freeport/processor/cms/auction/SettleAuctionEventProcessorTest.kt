@@ -10,7 +10,7 @@ import nft.freeport.listener.event.SettleAuction
 import nft.freeport.processor.cms.InjectStrapiWiremock
 import nft.freeport.processor.cms.WiremockStrapi
 import nft.freeport.processor.cms.stubGettingStrapiAuctions
-import nft.freeport.processor.cms.stubGettingStrapiNftId
+import nft.freeport.processor.cms.stubGettingStrapiNft
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -30,12 +30,12 @@ class SettleAuctionEventProcessorTest {
     // todo why do we update buyer price and ends_at fields?
     fun `processor is called -- updating is_settle auction field request is sent to strapi`() {
         val event = SettleAuction(
-            nftId = "start_auction_nft_id",
+            nftId = "settle_auction_nft_id",
             seller = "0xSTART_AUCTION_SELLER",
             price = BigInteger.TEN,
             buyer = "0xSTART_AUCTION_BUYER",
         )
-        wireMockServer.stubGettingStrapiNftId(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
 
         val auctionId = 1L
         wireMockServer.stubGettingStrapiAuctions(seller = event.seller, auctionId = auctionId)

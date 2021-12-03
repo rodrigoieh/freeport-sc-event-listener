@@ -16,10 +16,13 @@ class TransferSingleEventProcessor(
 ) : CmsEventProcessor<TransferSingle> {
     override val supportedClass = TransferSingle::class.java
 
+    // todo
+    //  optimistic locking?
+    //  Is it safe just to update balance for two wallets? We can easily repeat one update twice in case of app failure
     override fun process(eventData: SmartContractEventData<out TransferSingle>) = with(eventData.event) {
         if (from == ZERO_ADDRESS) {
             if (nftId != CURRENCY_TOKEN_ID) {
-                strapiService.create(CmsConfig.Routes::nft, Nft(nftId, to, amount))
+                strapiService.create(CmsConfig.Routes::nft, Nft(nftId = nftId, minter = to, supply = amount))
             }
         } else {
             nftEventProcessor.updateQuantity(from, nftId, -amount)

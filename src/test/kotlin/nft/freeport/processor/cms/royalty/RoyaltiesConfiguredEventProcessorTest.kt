@@ -10,7 +10,7 @@ import nft.freeport.listener.event.RoyaltiesConfigured
 import nft.freeport.processor.cms.InjectStrapiWiremock
 import nft.freeport.processor.cms.STRAPI_NFT_ID
 import nft.freeport.processor.cms.WiremockStrapi
-import nft.freeport.processor.cms.stubGettingStrapiNftId
+import nft.freeport.processor.cms.stubGettingStrapiNft
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -39,7 +39,7 @@ class RoyaltiesConfiguredEventProcessorTest {
             secondaryRoyaltyMinimum = BigInteger.valueOf(199),
         )
 
-        wireMockServer.stubGettingStrapiNftId(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
 
         testSubject.process(event.wrapEvent())
 
