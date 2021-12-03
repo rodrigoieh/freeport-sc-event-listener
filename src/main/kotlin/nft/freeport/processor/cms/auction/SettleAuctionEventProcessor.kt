@@ -42,6 +42,7 @@ class SettleAuctionEventProcessor(private val strapiService: StrapiService) : Cm
             mapOf(
                 "buyer" to event.buyer,
                 "price" to event.price,
+                // todo is it the right logic?
                 "ends_at" to Instant.parse(rawEvent.blockSignedAt),
                 "is_settled" to true
             )

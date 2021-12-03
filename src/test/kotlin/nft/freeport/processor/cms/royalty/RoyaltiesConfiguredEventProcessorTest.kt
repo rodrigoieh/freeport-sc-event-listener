@@ -8,8 +8,9 @@ import kotlinx.serialization.json.put
 import nft.freeport.buildJsonString
 import nft.freeport.listener.event.RoyaltiesConfigured
 import nft.freeport.processor.cms.InjectStrapiWiremock
+import nft.freeport.processor.cms.STRAPI_NFT_ID
 import nft.freeport.processor.cms.WiremockStrapi
-import nft.freeport.processor.cms.stubForNftId
+import nft.freeport.processor.cms.stubGettingStrapiNftId
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -26,9 +27,9 @@ class RoyaltiesConfiguredEventProcessorTest {
     private lateinit var testSubject: RoyaltiesConfiguredEventProcessor
 
     @Test
-    fun `processor is called -- two right requests are sent to strapi, internal strapi id is used as nft_id`() {
+    fun `processor is called -- two creation requests are sent to strapi, nft_id from strapi is used`() {
         val event = RoyaltiesConfigured(
-            nftId = "123456789",
+            nftId = "royalties_configured_nft_id",
             primaryRoyaltyAccount = "0x001",
             primaryRoyaltyCut = 100,
             primaryRoyaltyMinimum = BigInteger.valueOf(99),
@@ -38,14 +39,14 @@ class RoyaltiesConfiguredEventProcessorTest {
             secondaryRoyaltyMinimum = BigInteger.valueOf(199),
         )
 
-        wireMockServer.stubForNftId(smartContractNftId = event.nftId, strapiNftId = 1001L)
+        wireMockServer.stubGettingStrapiNftId(smartContractNftId = event.nftId)
 
         testSubject.process(event.wrapEvent())
 
         wireMockServer.verify(
-            postRequestedFor(urlEqualTo("/creator-nft-roaylties")).withRequestBody(
+            postRequestedFor(urlPathEqualTo("/creator-nft-roaylties")).withRequestBody(
                 equalToJson(buildJsonString {
-                    put("nft_id", 1001L)
+                    put("nft_id", STRAPI_NFT_ID)
                     put("sale_type", 1)
                     put("beneficiary", event.primaryRoyaltyAccount)
                     put("sale_cut", event.primaryRoyaltyCut)
@@ -54,9 +55,9 @@ class RoyaltiesConfiguredEventProcessorTest {
             )
         )
         wireMockServer.verify(
-            postRequestedFor(urlEqualTo("/creator-nft-roaylties")).withRequestBody(
+            postRequestedFor(urlPathEqualTo("/creator-nft-roaylties")).withRequestBody(
                 equalToJson(buildJsonString {
-                    put("nft_id", 1001L)
+                    put("nft_id", STRAPI_NFT_ID)
                     put("sale_type", 2)
                     put("beneficiary", event.secondaryRoyaltyAccount)
                     put("sale_cut", event.secondaryRoyaltyCut)

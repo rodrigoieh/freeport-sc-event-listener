@@ -22,7 +22,7 @@ class WiremockStrapi : QuarkusTestResourceLifecycleManager {
         wireMockServer.start()
 
         wireMockServer.stubFor(
-            post(urlEqualTo("/admin/login"))
+            post(urlPathEqualTo("/admin/login"))
                 .withRequestBody(
                     // credentials from configs
                     equalToJson(buildJsonString {
