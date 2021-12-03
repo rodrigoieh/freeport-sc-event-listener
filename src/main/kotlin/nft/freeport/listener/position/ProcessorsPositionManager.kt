@@ -37,15 +37,11 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
      * It can get data from database or fallback to configs.
      */
     fun getCurrentPosition(processorId: String, contract: String): ProcessedEventPosition {
-        val key = PositionKey(processorId, contract)
-        return lastPositionByProcessorAndContract[key] ?: run {
+        return lastPositionByProcessorAndContract[PositionKey(processorId, contract)] ?: run {
             val block: Long = (startBlockByContract[contract]
                 ?: error("can't find starting position for $processorId, contract $contract in both database and configs"))
 
-            val position = ProcessedEventPosition(block, null, NEW)
-            lastPositionByProcessorAndContract[key] = position
-
-            position
+            ProcessedEventPosition(block, null, NEW)
         }
     }
 
