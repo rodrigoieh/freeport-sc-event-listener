@@ -5,6 +5,11 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager.TestInjector
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager.TestInjector.AnnotatedAndMatchesType
+import kotlinx.serialization.json.addJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
+import nft.freeport.buildJsonString
 
 class WiremockStrapi : QuarkusTestResourceLifecycleManager {
 
@@ -19,48 +24,47 @@ class WiremockStrapi : QuarkusTestResourceLifecycleManager {
         wireMockServer.stubFor(
             post(urlEqualTo("/admin/login"))
                 .withRequestBody(
-                    equalToJson(
-                        """
-                    {
-                        "email": "api-user",
-                        "password": "api-password"
-                    }
-                """.trimIndent()
-                    )
+                    // credentials from configs
+                    equalToJson(buildJsonString {
+                        put("email", "api-user")
+                        put("password", "api-password")
+                    })
                 )
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json; charset=utf-8")
                         .withBody(
-                            """
-                    {
-                        "data": {
-                            "token": "$token",
-                            "user": {
-                                "id": 1,
-                                "firstname": "admin",
-                                "lastname": "admin",
-                                "username": null,
-                                "email": "admin@admin.admin",
-                                "registrationToken": null,
-                                "isActive": true,
-                                "blocked": null,
-                                "preferedLanguage": null,
-                                "roles": [
-                                    {
-                                        "id": 1,
-                                        "name": "Super Admin",
-                                        "description": "Super Admins can access and manage all features and settings.",
-                                        "code": "strapi-super-admin"
+                            // real response
+                            buildJsonString {
+                                putJsonObject("data") {
+                                    put("token", token)
+                                    putJsonObject("user") {
+                                        put("id", 1)
+                                        put("firstname", "admin")
+                                        put("lastname", "admin")
+                                        put("username", null as String?)
+                                        put("email", "admin@admin.admin")
+                                        put("registrationToken", null as String?)
+                                        put("isActive", true)
+                                        put("blocked", null as String?)
+                                        put("preferedLanguage", null as String?)
+                                        putJsonArray("roles") {
+                                            addJsonObject {
+                                                put("id", 1)
+                                                put("name", "Super Admin")
+                                                put(
+                                                    "description",
+                                                    "Super Admins can access and manage all features and settings."
+                                                )
+                                                put("code", "strapi-super-admin")
+                                            }
+                                        }
                                     }
-                                ]
+                                }
                             }
-                        }
-                    }
-                """.trimIndent()
                         )
                 )
-        );
+        )
 
         return mutableMapOf("cms.base-url" to "http://localhost:${wireMockServer.port()}");
     }

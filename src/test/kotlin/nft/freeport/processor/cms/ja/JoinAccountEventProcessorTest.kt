@@ -4,6 +4,8 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import io.quarkus.test.common.QuarkusTestResource
 import io.quarkus.test.junit.QuarkusTest
+import kotlinx.serialization.json.put
+import nft.freeport.buildJsonString
 import nft.freeport.listener.event.JointAccountShareCreated
 import nft.freeport.processor.cms.InjectStrapiWiremock
 import nft.freeport.processor.cms.WiremockStrapi
@@ -27,16 +29,12 @@ class JoinAccountEventProcessorTest {
 
         testSubject.process(event.wrapEvent())
 
-        val expectedRequestBody = """
-                {
-                  "owner": "${event.owner}",
-                  "account": "${event.account}"
-                }
-            """.trimIndent()
-
         wireMockServer.verify(
             postRequestedFor(urlEqualTo("/creator-joint-accounts")).withRequestBody(
-                equalToJson(expectedRequestBody)
+                equalToJson(buildJsonString {
+                    put("owner", event.owner)
+                    put("account", event.account)
+                })
             )
         )
     }
