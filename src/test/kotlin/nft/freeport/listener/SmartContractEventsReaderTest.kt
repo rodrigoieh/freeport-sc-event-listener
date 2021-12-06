@@ -10,16 +10,14 @@ import nft.freeport.listener.config.ContractsConfig
 import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.position.ProcessorsPositionManager
 import nft.freeport.listener.position.dto.ProcessedEventPosition
-import nft.freeport.listener.position.dto.ProcessingBlockState
+import nft.freeport.listener.position.dto.ProcessingBlockState.NEW
 import nft.freeport.processor.freeport.FreeportEventProcessorBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.mockito.Mockito
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import javax.inject.Inject
 
 
@@ -65,7 +63,7 @@ class SmartContractEventsReaderTest {
         // given
         val startBlockNumber = 1000L
         whenever(positionManager.getCurrentPosition(eq(FREEPORT_PROCESSOR_ID), eq(TEST_CONTRACT_ADDRESS))).thenReturn(
-            ProcessedEventPosition(block = startBlockNumber, offset = null, currentState = ProcessingBlockState.NEW)
+            ProcessedEventPosition(block = startBlockNumber, offset = null, currentState = NEW)
         )
         wireMockServer.stubGettingLatestBlock(block = 1500)
 
@@ -112,5 +110,47 @@ class SmartContractEventsReaderTest {
                 this.rawEvent.blockHeight == startBlockNumber + it
             })
         }
+    }
+
+    @Test
+    fun `more than million blocks are requested -- batch processing with one million step should be used`() {
+        // given
+        val startBlockNumber = 1000L
+        val endBlockNumber = startBlockNumber + 2_500_000
+
+        whenever(positionManager.getCurrentPosition(eq(FREEPORT_PROCESSOR_ID), eq(TEST_CONTRACT_ADDRESS))).thenReturn(
+            ProcessedEventPosition(block = startBlockNumber, offset = null, currentState = NEW)
+        )
+        wireMockServer.stubGettingLatestBlock(block = endBlockNumber)
+
+        // mock first request, step is one million
+        wireMockServer.stubGettingEvents(
+            contract = TEST_CONTRACT_ADDRESS,
+            from = 1000L,
+            to = 1_001_000L,
+        ) {
+            generateOrderedEmptyEvents(
+                startEventNumber = 1, lastEventNumber = 50,
+                startBlockNumber = startBlockNumber, eventsPerBlock = 1,
+            )
+        }
+
+        // mock second request, additional step in one million
+        wireMockServer.stubGettingEvents(
+            contract = TEST_CONTRACT_ADDRESS,
+            from = 1_001_001L,
+            to = 2_001_000L,
+        ) {
+            generateOrderedEmptyEvents(
+                startEventNumber = 51, lastEventNumber = 100,
+                startBlockNumber = 1_001_001L, eventsPerBlock = 1,
+            )
+        }
+
+        // start flow
+        testSubject.freeportProcessor()
+
+        // check that real requests matches to the previous mocks
+        verify(freeportEventProcessor, times(100)).processAndCommit(any())
     }
 }
