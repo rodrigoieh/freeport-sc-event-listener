@@ -33,7 +33,7 @@ class SmartContractEventsReader(
     private val networkConfig: NetworkConfig,
     @RestClient private val covalentClient: CovalentClient,
     private val converter: SmartContractEventConverter,
-    private val stateProvider: ProcessorsPositionManager,
+    private val positionManager: ProcessorsPositionManager,
 
     private val freeportEventProcessor: FreeportEventProcessorBase,
     private val ddcEventProcessor: DdcProcessor,
@@ -87,7 +87,7 @@ class SmartContractEventsReader(
     }
 
     private fun readAndProcess(contract: String, processor: EventProcessor, processorId: String) {
-        val position = stateProvider.getCurrentPosition(processorId, contract)
+        val position = positionManager.getCurrentPosition(processorId, contract)
         val latestBlockFromNetwork = getLatestBlockFromNetwork()
         if (latestBlockFromNetwork == UNDEFINED_BLOCK ||
             // all processors are handled this block, just skip
@@ -160,8 +160,10 @@ class SmartContractEventsReader(
         // we need to decrease block limit
         if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
             val half = (toBlock - fromBlock) / 2
-            return readAndProcess(contract, processor, fromBlock, fromBlock + half)
-                    && readAndProcess(contract, processor, fromBlock + half, toBlock)
+            val middleBlock = fromBlock + half
+            return readAndProcess(contract, processor, fromBlock, middleBlock)
+                    // +1 to prevent requesting the same block twice
+                    && readAndProcess(contract, processor, middleBlock + 1, toBlock)
         }
 
         events

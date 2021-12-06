@@ -66,7 +66,7 @@ class WiremockStrapi : QuarkusTestResourceLifecycleManager {
                 )
         )
 
-        return mutableMapOf("cms.base-url" to "http://localhost:${wireMockServer.port()}");
+        return mutableMapOf("cms.base-url" to wireMockServer.baseUrl());
     }
 
     override fun stop() {

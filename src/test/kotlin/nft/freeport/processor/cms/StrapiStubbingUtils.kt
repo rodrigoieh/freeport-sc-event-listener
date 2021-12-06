@@ -7,8 +7,7 @@ import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.put
 import nft.freeport.buildJsonArrayString
 
-
-fun WireMockServer.stubGettingStrapiWallet(
+internal fun WireMockServer.stubGettingStrapiWallet(
     wallet: String,
     strapiNftId: Long = STRAPI_NFT_ID,
     fieldsBuilderAction: (JsonObjectBuilder.() -> Unit)? = null
@@ -26,7 +25,7 @@ fun WireMockServer.stubGettingStrapiWallet(
 }
 
 
-fun WireMockServer.stubGettingStrapiNft(
+internal fun WireMockServer.stubGettingStrapiNft(
     smartContractNftId: String,
     strapiNftId: Long = STRAPI_NFT_ID,
     additionalFieldsBuilderAction: JsonObjectBuilder.() -> Unit = { }
@@ -50,7 +49,11 @@ fun WireMockServer.stubGettingStrapiNft(
 /**
  * The newest one by ends_at should be used
  */
-fun WireMockServer.stubGettingStrapiAuctions(seller: String, auctionId: Long, strapiNftId: Long = STRAPI_NFT_ID) {
+internal fun WireMockServer.stubGettingStrapiAuctions(
+    seller: String,
+    auctionId: Long,
+    strapiNftId: Long = STRAPI_NFT_ID
+) {
     stubFor(
         get(urlPathEqualTo("/creator-auctions"))
             .withQueryParam("nft_id", equalTo(strapiNftId.toString()))

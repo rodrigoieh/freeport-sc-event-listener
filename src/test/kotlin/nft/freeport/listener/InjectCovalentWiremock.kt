@@ -1,0 +1,3 @@
+package nft.freeport.listener
+
+annotation class InjectCovalentWiremock

@@ -3,7 +3,6 @@ package nft.freeport.processor.freeport.nft
 import io.kotest.matchers.shouldBe
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.TransferBatch
 import nft.freeport.processor.freeport.contractEvent
@@ -14,7 +13,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 @QuarkusTest
-internal class TransferBatchEventProcessorTest : AbstractIntegrationTest() {
+internal class TransferBatchEventProcessorTest {
     @Inject
     internal lateinit var testSubject: TransferBatchEventProcessor
 

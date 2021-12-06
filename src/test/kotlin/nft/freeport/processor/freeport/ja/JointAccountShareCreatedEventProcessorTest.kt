@@ -1,7 +1,6 @@
 package nft.freeport.processor.freeport.ja
 
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.JointAccountShareCreated
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.processor.freeport.contractEvent
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @QuarkusTest
-internal class JointAccountShareCreatedEventProcessorTest : AbstractIntegrationTest() {
+internal class JointAccountShareCreatedEventProcessorTest {
     @Inject
     internal lateinit var testSubject: JointAccountShareCreatedEventProcessor
 
