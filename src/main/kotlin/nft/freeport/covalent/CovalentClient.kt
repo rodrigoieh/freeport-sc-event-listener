@@ -28,8 +28,8 @@ interface CovalentClient {
     fun getContractEvents(
         @PathParam("chainId") chainId: Int,
         @PathParam("address") contractAddress: String,
-        @QueryParam("starting-block") startingBlock: Long,
-        @QueryParam("ending-block") endingBlock: Long,
+        @QueryParam("starting-block") startingBlockInclusive: Long,
+        @QueryParam("ending-block") endingBlockExclusive: Long,
         @QueryParam("key") apiKey: String
     ): CovalentResponse<ContractEvent>
 }

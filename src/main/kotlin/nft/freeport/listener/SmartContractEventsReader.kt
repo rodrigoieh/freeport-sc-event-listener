@@ -105,9 +105,9 @@ class SmartContractEventsReader(
                 position.offset,
                 latestBlockFromNetwork,
             )
-            readAndProcessBatch(contract, processor, fromBlock, latestBlockFromNetwork)
+            readAndProcessBatch(contract, processor, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
         } else {
-            readAndProcess(contract, processor, fromBlock, latestBlockFromNetwork)
+            readAndProcess(contract, processor, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
         }
     }
 
@@ -137,8 +137,9 @@ class SmartContractEventsReader(
         val rs: CovalentResponse<ContractEvent> = covalentClient.getContractEvents(
             chainId = networkConfig.chainId(),
             contractAddress = contract,
-            startingBlock = fromBlock,
-            endingBlock = toBlock,
+            startingBlockInclusive = fromBlock,
+            // to get last one block in case when only one new is available
+            endingBlockExclusive = toBlock + 1,
             apiKey = networkConfig.covalentApiKey()
         )
 
@@ -160,8 +161,8 @@ class SmartContractEventsReader(
         // we need to decrease block limit
         if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
             val half = (toBlock - fromBlock) / 2
-            return readAndProcess(contract, processor, fromBlock, fromBlock + half)
-                    && readAndProcess(contract, processor, fromBlock + half, toBlock)
+            return readAndProcess(contract, processor, fromBlock = fromBlock, toBlock = fromBlock + half)
+                    && readAndProcess(contract, processor, fromBlock = fromBlock + half, toBlock = toBlock)
         }
 
         events
