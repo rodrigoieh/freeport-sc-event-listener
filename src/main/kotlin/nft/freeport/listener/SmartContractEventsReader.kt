@@ -46,7 +46,7 @@ class SmartContractEventsReader(
          * For decoded log events and other endpoints where you are asked to specify a block range, you are limited to
          * a million block range after which point you need to make a follow-up call using the pagination info.
          */
-        private const val COVALENT_BLOCKS_LIMIT = 1_000_000
+        private const val COVALENT_BLOCKS_LIMIT = 1_000_000 - 1
         private const val COVALENT_EVENTS_LIMIT = 100
         private const val UNDEFINED_BLOCK = -1L
     }
