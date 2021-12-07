@@ -18,11 +18,12 @@ class AttachToNFTEventProcessor(private val strapiService: StrapiService) : CmsE
         val nft = strapiService.findOne(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
         if (nft == null) {
             log.warn("Received AttachToNFT event for non-existing NFT {}. Skip.", nftId)
-            return@with
+            return
         }
+
         if (!nft.getString("minter").equals(sender, true)) {
             log.warn("Received AttachToNFT event for NFT {} from non-minter {}. Skip.", nftId, sender)
-            return@with
+            return
         }
 
         strapiService.create(CmsConfig.Routes::nftCid, NftCid(nft.getLong("id"), sender, cid))
