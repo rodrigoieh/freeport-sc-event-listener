@@ -1,5 +1,6 @@
 package nft.freeport.processor.freeport.nft
 
+import io.kotest.matchers.shouldBe
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
 import nft.freeport.listener.event.AttachToNFT
@@ -26,14 +27,15 @@ internal class AttachToNFTEventProcessorTest {
     fun `Process AttachToNFT event`() {
         //given
         NftEntity(
-            "36986023997667029293600386870102381703350581417154820997185762068350256545802",
-            "0x51c5590504251a5993ba6a46246f87fa0eae5897",
-            BigInteger.ONE
+            nftId = "36986023997667029293600386870102381703350581417154820997185762068350256545802",
+            minter = "0x51c5590504251a5993ba6a46246f87fa0eae5897",
+            supply = BigInteger.ONE
         ).persist()
+
         val event = AttachToNFT(
-            "0x51c5590504251a5993ba6a46246f87fa0eae5897",
-            "36986023997667029293600386870102381703350581417154820997185762068350256545802",
-            "QmPVXtR5URQHHAT8dqjRUJoNkBUtgyniwJeca8qgG7WHNR"
+            sender = "0x51c5590504251a5993ba6a46246f87fa0eae5897",
+            nftId = "36986023997667029293600386870102381703350581417154820997185762068350256545802",
+            cid = "QmPVXtR5URQHHAT8dqjRUJoNkBUtgyniwJeca8qgG7WHNR"
         )
 
         //when
@@ -45,5 +47,24 @@ internal class AttachToNFTEventProcessorTest {
             assertThat(nftId, equalTo("36986023997667029293600386870102381703350581417154820997185762068350256545802"))
             assertThat(cid, equalTo("QmPVXtR5URQHHAT8dqjRUJoNkBUtgyniwJeca8qgG7WHNR"))
         }
+    }
+
+    @Test
+    @TestTransaction
+    fun `AttachToNFT event from non-minter (sender != minter) -- event isn't processed`() {
+        //given
+        val nftId = "123456789"
+        NftEntity(nftId = nftId, minter = "0x1", supply = BigInteger.ONE).persist()
+
+        val event = AttachToNFT(
+            sender = "0x2", nftId = nftId,
+            cid = "QmPVXtR5URQHHAT8dqjRUJoNkBUtgyniwJeca8qgG7WHNR"
+        )
+
+        //when
+        testSubject.process(SmartContractEventData("some-contract", event, contractEvent("2021-11-08T10:50:36Z")))
+
+        //then
+        NftCidEntity.findAll().firstResult() shouldBe null
     }
 }

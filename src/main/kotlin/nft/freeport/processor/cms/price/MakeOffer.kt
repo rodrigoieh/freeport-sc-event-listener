@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigInteger
 
 data class MakeOffer(
-    @field:JsonProperty("nft_id")
+    @field:JsonProperty("creator_nft")
     val nftId: Long,
     val seller: String,
     val price: BigInteger
