@@ -37,7 +37,7 @@ class MakeOfferEventProcessorTest {
         wireMockServer.verify(
             postRequestedFor(urlPathEqualTo("/creator-make-offers")).withRequestBody(
                 equalToJson(buildJsonString {
-                    put("nft_id", STRAPI_NFT_ID)
+                    put("creator_nft", STRAPI_NFT_ID)
                     put("seller", event.seller)
                     put("price", 10)
                 })
