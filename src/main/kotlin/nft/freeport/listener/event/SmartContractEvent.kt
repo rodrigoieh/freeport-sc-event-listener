@@ -1,7 +1,15 @@
 package nft.freeport.listener.event
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME
 import java.math.BigInteger
 
+@JsonTypeInfo(
+    use = NAME,
+    include = PROPERTY,
+    property = "eventName"
+)
 sealed class SmartContractEvent
 
 interface NftRelatedEvent {
