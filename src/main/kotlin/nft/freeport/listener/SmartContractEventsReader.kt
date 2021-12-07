@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
 
+/**
+ * TODO make normal solution without +-1 logic in many places
+ */
 @ApplicationScoped
 class SmartContractEventsReader(
     private val networkConfig: NetworkConfig,
@@ -46,7 +49,7 @@ class SmartContractEventsReader(
          * For decoded log events and other endpoints where you are asked to specify a block range, you are limited to
          * a million block range after which point you need to make a follow-up call using the pagination info.
          */
-        private const val COVALENT_BLOCKS_LIMIT = 1_000_000
+        private const val COVALENT_BLOCKS_LIMIT = 1_000_000 - 1
         private const val COVALENT_EVENTS_LIMIT = 100
         private const val UNDEFINED_BLOCK = -1L
     }
@@ -105,9 +108,9 @@ class SmartContractEventsReader(
                 position.offset,
                 latestBlockFromNetwork,
             )
-            readAndProcessBatch(contract, processor, fromBlock, latestBlockFromNetwork)
+            readAndProcessBatch(contract, processor, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
         } else {
-            readAndProcess(contract, processor, fromBlock, latestBlockFromNetwork)
+            readAndProcess(contract, processor, fromBlock = fromBlock, toBlock = latestBlockFromNetwork)
         }
     }
 
@@ -137,8 +140,9 @@ class SmartContractEventsReader(
         val rs: CovalentResponse<ContractEvent> = covalentClient.getContractEvents(
             chainId = networkConfig.chainId(),
             contractAddress = contract,
-            startingBlock = fromBlock,
-            endingBlock = toBlock,
+            startingBlockInclusive = fromBlock,
+            // to get last one block in case when only one new is available
+            endingBlockExclusive = toBlock + 1,
             apiKey = networkConfig.covalentApiKey()
         )
 
@@ -160,10 +164,9 @@ class SmartContractEventsReader(
         // we need to decrease block limit
         if (numberOfEvents == COVALENT_EVENTS_LIMIT) {
             val half = (toBlock - fromBlock) / 2
-            val middleBlock = fromBlock + half
-            return readAndProcess(contract, processor, fromBlock, middleBlock)
-                    // +1 to prevent requesting the same block twice
-                    && readAndProcess(contract, processor, middleBlock + 1, toBlock)
+
+            return readAndProcess(contract, processor, fromBlock = fromBlock, toBlock = fromBlock + half)
+                    && readAndProcess(contract, processor, fromBlock = fromBlock + half, toBlock = toBlock)
         }
 
         events

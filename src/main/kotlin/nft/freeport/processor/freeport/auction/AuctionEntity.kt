@@ -38,10 +38,9 @@ class AuctionEntity(
     var isSettled: Boolean
 ) : PanacheEntityBase {
     companion object : PanacheCompanionBase<AuctionEntity, Long> {
-        fun findActive(seller: String, nftId: String): AuctionEntity {
+        fun findActive(seller: String, nftId: String): AuctionEntity? {
             return find("seller = ?1 AND nftId = ?2", Sort.descending("endsAt"), seller, nftId)
                 .firstResult()
-                .let(::requireNotNull)
         }
     }
 }

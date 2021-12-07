@@ -68,7 +68,7 @@ class SmartContractEventsReaderTest {
         wireMockServer.stubGettingLatestBlock(block = 1500)
 
         // mock first request, trying to get all events 1000..1500 blocks
-        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = startBlockNumber, to = 1500) {
+        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = startBlockNumber, to = 1501) {
             // return 100 events, it means that we've reached to limit
             generateOrderedEmptyEvents(
                 startEventNumber = 1, lastEventNumber = 100,
@@ -77,17 +77,17 @@ class SmartContractEventsReaderTest {
         }
         // then we should go deeper recursively using binary search to find [from..to] pair with less than 100 events
         //              1000..1500 - got 100, KO, trying to split it into two requests
-        // 1) 1000..1250 - got 50, OK, send to processor     2) 1251..1500 - got 50, OK, send to processor
+        // 1) 1000..1251 - got 50, OK, send to processor     2) 1250..1500 - got 50, OK, send to processor
 
         // 1) mock trying to get events 1000..1250 blocks
-        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = startBlockNumber, to = 1250) {
+        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = startBlockNumber, to = 1251) {
             generateOrderedEmptyEvents(
                 startEventNumber = 1, lastEventNumber = 50,
                 startBlockNumber = startBlockNumber, eventsPerBlock = 1,
             )
         }
         // 2) mock trying to get events 1251..1500 blocks
-        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = 1251, to = 1500) {
+        wireMockServer.stubGettingEvents(contract = TEST_CONTRACT_ADDRESS, from = 1250, to = 1501) {
             generateOrderedEmptyEvents(
                 startEventNumber = 51, lastEventNumber = 100,
                 startBlockNumber = startBlockNumber, eventsPerBlock = 1,
@@ -130,7 +130,7 @@ class SmartContractEventsReaderTest {
             to = 1_001_000L,
         ) {
             generateOrderedEmptyEvents(
-                startEventNumber = 1, lastEventNumber = 50,
+                startEventNumber = 1, lastEventNumber = 49,
                 startBlockNumber = startBlockNumber, eventsPerBlock = 1,
             )
         }
@@ -138,12 +138,12 @@ class SmartContractEventsReaderTest {
         // mock second request, additional step in one million
         wireMockServer.stubGettingEvents(
             contract = TEST_CONTRACT_ADDRESS,
-            from = 1_001_001L,
-            to = 2_001_000L,
+            from = 1_001_000L,
+            to = 2_000_999L,
         ) {
             generateOrderedEmptyEvents(
-                startEventNumber = 51, lastEventNumber = 100,
-                startBlockNumber = 1_001_001L, eventsPerBlock = 1,
+                startEventNumber = 50, lastEventNumber = 100,
+                startBlockNumber = 1_001_000L, eventsPerBlock = 1,
             )
         }
 
