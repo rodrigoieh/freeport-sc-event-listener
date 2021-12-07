@@ -83,7 +83,7 @@ internal class DdcProcessorTest {
             to = "0x2",
             nftId = "0x3",
             amount = BigInteger.TEN
-        ) to "0xf66798ac3053788ae439647a8012762b623aa3b6de0b2ddd69c3188fa64e0e2c",
+        ) to "0x56f32c016953e988f0e34c8022c8fd4312a4e04c997d34dc14d19f9b4406fcaa",
         RoyaltiesConfigured(
             "0x0",
             "0x1",
@@ -92,43 +92,43 @@ internal class DdcProcessorTest {
             "0x2",
             10000,
             BigInteger.ONE
-        ) to "0x5c192e9bdd46c804423b090029ba9e60e53aa70fa1886347e33eefbddc29c5ae",
+        ) to "0x7cf0aa3c65c40d476a353ce9dab17f841b3a55e4cf67e15817f17409b692f3bd",
         MakeOffer(
             seller = "0x0",
             nftId = "0x1",
             price = BigInteger.TEN
-        ) to "0x130ea0788be98e6fb3daec4e407c72ac61b96b3c2c3696282f1761b96d11ceb1",
+        ) to "0x1c1a38c8fab5af5418d2b995e30d6008d9b371d2ac6726975a7ac14d3869279d",
         TakeOffer(
             buyer = "0x0",
             seller = "0x1",
             nftId = "0x2",
             price = BigInteger.TEN,
             amount = BigInteger.ONE
-        ) to "0xb980b3de183b2042f6c93e694b0efee88f906799af241bc13e3f9f35fdc752b1",
+        ) to "0x1753389960889e2377ecee7deac8f296c032ccc8f8f7ade7973243cdeaf9d0e7",
         StartAuction(
             seller = "0x0",
             nftId = "0x1",
             price = BigInteger.TEN,
             closeTimeSec = BigInteger.ONE
-        ) to "0x5a2e903bdeac17fc49173103328841e320d793c80daa6566dece9edc7c8b7cd5",
+        ) to "0xc639d4ba40b7facbb5d4299f80f6d3e3fb2be6ed5b1521d07b9fec2f722d963c",
         BidOnAuction(
             seller = "0x0",
             nftId = "0x1",
             price = BigInteger.TEN,
             closeTimeSec = BigInteger.ONE,
             buyer = "0x2"
-        ) to "0x6829e1d09debfa52842f36079b730218570f5d0aa5638b6a333353de782a4a2d",
+        ) to "0xef63ed570c68ec1804ef0fd187a2081c6425983638494164578b71361949e2d1",
         SettleAuction(
             seller = "0x0",
             nftId = "0x1",
             price = BigInteger.TEN,
             buyer = "0x2"
-        ) to "0x46e5081cdc36cd67853f5b9fb801b61c3879190daa743817ea0ce0aa9a900931",
+        ) to "0xe24ea69b242a46ed9087d066cd43bd15f13316df7e74bba5ae8ab9b724c8dfa1",
         AttachToNFT(
             sender = "0x0",
             nftId = "0x1",
             cid = "0x2"
-        ) to "0xf576bab5b77ededb81057bd9d77ae400e9db83561e6eea0c9aefddd9bb6507b7",
+        ) to "0x706396e5af6f8b67873c034c3aa5aa33bc878bf0ebd5606f2ae0ed0885d37c65",
     ).map { (event: SmartContractEvent, hashedId) ->
         DynamicTest.dynamicTest("$event id should be $hashedId") {
             clearInvocations(ddcProducer)

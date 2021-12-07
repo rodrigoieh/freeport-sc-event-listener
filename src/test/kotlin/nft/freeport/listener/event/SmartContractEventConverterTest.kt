@@ -2,6 +2,7 @@ package nft.freeport.listener.event
 
 import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.kotest.matchers.shouldBe
 import nft.freeport.covalent.dto.ContractEvent
 import nft.freeport.covalent.dto.ContractEventParam
 import nft.freeport.covalent.dto.DecodedContractEvent
@@ -33,9 +34,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (seller, nftId, price, closeTimeSec, buyer) = testSubject.convert(source) as BidOnAuction
+        val event = testSubject.convert(source)
+        val (seller, nftId, price, closeTimeSec, buyer) = event as BidOnAuction
 
         //then
+        checkEventNameJsonField(event, "BidOnAuction")
         assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(
             nftId,
@@ -64,9 +67,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (seller, nftId, price, buyer) = testSubject.convert(source) as SettleAuction
+        val event = testSubject.convert(source)
+        val (seller, nftId, price, buyer) = event as SettleAuction
 
         //then
+        checkEventNameJsonField(event, "SettleAuction")
         assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(
             nftId,
@@ -94,9 +99,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (seller, nftId, price, closeTimeSec) = testSubject.convert(source) as StartAuction
+        val event = testSubject.convert(source)
+        val (seller, nftId, price, closeTimeSec) = event as StartAuction
 
         //then
+        checkEventNameJsonField(event, "StartAuction")
         assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(nftId, equalTo("36986023997667029293600386870102381703350581417154820997185762068350256545802"))
         assertThat(price, equalTo(90909090909.toBigInteger()))
@@ -121,9 +128,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (account, owner, fraction) = testSubject.convert(source) as JointAccountShareCreated
+        val event = testSubject.convert(source)
+        val (account, owner, fraction) = event as JointAccountShareCreated
 
         //then
+        checkEventNameJsonField(event, "JointAccountShareCreated")
         assertThat(account, equalTo("0xdb9875e9a78b8e14bdb602b7b4c12dac4ea7c77c"))
         assertThat(owner, equalTo("0x6d2b28389d3153689c57909829dfcf6241d36388"))
         assertThat(fraction, equalTo(9000))
@@ -147,9 +156,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (sender, nftId, cid) = testSubject.convert(source) as AttachToNFT
+        val event = testSubject.convert(source)
+        val (sender, nftId, cid) = event as AttachToNFT
 
         //then
+        checkEventNameJsonField(event, "AttachToNFT")
         assertThat(sender, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(nftId, equalTo("36986023997667029293600386870102381703350581417154820997185762068350256545802"))
         assertThat(cid, equalTo("QmPVXtR5URQHHAT8dqjRUJoNkBUtgyniwJeca8qgG7WHNR"))
@@ -191,9 +202,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (operator, from, to, ids, amounts) = testSubject.convert(source) as TransferBatch
+        val event = testSubject.convert(source)
+        val (operator, from, to, ids, amounts) = event as TransferBatch
 
         //then
+        checkEventNameJsonField(event, "TransferBatch")
         assertThat(operator, equalTo("0x123"))
         assertThat(from, equalTo("0xabc"))
         assertThat(to, equalTo("0xdef"))
@@ -223,9 +236,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (operator, from, to, id, amount) = testSubject.convert(source) as TransferSingle
+        val event = testSubject.convert(source)
+        val (operator, from, to, id, amount) = event as TransferSingle
 
         //then
+        checkEventNameJsonField(event, "TransferSingle")
         assertThat(operator, equalTo("0x123"))
         assertThat(from, equalTo("0xabc"))
         assertThat(to, equalTo("0xdef"))
@@ -251,9 +266,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (seller, nftId, price) = testSubject.convert(source) as MakeOffer
+        val event = testSubject.convert(source)
+        val (seller, nftId, price) = event as MakeOffer
 
         //then
+        checkEventNameJsonField(event, "MakeOffer")
         assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(nftId, equalTo("36986023997667029293600386870102381703350581417154820997167315324276546994186"))
         assertThat(price, equalTo(2000000000000.toBigInteger()))
@@ -275,9 +292,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (cereUnitsPerPenny) = testSubject.convert(source) as SetExchangeRate
+        val event = testSubject.convert(source)
+        val (cereUnitsPerPenny) = event as SetExchangeRate
 
         //then
+        checkEventNameJsonField(event, "SetExchangeRate")
         assertThat(cereUnitsPerPenny, equalTo(1000000000.toBigInteger()))
     }
 
@@ -300,9 +319,11 @@ internal class SmartContractEventConverterTest {
         )
 
         //when
-        val (buyer, seller, nftId, price, amount) = testSubject.convert(source) as TakeOffer
+        val event = testSubject.convert(source)
+        val (buyer, seller, nftId, price, amount) = event as TakeOffer
 
         //then
+        checkEventNameJsonField(event, "TakeOffer")
         assertThat(buyer, equalTo("0x63846e2d234e4f854f43423014430b4e131f697b"))
         assertThat(seller, equalTo("0x51c5590504251a5993ba6a46246f87fa0eae5897"))
         assertThat(
@@ -333,6 +354,7 @@ internal class SmartContractEventConverterTest {
         val result = testSubject.convert(source) as RoyaltiesConfigured
 
         //then
+        checkEventNameJsonField(result, "RoyaltiesConfigured")
         assertThat(
             result.nftId,
             equalTo("12648834910999427420486791714441733200585385323701742277809926298386105892865")
@@ -343,5 +365,11 @@ internal class SmartContractEventConverterTest {
         assertThat(result.secondaryRoyaltyAccount, equalTo("0x8aaab81aff26d0f4e34520b87c608b183dcf5bb8"))
         assertThat(result.secondaryRoyaltyCut, equalTo(7))
         assertThat(result.secondaryRoyaltyMinimum, equalTo(8.toBigInteger()))
+    }
+
+    private fun checkEventNameJsonField(event: SmartContractEvent, expectedValue: String) {
+        val json = objectMapper.writeValueAsString(event)
+
+        objectMapper.readTree(json).get("eventName").textValue() shouldBe expectedValue
     }
 }
