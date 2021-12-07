@@ -15,16 +15,17 @@ class AttachToNFTEventProcessor : FreeportEventProcessor<AttachToNFT> {
 
     @Transactional
     override fun process(eventData: SmartContractEventData<out AttachToNFT>) = with(eventData.event) {
-        if (NftEntity.findById(nftId) == null) {
+        val nft = NftEntity.findById(nftId)
+        if (nft == null) {
             log.warn("Received AttachToNFT event for non-existing NFT {}. Skip.", this)
             return
         }
 
-        NftCidEntity(
-            id = null,
-            nftId = nftId,
-            sender = sender,
-            cid = cid
-        ).persist()
+        if (!nft.minter.equals(sender, true)) {
+            log.warn("Received AttachToNFT event for NFT {} from non-minter {}. Skip.", nftId, sender)
+            return
+        }
+
+        NftCidEntity(id = null, nftId = nftId, sender = sender, cid = cid).persist()
     }
 }
