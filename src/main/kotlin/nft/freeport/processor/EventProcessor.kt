@@ -10,7 +10,6 @@ import nft.freeport.listener.position.dto.ProcessingBlockState
 import nft.freeport.listener.position.dto.ProcessingBlockState.DONE
 import nft.freeport.listener.position.dto.ProcessingBlockState.PARTIALLY_DONE
 import nft.freeport.listener.position.entity.ProcessorLastScannedEventPositionEntity
-import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 import kotlin.reflect.KClass
 

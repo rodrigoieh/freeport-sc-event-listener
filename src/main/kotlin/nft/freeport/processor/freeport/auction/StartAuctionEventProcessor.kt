@@ -3,9 +3,8 @@ package nft.freeport.processor.freeport.auction
 import nft.freeport.ZERO_ADDRESS
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.listener.event.StartAuction
-import nft.freeport.processor.freeport.FreeportEventProcessor
+import nft.freeport.processor.freeport.FreeportExistingNftRelatedEventProcessor
 import nft.freeport.processor.freeport.nft.NftEntity
-import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.MathContext
@@ -14,20 +13,14 @@ import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
 @ApplicationScoped
-class StartAuctionEventProcessor : FreeportEventProcessor<StartAuction> {
-    private val log = LoggerFactory.getLogger(javaClass)
-
+class StartAuctionEventProcessor : FreeportExistingNftRelatedEventProcessor<StartAuction> {
     private val priceRoundingMathContext = MathContext(10)
     private val priceMultiplier: BigDecimal = BigDecimal.valueOf(1.1)
 
     override val supportedClass = StartAuction::class.java
 
     @Transactional
-    override fun process(eventData: SmartContractEventData<out StartAuction>) = with(eventData.event) {
-        if (NftEntity.findById(nftId) == null) {
-            log.warn("Received StartAuction event for non-existing NFT {}. Skip.", this.nftId)
-            return@with
-        }
+    override fun process(eventData: SmartContractEventData<out StartAuction>, nft: NftEntity) = with(eventData.event) {
         AuctionEntity(
             id = null,
             seller = seller,
