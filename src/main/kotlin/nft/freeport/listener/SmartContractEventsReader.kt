@@ -126,7 +126,7 @@ class SmartContractEventsReader(
             if (!readAndProcess(contract, processor, fromBlock = from, toBlock = to)) {
                 return
             }
-            from = to + 1
+            from = to
             to += COVALENT_BLOCKS_LIMIT
         }
     }

@@ -138,7 +138,7 @@ class SmartContractEventsReaderTest {
         // mock second request, additional step in one million
         wireMockServer.stubGettingEvents(
             contract = TEST_CONTRACT_ADDRESS,
-            from = 1_001_000L,
+            from = 1_000_999L,
             to = 2_000_999L,
         ) {
             generateOrderedEmptyEvents(
