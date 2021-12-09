@@ -31,7 +31,7 @@ class StartAuctionEventProcessorTest {
             price = BigInteger.TEN,
             closeTimeSec = BigInteger.valueOf(1609502400)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
         wireMockServer.stubEntityCreation(entityPath = "/creator-auctions")
 
         testSubject.process(event.wrapEvent())

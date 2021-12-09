@@ -8,7 +8,7 @@ import kotlinx.serialization.json.put
 import nft.freeport.buildJsonString
 import nft.freeport.listener.event.MakeOffer
 import nft.freeport.processor.cms.*
-import nft.freeport.processor.cms.stubGettingStrapiNft
+import nft.freeport.processor.cms.stubGettingExistingStrapiNft
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -28,7 +28,7 @@ class MakeOfferEventProcessorTest {
     fun `processor is called -- creation request is sent to strapi, nft_id from strapi is used`() {
         val event = MakeOffer(nftId = "make_offer_nft_id", seller = "0xSELLER", price = BigInteger.TEN)
 
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
         wireMockServer.stubEntityCreation(entityPath = "/creator-make-offers")
 
         testSubject.process(event.wrapEvent())

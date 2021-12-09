@@ -8,7 +8,7 @@ import kotlinx.serialization.json.put
 import nft.freeport.buildJsonString
 import nft.freeport.listener.event.AttachToNFT
 import nft.freeport.processor.cms.*
-import nft.freeport.processor.cms.stubGettingStrapiNft
+import nft.freeport.processor.cms.stubGettingExistingStrapiNft
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
@@ -27,7 +27,7 @@ class AttachToNFTEventProcessorTest {
     fun `processor is called, sender == minter from strapi -- creation request is sent to strapi`() {
         val event = AttachToNFT(nftId = "attach_nft_id", sender = "0xATTACH_SENDER", cid = "0xATTACH_CID")
 
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId) {
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId) {
             put("minter", event.sender)
         }
         wireMockServer.stubEntityCreation(entityPath = "/creator-nft-cids")
@@ -49,7 +49,7 @@ class AttachToNFTEventProcessorTest {
     fun `processor is called, sender != minter from strapi -- request is not sent`() {
         val event = AttachToNFT(nftId = "attach_nft_id", sender = "0xATTACH_SENDER", cid = "0xATTACH_CID")
 
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId) {
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId) {
             put("minter", "0xANOTHER_MINTER")
         }
 

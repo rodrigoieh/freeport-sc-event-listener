@@ -9,7 +9,7 @@ import nft.freeport.buildJsonString
 import nft.freeport.listener.event.BidOnAuction
 import nft.freeport.processor.cms.*
 import nft.freeport.processor.cms.stubGettingStrapiAuctions
-import nft.freeport.processor.cms.stubGettingStrapiNft
+import nft.freeport.processor.cms.stubGettingExistingStrapiNft
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -34,7 +34,7 @@ class BidOnAuctionEventProcessorTest {
             buyer = "0xBID_ON_AUCTION_BUYER",
             closeTimeSec = BigInteger.valueOf(1609502400)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
 
         val auctionId = 1L
         wireMockServer.stubGettingStrapiAuctions(seller = event.seller, auctionId = auctionId)

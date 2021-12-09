@@ -32,7 +32,7 @@ class TransferSingleEventProcessorTest {
             operator = "OPERATOR_TRANSfER_SINGLE",
             amount = BigInteger.valueOf(25)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
 
         val senderWalletStrapiId = 1927321
         wireMockServer.stubGettingStrapiWallet(wallet = event.from) {
@@ -67,7 +67,7 @@ class TransferSingleEventProcessorTest {
     }
 
     @Test
-    fun `processor is called, sender is ZERO_ADDRESS, nftId is cere token -- only receiver updation request is sent`() {
+    fun `processor is called, sender is ZERO_ADDRESS, nftId is cere token -- only receiver update request is sent`() {
         val event = TransferSingle(
             // cere token
             nftId = "0",
@@ -76,7 +76,7 @@ class TransferSingleEventProcessorTest {
             operator = "OPERATOR_TRANSfER_SINGLE_CERE_TOKEN",
             amount = BigInteger.valueOf(50_000)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
         val receiverWalletStrapId = 54562534543
         wireMockServer.stubGettingStrapiWallet(wallet = event.to) {
             put("id", receiverWalletStrapId)
@@ -104,7 +104,7 @@ class TransferSingleEventProcessorTest {
             operator = "OPERATOR_TRANSfER_SINGLE_ZERO_ADDRESS",
             amount = BigInteger.valueOf(5000)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
         wireMockServer.stubGettingStrapiWallet(wallet = event.to) {
             put("id", 456)
             put("quantity", 500)
@@ -134,7 +134,7 @@ class TransferSingleEventProcessorTest {
             operator = "OPERATOR_TRANSfER_SINGLE_WALLETS_MISSED",
             amount = BigInteger.valueOf(25)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
 
         // no wallets, just empty arrays
         wireMockServer.stubGettingStrapiWallet(wallet = event.from)
@@ -161,6 +161,41 @@ class TransferSingleEventProcessorTest {
                     put("nft_id", STRAPI_NFT_ID)
                     put("wallet", event.to)
                     put("quantity", 25)
+                })
+            )
+        )
+    }
+
+    @Test
+    fun `CERE tokens transfer, nft does not exist -- CERE nft is created`() {
+        val cereNftId = "0"
+        val event = TransferSingle(
+            // CERE tokens
+            nftId = cereNftId,
+            from = "0xFROM_TRANSER_SINGLE_CERE_NFT_MISSED",
+            to = "0xTO_TRANSER_SINGLE_CERE_NFT_MISSED",
+            operator = "OPERATOR_TRANSfER_SINGLE_CERE_NFT_MISSED",
+            amount = BigInteger.valueOf(5000)
+        )
+        val strapiCereNftId: Long = 100
+        // empty response
+        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubEntityCreation(entityPath = "/creator-nfts", id = strapiCereNftId)
+
+        // no wallets, just empty arrays
+        wireMockServer.stubGettingStrapiWallet(wallet = event.from, strapiNftId = strapiCereNftId)
+        wireMockServer.stubGettingStrapiWallet(wallet = event.to, strapiNftId = strapiCereNftId)
+        wireMockServer.stubEntityCreation(entityPath = "/creator-wallet-nfts")
+
+        testSubject.process(event.wrapEvent())
+
+        // CERE nft is created
+        wireMockServer.verify(
+            postRequestedFor(urlPathEqualTo("/creator-nfts")).withRequestBody(
+                equalToJson(buildJsonString {
+                    put("nft_id", cereNftId)
+                    put("minter", "0x0000000000000000000000000000000000000000")
+                    put("supply", 10_000_000_000)
                 })
             )
         )
