@@ -42,9 +42,6 @@ dependencies {
     implementation("com.github.komputing.khex:extensions:1.1.2")
 
     // Kotlin
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.3.1"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -63,7 +60,9 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.6.3")
-
+    // to use json dsl api in mocking restful api
+    testImplementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.3.1"))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm")
 }
 
 tasks {
