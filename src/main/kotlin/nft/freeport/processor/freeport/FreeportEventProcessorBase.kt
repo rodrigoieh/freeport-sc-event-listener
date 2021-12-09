@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 @ApplicationScoped
 class FreeportEventProcessorBase(
-    override val stateProvider: ProcessorsPositionManager,
+    override val positionManager: ProcessorsPositionManager,
     private val processorsMap: Map<String, FreeportEventProcessor<SmartContractEvent>>,
 ) : EventProcessor {
     override val id = FREEPORT_PROCESSOR_ID

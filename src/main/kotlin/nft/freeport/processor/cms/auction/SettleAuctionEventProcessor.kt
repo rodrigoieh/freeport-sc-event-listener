@@ -39,6 +39,7 @@ class SettleAuctionEventProcessor(override val strapiService: StrapiService) :
             mapOf(
                 "buyer" to eventData.event.buyer,
                 "price" to eventData.event.price,
+                // We don't have any other information in event, so consider that auction is settled once SC transaction was confirmed.
                 "ends_at" to Instant.parse(eventData.rawEvent.blockSignedAt),
                 "is_settled" to true
             )

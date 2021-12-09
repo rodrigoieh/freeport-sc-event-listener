@@ -19,7 +19,7 @@ class TransferSingleEventProcessor(
     override fun process(eventData: SmartContractEventData<out TransferSingle>) = with(eventData.event) {
         if (from == ZERO_ADDRESS) {
             if (nftId != CURRENCY_TOKEN_ID) {
-                strapiService.create(CmsConfig.Routes::nft, Nft(nftId, to, amount))
+                strapiService.create(CmsConfig.Routes::nft, Nft(nftId = nftId, minter = to, supply = amount))
             }
         } else {
             nftEventProcessor.updateQuantity(from, nftId, -amount)

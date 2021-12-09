@@ -60,7 +60,9 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("com.github.tomakehurst:wiremock:2.27.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.6.3")
-
+    // to use json dsl api in mocking restful api
+    testImplementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.3.1"))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm")
 }
 
 tasks {

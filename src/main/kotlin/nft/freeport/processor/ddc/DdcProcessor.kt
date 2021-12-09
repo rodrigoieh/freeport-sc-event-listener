@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 
 @ApplicationScoped
 class DdcProcessor(
-    override val stateProvider: ProcessorsPositionManager,
+    override val positionManager: ProcessorsPositionManager,
     private val objectMapper: ObjectMapper,
     private val ddcProducer: Producer,
 

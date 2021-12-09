@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 @ApplicationScoped
 class CmsEventProcessorBase(
-    override val stateProvider: ProcessorsPositionManager,
+    override val positionManager: ProcessorsPositionManager,
     private val processorsMap: Map<String, CmsEventProcessor<SmartContractEvent>>,
 ) : EventProcessor {
     override val id = CMS_PROCESSOR_ID

@@ -20,7 +20,7 @@ class ProcessorsPositionManager(contractsConfig: ContractsConfig) {
     /** Fetch the latest state from the database **/
     @Transactional
     @PostConstruct
-    private fun initLastScannedPositions() {
+    internal fun initLastScannedPositions() {
         lastPositionByProcessorAndContract = ProcessorLastScannedEventPositionEntity.findAll().stream().asSequence()
             .onEach { positionEntity -> log.info("The actual processor position: {}", positionEntity) }
             .map { it.toKey() to it.toValue() }
