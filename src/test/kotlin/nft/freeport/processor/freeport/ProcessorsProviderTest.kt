@@ -2,14 +2,13 @@ package nft.freeport.processor.freeport
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.BlockProcessedEvent
 import nft.freeport.listener.event.SmartContractEvent
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @QuarkusTest
-internal class ProcessorsProviderTest : AbstractIntegrationTest() {
+internal class ProcessorsProviderTest {
     @Inject
     internal lateinit var processorsMap: Map<String, FreeportEventProcessor<SmartContractEvent>>
 

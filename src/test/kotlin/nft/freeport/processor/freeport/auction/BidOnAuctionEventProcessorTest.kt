@@ -2,7 +2,6 @@ package nft.freeport.processor.freeport.auction
 
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.BidOnAuction
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.processor.freeport.contractEvent
@@ -18,7 +17,7 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 @QuarkusTest
-internal class BidOnAuctionEventProcessorTest : AbstractIntegrationTest() {
+internal class BidOnAuctionEventProcessorTest {
     @Inject
     internal lateinit var testSubject: BidOnAuctionEventProcessor
 

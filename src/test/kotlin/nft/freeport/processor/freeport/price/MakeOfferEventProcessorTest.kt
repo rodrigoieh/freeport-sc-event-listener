@@ -2,7 +2,6 @@ package nft.freeport.processor.freeport.price
 
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.MakeOffer
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.processor.freeport.contractEvent
@@ -15,7 +14,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 @QuarkusTest
-internal class MakeOfferEventProcessorTest : AbstractIntegrationTest() {
+internal class MakeOfferEventProcessorTest {
     @Inject
     internal lateinit var testSubject: MakeOfferEventProcessor
 

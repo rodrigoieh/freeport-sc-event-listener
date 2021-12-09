@@ -69,6 +69,12 @@ quarkus:
     name: 'freeport-sc-event-listener'
     tag: 'dev'
 
+"%test":
+  contracts:
+    test-processor:
+      address: '0x02'
+      first-block-number: 0
+
 "%prod":
   ddc:
     enabled: true

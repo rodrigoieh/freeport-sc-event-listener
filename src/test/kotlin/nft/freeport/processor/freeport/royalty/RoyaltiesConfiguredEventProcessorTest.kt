@@ -2,7 +2,6 @@ package nft.freeport.processor.freeport.royalty
 
 import io.quarkus.test.TestTransaction
 import io.quarkus.test.junit.QuarkusTest
-import nft.freeport.AbstractIntegrationTest
 import nft.freeport.listener.event.RoyaltiesConfigured
 import nft.freeport.listener.event.SmartContractEventData
 import nft.freeport.processor.freeport.contractEvent
@@ -14,7 +13,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 @QuarkusTest
-internal class RoyaltiesConfiguredEventProcessorTest : AbstractIntegrationTest() {
+internal class RoyaltiesConfiguredEventProcessorTest {
     @Inject
     internal lateinit var testSubject: RoyaltiesConfiguredEventProcessor
 

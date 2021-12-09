@@ -18,7 +18,7 @@ interface EventProcessor {
 
     val supportedEvents: Set<KClass<out SmartContractEvent>>
 
-    val stateProvider: ProcessorsPositionManager
+    val positionManager: ProcessorsPositionManager
 
     fun process(eventData: SmartContractEventData<out SmartContractEvent>)
 
@@ -29,7 +29,7 @@ interface EventProcessor {
             return
         }
 
-        val currentPosition: ProcessedEventPosition = stateProvider.getCurrentPosition(id, eventData.contract)
+        val currentPosition: ProcessedEventPosition = positionManager.getCurrentPosition(id, eventData.contract)
         when {
             // handle when current block is before a new one
             currentPosition.block < eventData.rawEvent.blockHeight -> Unit
@@ -56,7 +56,7 @@ interface EventProcessor {
         val offset = if (eventData.rawEvent.logOffset == NO_EVENTS_BLOCK_OFFSET) null
         else eventData.rawEvent.logOffset
 
-        stateProvider.updatePosition(
+        positionManager.updatePosition(
             ProcessorLastScannedEventPositionEntity(
                 processorId = id, contract = eventData.contract, state = newState,
                 block = eventData.rawEvent.blockHeight, offset = offset
