@@ -1,5 +1,7 @@
 package nft.freeport
 
+import java.math.BigInteger
+
 const val SMART_CONTRACT_EVENTS_FREEPORT_TOPIC_NAME = "sc-events-freeport"
 const val SMART_CONTRACT_EVENTS_DDC_TOPIC_NAME = "sc-events-ddc"
 const val SMART_CONTRACT_EVENTS_CMS_TOPIC_NAME = "sc-events-cms"
@@ -13,7 +15,8 @@ const val NO_EVENTS_BLOCK_OFFSET = -1L
 
 const val ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-val CERE_TOKENS_SUPPLY = 10_000_000_000.toBigInteger()
+// 2^53-1
+val CURRENCY_TOKEN_SUPPLY: BigInteger = BigInteger.valueOf(9007199254740991)
 
 const val CURRENCY_TOKEN_ID = "0"
 

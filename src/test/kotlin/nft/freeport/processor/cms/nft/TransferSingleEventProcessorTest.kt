@@ -195,7 +195,7 @@ class TransferSingleEventProcessorTest {
                 equalToJson(buildJsonString {
                     put("nft_id", cereNftId)
                     put("minter", "0x0000000000000000000000000000000000000000")
-                    put("supply", 10_000_000_000)
+                    put("supply", 9007199254740991)
                 })
             )
         )

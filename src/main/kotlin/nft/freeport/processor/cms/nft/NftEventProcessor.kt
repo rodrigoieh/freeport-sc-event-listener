@@ -1,6 +1,6 @@
 package nft.freeport.processor.cms.nft
 
-import nft.freeport.CERE_TOKENS_SUPPLY
+import nft.freeport.CURRENCY_TOKEN_SUPPLY
 import nft.freeport.CURRENCY_TOKEN_ID
 import nft.freeport.ZERO_ADDRESS
 import nft.freeport.processor.cms.CmsConfig
@@ -17,7 +17,7 @@ class NftEventProcessor(private val strapiService: StrapiService) {
         val nft = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId)) ?: run {
             if (nftId == CURRENCY_TOKEN_ID) {
                 return@run strapiService
-                    .create(CmsConfig.Routes::nft, Nft(nftId, ZERO_ADDRESS, CERE_TOKENS_SUPPLY))
+                    .create(CmsConfig.Routes::nft, Nft(nftId, ZERO_ADDRESS, CURRENCY_TOKEN_SUPPLY))
                     .getLong("id")
             }
 
