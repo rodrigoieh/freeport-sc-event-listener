@@ -19,11 +19,12 @@ class StrapiService(config: CmsConfig, vertx: Vertx) {
     private val baseUrl = config.baseUrl()
     private val client = WebClient.create(vertx)
 
-    fun create(route: CmsConfig.Routes.() -> String, payload: Any) {
-        client.postAbs("$baseUrl/${route(routes)}")
+    fun create(route: CmsConfig.Routes.() -> String, payload: Any): JsonObject {
+        return client.postAbs("$baseUrl/${route(routes)}")
             .bearerTokenAuthentication(jwt())
             .sendJson(payload)
             .await()
+            .bodyAsJsonObject()
     }
 
     fun findAll(route: CmsConfig.Routes.() -> String, filters: Map<String, Any>): JsonArray {

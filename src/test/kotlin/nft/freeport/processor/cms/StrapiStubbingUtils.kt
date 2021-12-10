@@ -2,10 +2,12 @@ package nft.freeport.processor.cms
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import kotlinx.serialization.json.JsonArrayBuilder
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.put
 import nft.freeport.buildJsonArrayString
+import nft.freeport.buildJsonString
 
 internal fun WireMockServer.stubGettingStrapiWallet(
     wallet: String,
@@ -24,11 +26,10 @@ internal fun WireMockServer.stubGettingStrapiWallet(
     )
 }
 
-
+/** empty response by default **/
 internal fun WireMockServer.stubGettingStrapiNft(
     smartContractNftId: String,
-    strapiNftId: Long = STRAPI_NFT_ID,
-    additionalFieldsBuilderAction: JsonObjectBuilder.() -> Unit = { }
+    fieldsBuilder: JsonArrayBuilder.() -> Unit = { }
 ) {
     stubFor(
         get(urlPathEqualTo("/creator-nfts"))
@@ -36,14 +37,25 @@ internal fun WireMockServer.stubGettingStrapiNft(
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json; charset=utf-8")
-                    .withBody(buildJsonArrayString {
-                        addJsonObject {
-                            put("id", strapiNftId)
-                            additionalFieldsBuilderAction()
-                        }
-                    })
+                    .withBody(buildJsonArrayString(fieldsBuilder))
             )
     )
+}
+
+internal fun WireMockServer.stubGettingExistingStrapiNft(
+    smartContractNftId: String,
+    strapiNftId: Long = STRAPI_NFT_ID,
+    minter: String = STRAPI_NFT_MINTER,
+    additionalFieldsBuilderAction: JsonObjectBuilder.() -> Unit = { }
+) {
+    stubGettingStrapiNft(smartContractNftId = smartContractNftId) {
+        addJsonObject {
+            put("id", strapiNftId)
+            put("minter", minter)
+            additionalFieldsBuilderAction(this)
+        }
+
+    }
 }
 
 /**
@@ -75,4 +87,20 @@ internal fun WireMockServer.stubGettingStrapiAuctions(
     )
 }
 
+internal fun WireMockServer.stubEntityCreation(entityPath: String, id: Long = 42) {
+    stubFor(
+        post(urlPathEqualTo(entityPath))
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json; charset=utf-8")
+                    .withBody(
+                        buildJsonString {
+                            put("id", id)
+                        }
+                    )
+            )
+    )
+}
+
 const val STRAPI_NFT_ID = 42L
+const val STRAPI_NFT_MINTER = "0x00000000000042"

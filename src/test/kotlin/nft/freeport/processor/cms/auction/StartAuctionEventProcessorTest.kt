@@ -7,10 +7,7 @@ import io.quarkus.test.junit.QuarkusTest
 import kotlinx.serialization.json.put
 import nft.freeport.buildJsonString
 import nft.freeport.listener.event.StartAuction
-import nft.freeport.processor.cms.InjectStrapiWiremock
-import nft.freeport.processor.cms.STRAPI_NFT_ID
-import nft.freeport.processor.cms.WiremockStrapi
-import nft.freeport.processor.cms.stubGettingStrapiNft
+import nft.freeport.processor.cms.*
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -34,7 +31,8 @@ class StartAuctionEventProcessorTest {
             price = BigInteger.TEN,
             closeTimeSec = BigInteger.valueOf(1609502400)
         )
-        wireMockServer.stubGettingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = event.nftId)
+        wireMockServer.stubEntityCreation(entityPath = "/creator-auctions")
 
         testSubject.process(event.wrapEvent())
 

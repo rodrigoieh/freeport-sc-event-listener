@@ -13,10 +13,10 @@ class JoinAccountEventProcessor(
 ) : CmsEventProcessor<JointAccountShareCreated> {
     override val supportedClass = JointAccountShareCreated::class.java
 
-    override fun process(eventData: SmartContractEventData<out JointAccountShareCreated>) = with(eventData.event) {
+    override fun process(eventData: SmartContractEventData<out JointAccountShareCreated>) {
         strapiService.create(
             route = CmsConfig.Routes::jointAccount,
-            payload = JointAccount(owner = owner, account = account)
+            payload = JointAccount(owner = eventData.event.owner, account = eventData.event.account)
         )
     }
 }

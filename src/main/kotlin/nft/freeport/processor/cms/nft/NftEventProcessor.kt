@@ -1,5 +1,8 @@
 package nft.freeport.processor.cms.nft
 
+import nft.freeport.CURRENCY_TOKEN_SUPPLY
+import nft.freeport.CURRENCY_TOKEN_ID
+import nft.freeport.ZERO_ADDRESS
 import nft.freeport.processor.cms.CmsConfig
 import nft.freeport.processor.cms.strapi.StrapiService
 import org.slf4j.LoggerFactory
@@ -11,8 +14,13 @@ class NftEventProcessor(private val strapiService: StrapiService) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     fun updateQuantity(address: String, nftId: String, delta: BigInteger) {
-        val nft = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId))
-        if (nft == null) {
+        val nft = strapiService.findId(CmsConfig.Routes::nft, mapOf("nft_id" to nftId)) ?: run {
+            if (nftId == CURRENCY_TOKEN_ID) {
+                return@run strapiService
+                    .create(CmsConfig.Routes::nft, Nft(nftId, ZERO_ADDRESS, CURRENCY_TOKEN_SUPPLY))
+                    .getLong("id")
+            }
+
             log.warn("Unable to find NFT with id {} in CMS", nftId)
             return
         }

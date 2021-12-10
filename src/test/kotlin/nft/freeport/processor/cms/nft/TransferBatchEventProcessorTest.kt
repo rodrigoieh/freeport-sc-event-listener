@@ -9,7 +9,7 @@ import nft.freeport.buildJsonString
 import nft.freeport.listener.event.TransferBatch
 import nft.freeport.processor.cms.InjectStrapiWiremock
 import nft.freeport.processor.cms.WiremockStrapi
-import nft.freeport.processor.cms.stubGettingStrapiNft
+import nft.freeport.processor.cms.stubGettingExistingStrapiNft
 import nft.freeport.processor.cms.stubGettingStrapiWallet
 import nft.freeport.wrapEvent
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class TransferBatchEventProcessorTest {
 
         event.ids.forEachIndexed { index, id ->
             val strapiNftId: Long = ((index + 1) * 100).toLong()
-            wireMockServer.stubGettingStrapiNft(smartContractNftId = id, strapiNftId = strapiNftId)
+            wireMockServer.stubGettingExistingStrapiNft(smartContractNftId = id, strapiNftId = strapiNftId)
         }
 
         val firstNftSenderWalletStrapiId = 21343214131
